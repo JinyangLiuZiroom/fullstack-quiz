@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .answer .android { margin-top: 10px; padding: 10px 12px; background: #eef4ff; border-radius: 6px; color: #2a3a55; font-size: 13px; }
+  .answer .android .label { color: #1664ff; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+    .answer .android { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script>
+const QUIZ = {"id": "vol04", "title": "全栈转型模拟自测卷", "sub": "可答题 · 交卷判分 · 自动记录错题", "meta": "题型对齐公司真实考法：<b>单选 / 多选 / 判断 / 填空</b>，给出代码片段或场景，问执行结果、补全代码、判断框架用法。<br>本卷共 <b>35 题</b>：后端 Java 20 + 前端 FE 10 + 测试 5（比例约 50% / 35% / 15%）。<br>难度：<b>实战细节型</b>。每题带答案 + 讲解 + Android 类比。", "sections": [{"name": "一、后端 Java（20 题）", "cat": "backend", "questions": [{"no": 1, "type": "single", "body": "重写了 <code>equals()</code> 却没有重写 <code>hashCode()</code>，会导致什么问题？", "code": null, "options": [{"k": "A", "t": "编译报错"}, {"k": "B", "t": "该对象作为 HashMap/HashSet 的 key 时可能无法正确查找或去重"}, {"k": "C", "t": "完全没有影响"}, {"k": "D", "t": "运行时必抛异常"}], "answer": ["B"], "explain": "equals 契约：两对象 equals 相等则 hashCode 必须相等。只重写 equals 会让\"逻辑相等\"的对象 hashCode 不同，落到不同桶，导致 HashMap 查不到、HashSet 去重失效。", "android": "类似 Kotlin data class 自动生成 equals/hashCode；Java 手写 POJO 忘了 hashCode 就会踩这个坑。"}, {"no": 2, "type": "single", "body": "以下方法的返回值是？", "code": "int f() {\n  int x = 1;\n  try {\n    return x;\n  } finally {\n    x = 2;\n  }\n}", "options": [{"k": "A", "t": "1"}, {"k": "B", "t": "2"}, {"k": "C", "t": "编译错误"}, {"k": "D", "t": "抛出异常"}], "answer": ["A"], "explain": "return x 时已把返回值 1 暂存到返回槽，finally 里改 x=2 不影响已暂存的值，故返回 1。但如果 finally 里也写 return，则会覆盖前面的返回值。", "android": "类似你在 finally 释放资源，不该在 finally 里改返回值或 return，很容易埋下隐蔽 bug。"}, {"no": 3, "type": "judge", "body": "Java 泛型是编译期语法糖，运行时会类型擦除，因此 <code>new ArrayList&lt;String&gt;().getClass() == new ArrayList&lt;Integer&gt;().getClass()</code> 结果为 true。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "泛型信息编译后被擦除为原始类型 ArrayList，运行时二者 Class 相同。所以不能用 instanceof 判断泛型参数，也不能直接 new T[]。", "android": "类似 Gson 反序列化泛型要用 TypeToken 保留类型，正是因为运行时泛型被擦除了。"}, {"no": 4, "type": "single", "body": "关于 <code>java.util.Optional</code>，以下用法正确的是？", "code": null, "options": [{"k": "A", "t": "调用 get() 前应先 isPresent() 判断，或直接用 orElse 提供默认值"}, {"k": "B", "t": "用了 Optional 就能彻底杜绝 NPE，可随意直接 get()"}, {"k": "C", "t": "推荐把所有实体类字段都改成 Optional 类型"}, {"k": "D", "t": "Optional 实现了 Serializable，适合作为 RPC 传输对象"}], "answer": ["A"], "explain": "Optional 用于表达\"可能为空\"的返回值。对空 Optional 直接 get() 会抛 NoSuchElementException，应配合 orElse/orElseGet/ifPresent。它未实现 Serializable，不推荐作字段/参数。", "android": "类似 Kotlin 的可空类型 String? 搭配 ?: 默认值，Optional 是 Java 的手动版本。"}, {"no": 5, "type": "single", "body": "以下 Stream 代码的输出是？", "code": "List<Integer> r = Stream.of(1, 2, 3, 4)\n    .filter(x -> x % 2 == 0)\n    .map(x -> x * 10)\n    .collect(Collectors.toList());\nSystem.out.println(r);", "options": [{"k": "A", "t": "[10, 20, 30, 40]"}, {"k": "B", "t": "[20, 40]"}, {"k": "C", "t": "[2, 4]"}, {"k": "D", "t": "[10, 30]"}], "answer": ["B"], "explain": "filter 保留偶数 2、4；map 各乘 10 得 20、40。Stream 是惰性求值，只有 collect 这种终结操作才真正触发计算。", "android": "类似 Kotlin 的 list.filter{}.map{}，链式集合变换的思路完全一致。"}, {"no": 6, "type": "multi", "body": "关于 <code>Runnable</code> 与 <code>Callable</code>，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "Callable 的 call() 有返回值，Runnable 的 run() 没有返回值"}, {"k": "B", "t": "Callable 可以抛出受检异常，Runnable 的 run() 不能"}, {"k": "C", "t": "把 Callable 提交给线程池会返回 Future，可用于获取结果"}, {"k": "D", "t": "两者都不是函数式接口，不能用 Lambda 表达"}], "answer": ["A", "B", "C"], "explain": "Runnable/Callable 都是函数式接口（D 错，都能用 Lambda）。Callable<V> 有返回值且能抛受检异常，配合 ExecutorService.submit 返回 Future 拿结果。", "android": "类似线程池跑任务：需要结果就用带返回值的 Callable/Future，只执行不取结果用 Runnable。"}, {"no": 7, "type": "multi", "body": "关于 Java 异常体系，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "Error 表示 JVM 通常无法恢复的严重错误（如 OutOfMemoryError）"}, {"k": "B", "t": "RuntimeException 及其子类属于非受检异常（unchecked）"}, {"k": "C", "t": "受检异常必须显式 try-catch 或在方法签名用 throws 声明"}, {"k": "D", "t": "NullPointerException 是受检异常，编译期强制要求捕获"}], "answer": ["A", "B", "C"], "explain": "Throwable 分 Error 与 Exception；Exception 又分受检（如 IOException）与非受检（RuntimeException 系，如 NPE、IllegalArgumentException）。NPE 是 unchecked，D 错。", "android": "类似网络代码里 IOException 必须处理（受检），而空指针属于运行时异常，编译期不强制。"}, {"no": 8, "type": "single", "body": "HotSpot JVM 采用可达性分析判断对象能否回收，以下哪类可作为 GC Roots？", "code": null, "options": [{"k": "A", "t": "虚拟机栈局部变量引用的对象、方法区静态变量引用的对象等"}, {"k": "B", "t": "堆中的所有对象"}, {"k": "C", "t": "已被判定为垃圾的对象"}, {"k": "D", "t": "字符串常量池里的全部字符串"}], "answer": ["A"], "explain": "GC Roots 包括：栈帧局部变量表引用、方法区静态属性/常量引用、JNI 引用等。从 Roots 不可达的对象才会被回收。Java 不用引用计数（无法解决循环引用）。", "android": "类似内存泄漏排查：静态变量长期持有 Activity 引用，使其一直\"可达\"从而无法被回收。"}, {"no": 9, "type": "judge", "body": "类加载的双亲委派模型：类加载器收到请求时先委派给父加载器，父加载器无法完成才自己加载，这样能避免核心类库被篡改。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "Bootstrap → Extension → Application 逐级向上委派。好处是保证 java.lang.String 等核心类只被顶层加载，防止用户自定义同名类顶替核心类。", "android": "类似 Android 的 ClassLoader 层级（PathClassLoader/BootClassLoader），热修复就是在利用或打破这套机制。"}, {"no": 10, "type": "single", "body": "Spring 单例 Bean 初始化时，以下回调顺序正确的是？", "code": null, "options": [{"k": "A", "t": "构造器 → @PostConstruct → afterPropertiesSet → init-method"}, {"k": "B", "t": "构造器 → 属性注入 → @PostConstruct → afterPropertiesSet → init-method"}, {"k": "C", "t": "@PostConstruct → 构造器 → afterPropertiesSet"}, {"k": "D", "t": "afterPropertiesSet → 构造器 → @PostConstruct"}], "answer": ["B"], "explain": "实例化（构造）→ 依赖注入（属性填充）→ Aware 回调 → @PostConstruct → InitializingBean.afterPropertiesSet → 自定义 init-method。销毁时 @PreDestroy → DisposableBean.destroy → destroy-method。", "android": "类似 Activity 生命周期 onCreate→onStart→onResume 有固定顺序，Bean 也有固定的初始化链路。"}, {"no": 11, "type": "single", "body": "SpringMVC 处理一次请求的核心流程，正确的是？", "code": null, "options": [{"k": "A", "t": "DispatcherServlet → HandlerMapping 找处理器 → HandlerAdapter 调用 Controller → ViewResolver 解析视图 → 渲染返回"}, {"k": "B", "t": "Controller 直接接收请求并渲染，无需 DispatcherServlet"}, {"k": "C", "t": "Filter → Servlet → JSP，不经过任何映射"}, {"k": "D", "t": "请求先到 Service 再到 Controller"}], "answer": ["A"], "explain": "前端控制器 DispatcherServlet 统一入口，经 HandlerMapping 定位 handler，HandlerAdapter 执行返回 ModelAndView，由 ViewResolver 解析视图（@RestController 则直接把 JSON 写入响应体）。", "android": "类似一个统一的路由分发中心（Router），按 URL 找到对应处理逻辑再执行。"}, {"no": 12, "type": "single", "body": "接口 <code>GET /user/10?type=vip</code>，要在 Controller 里取到路径中的 10 与查询参数 type，参数注解应为？", "code": null, "options": [{"k": "A", "t": "@RequestBody Long id, @RequestParam String type"}, {"k": "B", "t": "@PathVariable Long id, @RequestParam String type"}, {"k": "C", "t": "@RequestParam Long id, @PathVariable String type"}, {"k": "D", "t": "两个参数都用 @PathVariable"}], "answer": ["B"], "explain": "@PathVariable 取 URL 路径占位（/user/{id}），@RequestParam 取查询串（?type=），@RequestBody 取请求体 JSON（多用于 POST/PUT）。GET 一般没有请求体。", "android": "类似 Retrofit 的 @Path、@Query、@Body 注解，语义一一对应。"}, {"no": 13, "type": "fill", "body": "MyBatis 中为复用重复的 SQL 片段（如公共列名列表），可用 <code>&lt;【空1】 id=\"cols\"&gt;...&lt;/【空1】&gt;</code> 定义片段，再用 <code>&lt;【空2】 refid=\"cols\"/&gt;</code> 引用它。", "code": null, "blanks": 2, "accept": [["sql"], ["include"]], "answerText": "sql；include", "explain": "<sql> 定义可复用片段，<include refid> 引用，避免多处重复维护列名/条件片段，是 MyBatis 的 SQL 复用机制。", "android": "类似你抽取公共常量/字符串资源统一复用，避免多处硬编码同一份内容。"}, {"no": 14, "type": "single", "body": "MySQL <code>EXPLAIN</code> 结果的 type 列，按性能从好到差排序正确的是？", "code": null, "options": [{"k": "A", "t": "ALL > index > range > ref > const"}, {"k": "B", "t": "const > ref > range > index > ALL"}, {"k": "C", "t": "ALL > range > const"}, {"k": "D", "t": "index > ALL > ref"}], "answer": ["B"], "explain": "常见 type 从优到劣：system/const → eq_ref → ref → range → index → ALL。ALL 是全表扫描最差；看到 index/ALL 通常要考虑加索引优化。", "android": "类似你分析查询计划找瓶颈，看到全表扫描（ALL）就该建合适的索引。"}, {"no": 15, "type": "multi", "body": "以下哪些情况会导致（普通）索引失效、退化为全表扫描？（多选）", "code": null, "options": [{"k": "A", "t": "在索引列上使用函数或运算，如 WHERE YEAR(create_time)=2024"}, {"k": "B", "t": "WHERE name LIKE '%abc'（以通配符开头的模糊匹配）"}, {"k": "C", "t": "索引列发生隐式类型转换（如 varchar 列用数字比较）"}, {"k": "D", "t": "WHERE id = 10（主键等值查询）"}], "answer": ["A", "B", "C"], "explain": "索引列参与函数/运算、左模糊 LIKE '%x'、隐式类型转换、OR 连接非索引列等都会使索引失效。D 主键等值是最优查询，正常走索引。", "android": "类似本地查询你对字段先做了转换，就没法利用现成索引，只能全量遍历。"}, {"no": 16, "type": "fill", "body": "MySQL 深分页 <code>LIMIT 1000000, 10</code> 很慢，因为要先扫描并丢弃前 100 万行。常见优化：基于上次最大 id 用 <code>WHERE id &gt; ? LIMIT 10</code>（游标法），或用 <b>【空1】</b>（先用子查询/覆盖索引定位主键 id，再 JOIN 回主表取整行）。", "code": null, "blanks": 1, "accept": [["延迟关联", "延迟", "子查询", "覆盖索引"]], "answerText": "延迟关联（先用覆盖索引/子查询定位主键，再回表关联）", "explain": "深分页痛点是丢弃大量行。游标法记住上次 id 避免 offset 扫描；延迟关联先用二级/覆盖索引拿到目标主键，再 JOIN 主表取完整行，减少回表次数。", "android": "类似长列表分页别用 offset 硬翻，用\"上次最后一条的 id/时间戳\"做游标下拉加载。"}, {"no": 17, "type": "multi", "body": "关于 Redis 数据结构的典型使用场景，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "String 适合缓存对象序列化串、做计数器（INCR）"}, {"k": "B", "t": "Hash 适合存储一个对象的多个字段（如用户信息）"}, {"k": "C", "t": "ZSet（有序集合）适合做排行榜（按分数排序）"}, {"k": "D", "t": "List 完全无法实现简单消息队列"}], "answer": ["A", "B", "C"], "explain": "String（缓存/计数）、Hash（对象字段）、List（可做队列，LPUSH/BRPOP）、Set（去重/交并集）、ZSet（排行榜/延迟队列）。D 错，List 可实现简单队列。", "android": "类似你按数据形态选本地存储结构：键值、对象、有序榜单各用不同容器。"}, {"no": 18, "type": "single", "body": "大量热点 key 在同一时刻集中过期，导致请求瞬间全部打到数据库，这种现象叫？", "code": null, "options": [{"k": "A", "t": "缓存穿透"}, {"k": "B", "t": "缓存击穿"}, {"k": "C", "t": "缓存雪崩"}, {"k": "D", "t": "缓存预热"}], "answer": ["C"], "explain": "雪崩＝大量 key 同时失效或 Redis 宕机（解法：过期时间加随机、多级缓存、高可用）；击穿＝单个热点 key 失效瞬间高并发（解法：互斥锁重建/逻辑过期）；穿透＝查根本不存在的数据（布隆过滤器/缓存空值）。", "android": "类似缓存全部同时失效造成后端瞬时压力峰值，给过期时间打散随机值可缓解。"}, {"no": 19, "type": "multi", "body": "为尽量保证 Kafka 消息不丢失，以下做法正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "生产者设置 acks=all（所有 ISR 副本确认后才算成功）"}, {"k": "B", "t": "topic 设置多副本 replication.factor >= 2"}, {"k": "C", "t": "消费者关闭自动提交 offset，处理成功后再手动提交"}, {"k": "D", "t": "生产者设置 acks=0 可靠性最高"}], "answer": ["A", "B", "C"], "explain": "防丢三方面：生产端 acks=all + 重试；broker 多副本 + min.insync.replicas；消费端手动提交 offset（处理完再提交，避免消费未完成就提交丢消息）。acks=0 不等确认最不可靠，D 错。", "android": "类似上报数据要\"服务端确认收到才算成功\"，接收端也要处理完再标记已消费。"}, {"no": 20, "type": "fill", "body": "RabbitMQ 中，<b>【空1】</b> 类型交换机按 routingKey 精确匹配路由到队列；<b>【空2】</b> 类型交换机把消息广播到所有绑定的队列（不看 routingKey）；topic 类型支持 * 和 # 通配符做模糊匹配。", "code": null, "blanks": 2, "accept": [["direct", "直连"], ["fanout", "广播"]], "answerText": "direct（直连）；fanout（广播）", "explain": "四种交换机：direct（精确 routingKey）、fanout（广播）、topic（通配符）、headers（按 header）。生产者发到 exchange，由 exchange 按类型把消息路由到队列。", "android": "类似事件总线的不同分发策略：点对点、全局广播、按主题订阅。"}]}, {"name": "二、前端 FE（10 题）", "cat": "fe", "questions": [{"no": 21, "type": "single", "body": "关于 JavaScript 原型链，正确的是？", "code": null, "options": [{"k": "A", "t": "对象的 __proto__ 指向其构造函数的 prototype，查找属性时沿原型链向上直到 null"}, {"k": "B", "t": "原型链没有终点，会无限循环"}, {"k": "C", "t": "实例的 __proto__ 等于它自身"}, {"k": "D", "t": "给实例新增同名属性会修改原型上的属性"}], "answer": ["A"], "explain": "obj.__proto__ === Constructor.prototype；访问属性时自身没有就沿 __proto__ 逐级向上查找，终点是 Object.prototype.__proto__ === null。实例同名属性会遮蔽原型属性但不改原型。", "android": "类似类继承的方法查找沿父类向上，找不到再往上直到根类 Object。"}, {"no": 22, "type": "multi", "body": "JavaScript 中 <code>new Foo()</code> 会执行哪些步骤？（多选）", "code": null, "options": [{"k": "A", "t": "创建一个新的空对象"}, {"k": "B", "t": "把新对象的 __proto__ 指向 Foo.prototype"}, {"k": "C", "t": "以新对象为 this 执行构造函数体"}, {"k": "D", "t": "若构造函数返回一个对象则用该对象，否则返回新对象"}], "answer": ["A", "B", "C", "D"], "explain": "new 的四步：创建空对象 → 链接原型 → 绑定 this 执行构造 → 返回（构造函数显式返回对象则用它，否则返回新建对象）。", "android": "类似对象实例化：分配内存 → 绑定类型信息 → 调用构造方法初始化。"}, {"no": 23, "type": "single", "body": "关于 <code>call</code>、<code>apply</code>、<code>bind</code> 的区别，正确的是？", "code": null, "options": [{"k": "A", "t": "call/apply 立即执行，区别是 apply 第二个参数传数组；bind 返回绑定 this 的新函数、不立即执行"}, {"k": "B", "t": "三者都会立即执行函数"}, {"k": "C", "t": "bind 的第二个参数必须是数组"}, {"k": "D", "t": "apply 无法改变函数的 this 指向"}], "answer": ["A"], "explain": "fn.call(ctx, a, b) 逐个传参并立即调用；fn.apply(ctx, [a, b]) 用数组传参立即调用；fn.bind(ctx) 返回新函数、稍后再调用。三者都能改变 this 指向。", "android": "类似给回调\"预绑定\"上下文/参数后再择机执行，bind 相当于预设 this 的柯里化。"}, {"no": 24, "type": "single", "body": "以下代码的输出是？", "code": "const r = [1, 2, 3, 4].reduce((acc, cur) => acc + cur, 10);\nconsole.log(r);", "options": [{"k": "A", "t": "10"}, {"k": "B", "t": "20"}, {"k": "C", "t": "24"}, {"k": "D", "t": "30"}], "answer": ["B"], "explain": "reduce 第二个参数 10 是初始累加值，依次 10+1+2+3+4 = 20。若不传初始值，则以数组首元素作为初值、从第二个元素开始累加。", "android": "类似 Kotlin 的 fold(10){acc, x -> acc + x}，累积计算。"}, {"no": 25, "type": "single", "body": "以下解构赋值代码的输出是？", "code": "const { a = 1, b = 2 } = { a: 10, c: 30 };\nconsole.log(a, b);", "options": [{"k": "A", "t": "10 2"}, {"k": "B", "t": "1 2"}, {"k": "C", "t": "10 undefined"}, {"k": "D", "t": "10 30"}], "answer": ["A"], "explain": "a 从源对象取到 10（覆盖默认值）；b 源对象里没有 → 使用默认值 2。解构默认值仅在对应属性为 undefined 时才生效。", "android": "类似函数默认参数：没传就用默认值，传了就用传入的值。"}, {"no": 26, "type": "single", "body": "关于 <code>Promise.all</code> 与 <code>Promise.race</code>，正确的是？", "code": null, "options": [{"k": "A", "t": "all 全部成功才 resolve（结果为数组），任一失败即 reject；race 取最先敲定（无论成败）的那个"}, {"k": "B", "t": "all 只要有一个成功就 resolve"}, {"k": "C", "t": "race 会等所有 Promise 完成"}, {"k": "D", "t": "两者行为完全相同"}], "answer": ["A"], "explain": "Promise.all 全部成功才成功、有一个失败就整体失败；race 返回最先 settle 的结果（不管成功还是失败）。另有 allSettled（等全部结束不中断）、any（第一个成功）。", "android": "类似并发多个请求：all＝等全部返回，race＝谁先返回用谁（常用于超时竞速）。"}, {"no": 27, "type": "fill", "body": "高频事件优化：<b>【空1】</b>（debounce）指事件停止触发一段时间后才执行（如搜索框停止输入 500ms 再发请求）；<b>【空2】</b>（throttle）指固定时间间隔内最多执行一次（如滚动、resize）。", "code": null, "blanks": 2, "accept": [["防抖", "debounce"], ["节流", "throttle"]], "answerText": "防抖（debounce）；节流（throttle）", "explain": "防抖：每次触发都重置计时器，只在最后一次触发后延时执行；节流：固定频率执行一次。搜索联想用防抖，滚动加载用节流。", "android": "类似按钮防连点（防抖）、列表滚动监听限频（节流）。"}, {"no": 28, "type": "single", "body": "CSS 中设置 <code>box-sizing: border-box</code> 后，元素的 width 包含哪些部分？", "code": null, "options": [{"k": "A", "t": "仅 content"}, {"k": "B", "t": "content + padding + border"}, {"k": "C", "t": "content + padding + border + margin"}, {"k": "D", "t": "content + margin"}], "answer": ["B"], "explain": "默认 content-box 时 width 只是内容宽，padding/border 会额外撑大总宽。border-box 让 width 包含 content+padding+border（不含 margin），布局更直观，常全局设置 * { box-sizing: border-box }。", "android": "类似 View 的 padding 是否算进设定宽度——border-box 相当于 padding 向内收缩而不额外撑大。"}, {"no": 29, "type": "judge", "body": "浏览器同源策略要求协议、域名、端口三者完全相同才算同源；跨域请求需服务端返回 <code>Access-Control-Allow-Origin</code> 等 CORS 响应头才被浏览器放行。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "同源＝协议+域名+端口一致。跨域时浏览器会拦截响应（请求可能已发到服务端），需后端配置 CORS 响应头；复杂请求还会先发 OPTIONS 预检。JSONP 是老式绕过手段。", "android": "类似应用的域名白名单/权限校验，跨源资源要显式授权才放行。"}, {"no": 30, "type": "single", "body": "Vue 中修改响应式数据后，想立即拿到更新后的真实 DOM，应使用？", "code": null, "options": [{"k": "A", "t": "直接同步读取 DOM 即可，数据一改 DOM 就同步更新了"}, {"k": "B", "t": "this.$nextTick(callback)，在 DOM 更新完成后再执行"}, {"k": "C", "t": "用 setTimeout 延时 100ms"}, {"k": "D", "t": "强制刷新整个页面"}], "answer": ["B"], "explain": "Vue 的 DOM 更新是异步批量的：数据变了不会同步更新 DOM。$nextTick 的回调会在下一次 DOM 更新循环结束后执行，此时能取到最新 DOM。Vue3 也可用其返回的 Promise。", "android": "类似 View.post{} 把操作排到布局测量/绘制完成后执行，确保能拿到正确的尺寸。"}]}, {"name": "三、测试（5 题）", "cat": "test", "questions": [{"no": 31, "type": "single", "body": "当程序输出由多个输入条件的组合决定（如\"是会员 且 金额>100 才打折\"），最适合设计测试用例的黑盒方法是？", "code": null, "options": [{"k": "A", "t": "等价类划分"}, {"k": "B", "t": "边界值分析"}, {"k": "C", "t": "判定表（决策表）法"}, {"k": "D", "t": "压力测试"}], "answer": ["C"], "explain": "判定表法系统列出各条件的所有组合与对应动作，适合\"多条件组合逻辑\"。等价类/边界值针对单个输入取值，覆盖不了条件之间的组合关系。", "android": "类似你测试多个开关组合下的 UI 行为，用真值表列全组合逐一验证。"}, {"no": 32, "type": "multi", "body": "关于性能测试常见指标，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "TPS 指系统每秒处理的事务数"}, {"k": "B", "t": "响应时间(RT)指从请求发出到收到响应的耗时"}, {"k": "C", "t": "并发用户数指同时向系统发起请求的用户数"}, {"k": "D", "t": "TPS 越高就一定代表响应时间越长"}], "answer": ["A", "B", "C"], "explain": "TPS/QPS（吞吐）、RT（响应时间）、并发数、错误率是核心指标。D 错：高 TPS 不必然高 RT，理想是高吞吐低延迟；但超过性能拐点后 RT 会随并发升高而恶化。", "android": "类似你压测接口关注 QPS 和 P99 延迟，找到系统承压的拐点。"}, {"no": 33, "type": "multi", "body": "关于 Mockito 的调用验证，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "verify(mock, times(2)).foo() 验证 foo 恰好被调用 2 次"}, {"k": "B", "t": "verify(mock, never()).foo() 验证 foo 从未被调用"}, {"k": "C", "t": "ArgumentCaptor 可捕获调用时传入的实参用于断言"}, {"k": "D", "t": "verify 只能验证是否被调用，无法验证调用次数"}], "answer": ["A", "B", "C"], "explain": "verify 配合 times(n)/never()/atLeast()/atMost() 验证调用次数；ArgumentCaptor 捕获传入实参做进一步断言。D 错，可精确验证次数。", "android": "类似你验证某回调被触发了几次、传入参数是否正确，用 mock 框架断言交互过程。"}, {"no": 34, "type": "fill", "body": "白盒覆盖率中，<b>【空1】</b> 覆盖要求每条语句至少执行一次；<b>【空2】</b> 覆盖（判定覆盖）要求每个判断的 true/false 分支都被执行过，比前者更强。", "code": null, "blanks": 2, "accept": [["语句", "statement"], ["分支", "判定", "branch", "decision"]], "answerText": "语句（statement）覆盖；分支/判定（branch/decision）覆盖", "explain": "覆盖强度递增：语句 < 判定(分支) < 条件 < 判定/条件 < 路径。语句覆盖最弱（每行跑到即可），分支覆盖要求每个 if 的真假两个分支都覆盖。", "android": "类似写单测要覆盖 if/else 的每个分支，而不只是\"每行都跑过\"。"}, {"no": 35, "type": "single", "body": "关于缺陷的严重程度(Severity)与优先级(Priority)，正确的理解是？", "code": null, "options": [{"k": "A", "t": "两者必须永远相等"}, {"k": "B", "t": "Severity 描述缺陷对系统的影响程度，Priority 描述修复的紧急/先后顺序，二者可不一致"}, {"k": "C", "t": "Priority 高的 bug 严重程度一定高"}, {"k": "D", "t": "拼写错误一定是高严重高优先级"}], "answer": ["B"], "explain": "Severity 看技术影响（如崩溃＝高）；Priority 看业务紧急度。可能出现\"低严重高优先\"（如首页把公司名拼错，不崩溃但要马上改）或\"高严重低优先\"（极罕见路径才崩溃）。", "android": "类似线上问题分级：崩溃率高但触发极少 vs 不崩但影响品牌，处理优先级由业务定。"}]}]};
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span><span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div>'
+            + '<div class="android"><span class="label">Android 类比：</span>'+q.android+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q.no==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
+  ans.classList.add('show');
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>

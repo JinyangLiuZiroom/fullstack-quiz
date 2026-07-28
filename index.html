@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型 · 刷题门户</title>
+<style>
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    background:#f5f7fa; color:#1f2329; margin:0; padding:32px 20px 60px; line-height:1.6; }
+  .wrap { max-width:720px; margin:0 auto; }
+  h1 { font-size:26px; margin:0 0 6px; }
+  .sub { color:#646a73; font-size:14px; margin-bottom:12px; }
+  .topbar { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .topbar .who { font-size:13px; color:#646a73; }
+  .topbar .who a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .topbar .who .btn { margin-left:6px; }
+  .stat { background:#fff; border-radius:12px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:18px; display:flex; gap:24px; flex-wrap:wrap; }
+  .stat .item .n { font-size:24px; font-weight:800; color:#1664ff; }
+  .stat .item .n.red { color:#ff4d4f; }
+  .stat .item .l { font-size:13px; color:#646a73; }
+  .card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 1px 3px rgba(0,0,0,.06);
+    margin-bottom:14px; display:flex; align-items:center; gap:14px; transition:all .15s; }
+  .card .info { flex:1; }
+  .card .t { font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; }
+  .card .d { color:#8a9099; font-size:13px; margin-top:3px; }
+  .card .badge { font-size:12px; font-weight:700; padding:2px 9px; border-radius:5px; }
+  .card .badge.done { background:#e9f9ee; color:#1a9e4b; }
+  .card .badge.wrong { background:#fff1f0; color:#ff4d4f; }
+  .open { background:#1664ff; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-size:14px; font-weight:600; white-space:nowrap; }
+  .open:hover { background:#0e4fd8; }
+  .redo { background:#f2f3f5; color:#41464b; border:none; padding:9px 14px; border-radius:8px; font-size:13px; cursor:pointer; font-weight:600; }
+  .redo:hover { background:#e5e6eb; }
+  .card.completed { background:#f2f3f5; opacity:.72; }
+  .card.completed .t { color:#8a9099; }
+  .card.completed .open { background:#c9ccd1; }
+  .card.completed .open:hover { background:#b6bac1; }
+  .footer { text-align:center; color:#9aa0a6; font-size:13px; margin-top:26px; }
+  .btn { border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .hint { font-size:12px; color:#8a9099; background:#fff7e6; border:1px solid #ffe0a3; border-radius:8px; padding:8px 12px; margin-bottom:14px; }
+  @media (max-width:600px) {
+    body { padding:16px 12px 40px; }
+    .wrap { max-width:100%; }
+    h1 { font-size:20px; }
+    .sub { font-size:12px; }
+    .stat { padding:12px 14px; gap:16px; }
+    .stat .item .n { font-size:20px; }
+    .card { padding:14px 12px; gap:10px; flex-direction:column; align-items:flex-start; }
+    .card .t { font-size:14px; }
+    .card .d { font-size:12px; }
+    .open { font-size:13px; padding:8px 14px; }
+    .redo { font-size:12px; padding:7px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>全栈转型 · 刷题门户</h1>
+  <div class="sub">Android → 全栈（前端 H5 + 后端 Java）· 每日十点自动出题 · 登录后答题记录按用户存入后台数据库</div>
+  <div class="topbar" id="topbar"></div>
+  <div class="stat" id="stat"></div>
+  <div id="list"></div>
+  <div class="footer">做过的卷子会自动置灰并显示得分 · 登录同一账号可在任意设备查看记录</div>
+</div>
+<script src="auth.js"></script>
+<script>
+const QUIZZES = [{"id": "vol01", "file": "fullstack_practice_01.html", "title": "第 1 期 · 全栈转型模拟自测卷", "total": 35}, {"id": "vol02", "file": "fullstack_practice_02.html", "title": "第 2 期 · 全栈转型模拟自测卷", "total": 35}, {"id": "vol03", "file": "fullstack_practice_03.html", "title": "第 3 期 · 全栈转型模拟自测卷", "total": 35}, {"id": "vol04", "file": "fullstack_practice_04.html", "title": "第 4 期 · 全栈转型模拟自测卷", "total": 35}, {"id": "vol05", "file": "fullstack_practice_05.html", "title": "第 5 期 · 全栈转型模拟自测卷", "total": 33}, {"id": "vol06", "file": "fullstack_practice_06.html", "title": "第 6 期 · 全栈转型模拟自测卷", "total": 33}, {"id": "vol07", "file": "fullstack_practice_07.html", "title": "第 7 期 · 全栈转型模拟自测卷", "total": 33}, {"id": "vol08", "file": "fullstack_practice_08.html", "title": "第 8 期 · 全栈转型模拟自测卷", "total": 33}];
+function loadLocal(id){ try{ return JSON.parse(localStorage.getItem('fsp:'+id)); }catch(e){ return null; } }
+
+async function render(){
+  const topbar=document.getElementById('topbar');
+  if(QB && QB.isLogin()){
+    topbar.innerHTML='<span class="who">已登录：'+QB.user()+'</span>'
+      +'<button class="btn btn-ghost" onclick="doLogout()">登出</button>';
+  } else {
+    topbar.innerHTML='<span class="who">未登录，记录仅存本机。'
+      +'<a onclick="doLogin()">登录 / 注册</a> 可跨设备同步</span>';
+  }
+  let recs={};
+  if(QB && QB.isLogin()){
+    try{ const list=await QB.apiGet('/api/records'); list.forEach(r=>recs[r.volId]=r); }
+    catch(e){ recs=localMap(); }
+  } else { recs=localMap(); }
+
+  let doneCount=0, wrongTotal=0, scoreSum=0, scoreTotal=0;
+  let html='';
+  QUIZZES.forEach(q=>{
+    const r=recs[q.id]; const done=!!r;
+    const score=r?r.score:0, total=r?r.total:q.total, wrong=r?JSON.parse(r.wrong||'[]'):[];
+    if(done){ doneCount++; wrongTotal+=wrong.length; scoreSum+=score; scoreTotal+=total; }
+    html+='<div class="card'+(done?' completed':'')+'">';
+    html+='<div class="info"><div class="t">'+q.title
+        + (done?' <span class="badge done">\u2714 \u5df2\u5b8c\u6210</span>':'')
+        + (done&&wrong.length?' <span class="badge wrong">\u9519 '+wrong.length+' \u9898</span>':'')
+        +'</div>';
+    html+='<div class="d">'+(done? ('\u5f97\u5206 '+score+'/'+total+'\u3000\u00b7\u3000\u6b63\u786e\u7387 '+Math.round(score/total*100)+'%') : '\u5355\u9009 / \u591a\u9009 / \u5224\u65ad \u00b7 \u542b\u7b54\u6848+\u8bb2\u89e3+Android \u7c7b\u6bd4')+'</div></div>';
+    html+='<a class="open" href="'+q.file+'">'+(done?'\u67e5\u770b/\u590d\u4e60 \u2192':'\u5f00\u59cb\u7b54\u9898 \u2192')+'</a>';
+    if(done) html+='<button class="redo" onclick="redo(\''+q.id+'\')">\u91cd\u505a</button>';
+    html+='</div>';
+  });
+  document.getElementById('list').innerHTML=html;
+  document.getElementById('stat').innerHTML=
+     '<div class="item"><div class="n">'+QUIZZES.length+'</div><div class="l">\u603b\u5377\u6570</div></div>'
+    +'<div class="item"><div class="n">'+doneCount+'</div><div class="l">\u5df2\u5b8c\u6210</div></div>'
+    +'<div class="item"><div class="n red">'+wrongTotal+'</div><div class="l">\u7d2f\u8ba1\u9519\u9898</div></div>'
+    +'<div class="item"><div class="n">'+(scoreTotal? Math.round(scoreSum/scoreTotal*100):0)+'%</div><div class="l">\u5e73\u5747\u6b63\u786e\u7387</div></div>';
+}
+function localMap(){
+  const m={}; QUIZZES.forEach(q=>{ const s=loadLocal(q.id); if(s&&s.done) m[q.id]={score:s.score,total:s.total,wrong:JSON.stringify(s.wrong)}; });
+  return m;
+}
+function redo(id){ if(confirm('\u6e05\u9664\u8be5\u5377\u8bb0\u5f55\u5e76\u91cd\u505a\uff1f')){ localStorage.removeItem('fsp:'+id); render(); } }
+function doLogin(){ QB.showLogin(()=>render()); }
+function doLogout(){ QB.clear(); render(); }
+render();
+</script>
+</body>
+</html>

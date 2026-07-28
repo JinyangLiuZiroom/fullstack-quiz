@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .answer .android { margin-top: 10px; padding: 10px 12px; background: #eef4ff; border-radius: 6px; color: #2a3a55; font-size: 13px; }
+  .answer .android .label { color: #1664ff; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+    .answer .android { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script>
+const QUIZ = {"id": "vol01", "title": "全栈转型模拟自测卷", "sub": "可答题 · 交卷判分 · 自动记录错题", "meta": "题型对齐公司真实考法：<b>单选 / 多选 / 判断 / 填空</b>，给出代码片段或场景，问执行结果、补全代码、判断框架用法。<br>本卷共 <b>35 题</b>：后端 Java 20 + 前端 FE 10 + 测试 5（比例约 50% / 35% / 15%）。<br>难度：<b>实战细节型</b>。每题带答案 + 讲解 + Android 类比。", "sections": [{"name": "一、后端 Java（20 题）", "cat": "backend", "questions": [{"no": 1, "type": "single", "body": "以下代码共创建几个 String 对象（不考虑类加载已有的情况）？", "code": "String s1 = \"abc\";\nString s2 = new String(\"abc\");", "options": [{"k": "A", "t": "1 个"}, {"k": "B", "t": "2 个"}, {"k": "C", "t": "3 个"}, {"k": "D", "t": "4 个"}], "answer": ["B"], "explain": "\"abc\" 入字符串常量池 1 个；<code>new String(\"abc\")</code> 在堆上再建 1 个对象（引用指向堆，堆里 char 数组可能被复用）。共 2 个。", "android": "类似资源复用池（TypedValue/Resource 缓存），字面量命中池、new 强制在堆新建。"}, {"no": 2, "type": "multi", "body": "关于 HashMap（JDK 8），正确的是：（多选）", "code": null, "options": [{"k": "A", "t": "链表长度达到 8 且数组容量≥64 时转红黑树"}, {"k": "B", "t": "默认初始容量 16，负载因子 0.75，扩容翻倍"}, {"k": "C", "t": "HashMap 是线程安全的，多线程可直接用"}, {"k": "D", "t": "key 为 null 时存放在下标 0 的桶"}], "answer": ["A", "B", "D"], "explain": "C 错：HashMap 线程不安全，并发用 ConcurrentHashMap。A/B/D 均为正确细节。扩容阈值 = 容量 × 负载因子 = 12 时扩容到 32。", "android": "类似 SparseArray（避免自动装箱） vs HashMap，都是哈希桶 + 冲突链表的思想。"}, {"no": 3, "type": "single", "body": "以下代码输出？", "code": "Integer a = 128;\nInteger b = 128;\nSystem.out.println(a == b);", "options": [{"k": "A", "t": "true"}, {"k": "B", "t": "false"}, {"k": "C", "t": "编译错误"}, {"k": "D", "t": "运行时异常"}], "answer": ["B"], "explain": "Integer 有缓存池 -128~127，128 超出范围，a、b 是两个不同对象，<code>==</code> 比地址为 false。若改成 127 则为 true。", "android": "类似 Integer.valueOf() 的缓存，或你用对象池时的\"同一值≠同一对象\"。"}, {"no": 4, "type": "judge", "body": "ArrayList 底层是数组，因此在中间位置插入元素效率很高（O(1)）。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "数组中间插入需把后续元素整体后移，复杂度 O(n)。LinkedList 中间插入本身 O(1) 但定位元素要遍历。末尾追加 ArrayList 才是 O(1)（不扩容时）。", "android": "RecyclerView 列表插入，中间位置变动会触发后续 item 重排，和数组移动同理。"}, {"no": 5, "type": "single", "body": "Java 中 <code>volatile</code> 关键字能保证什么？", "code": null, "options": [{"k": "A", "t": "原子性"}, {"k": "B", "t": "可见性 + 禁止指令重排序"}, {"k": "C", "t": "互斥（排他锁）"}, {"k": "D", "t": "原子性 + 可见性"}], "answer": ["B"], "explain": "volatile 保证变量修改对其他线程立即可见，并禁止重排序（双重检查锁单例常用），但<b>不保证复合操作原子性</b>（i++ 仍非原子）。原子性要用 synchronized 或 Atomic 类。", "android": "类似你在子线程改、主线程读的共享标记，需 volatile 防止主线程一直读寄存器旧值。"}, {"no": 6, "type": "multi", "body": "以下哪些场景会产生死锁？（多选）", "code": null, "options": [{"k": "A", "t": "线程 T1 持有锁 L1 等待 L2，线程 T2 持有 L2 等待 L1"}, {"k": "B", "t": "synchronized 方法内部调用同类另一个 synchronized 方法"}, {"k": "C", "t": "两个线程互相持有对方需要的锁且都不释放"}, {"k": "D", "t": "使用 ReentrantLock 正确加解锁"}], "answer": ["A", "C"], "explain": "死锁四要素：互斥、占有且等待、不可剥夺、循环等待。A/C 是经典循环等待。B 不会（synchronized 可重入）。D 正确加解锁不会死锁。", "android": "类似主线程等子线程锁、子线程又等主线程锁导致的 ANR 死锁。"}, {"no": 7, "type": "single", "body": "Spring <code>@Transactional</code> 的默认传播行为是？", "code": null, "options": [{"k": "A", "t": "REQUIRED"}, {"k": "B", "t": "REQUIRES_NEW"}, {"k": "C", "t": "SUPPORTS"}, {"k": "D", "t": "NESTED"}], "answer": ["A"], "explain": "REQUIRED 是默认：若已存在事务则加入，否则新建。REQUIRES_NEW 总是挂起当前事务新建一个，常用于\"日志/审计必须独立提交\"。", "android": "类似 Room 事务嵌套的默认行为——已有事务就复用，没有就开。"}, {"no": 8, "type": "multi", "body": "以下哪些情况会导致 <code>@Transactional</code> 注解失效（事务不回滚）？（多选）", "code": null, "options": [{"k": "A", "t": "事务方法被声明为 private"}, {"k": "B", "t": "同类内部 this 自调用该方法（未经过代理）"}, {"k": "C", "t": "方法内 try-catch 吞掉异常未抛出"}, {"k": "D", "t": "方法抛出 RuntimeException"}], "answer": ["A", "B", "C"], "explain": "Spring 事务基于 AOP 代理：private 方法不被代理（A 失效）；自调用绕过了代理（B 失效）；C 把异常吞了，代理感知不到，自然不回滚。D 是正确触发回滚的情况，不失效。", "android": "类似你用代理做埋点，直接内部调用绕过了代理，埋点就丢了——和自调用事务失效一个道理。"}, {"no": 9, "type": "judge", "body": "<code>@RestController</code> 等价于 <code>@Controller</code> + <code>@ResponseBody</code>。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "@RestController 是组合注解，自动给每个方法加上 @ResponseBody，返回值直接写进 HTTP body（转 JSON），不用再每个方法标 @ResponseBody。", "android": "相当于你封装的\"返回 JSON 的 BaseController\"，省得每处重复声明。"}, {"no": 10, "type": "fill", "body": "Spring 中，<code>@Autowired</code> 默认按 【空1】 注入；当同一类型有多个 Bean 时，可用 <code>@Qualifier(\"名称\")</code> 指定，或在首选 Bean 上标注 <code>@【空2】</code> 标记优先。", "code": null, "blanks": 2, "accept": [["类型", "bytype", "by type"], ["primary"]], "answerText": "类型（byType）；Primary", "explain": "@Autowired 默认按类型匹配；多个实现类时冲突，用 @Qualifier 指定 Bean 名，或给其中一个加 @Primary 表示优先注入。", "android": "完全是 Dagger/Hilt 的 @Inject 按类型 + @Named/@Qualifier 指定，理解方式一样。"}, {"no": 11, "type": "single", "body": "MyBatis 中 <code>resultType</code> 与 <code>resultMap</code> 的区别，正确的是？", "code": null, "options": [{"k": "A", "t": "resultType 按列名与属性名自动映射（同名），resultMap 可自定义复杂映射"}, {"k": "B", "t": "resultMap 只用于简单查询，resultType 用于复杂"}, {"k": "C", "t": "两者完全等价"}, {"k": "D", "t": "resultType 不能映射基本类型"}], "answer": ["A"], "explain": "resultType 要求列名与 Java 属性名一致（可用驼峰映射配置）；resultMap 显式定义 column→property 映射，能做别名、关联（association/collection）、类型转换，适合复杂结果。", "android": "类似 Cursor 自动映射 vs 手写映射——Room 的 @ColumnInfo 就是 resultMap 的思路。"}, {"no": 12, "type": "multi", "body": "关于 MyBatis 动态 SQL 标签，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "&lt;if test=\"...\"&gt; 条件成立才拼接内部 SQL"}, {"k": "B", "t": "&lt;choose&gt;&lt;when&gt;&lt;otherwise&gt; 类似 switch 分支"}, {"k": "C", "t": "&lt;trim&gt; 可去除多余的前缀/后缀（如多余 AND）"}, {"k": "D", "t": "&lt;where&gt; 自动加 WHERE 并去除开头多余的 AND/OR"}], "answer": ["A", "B", "C", "D"], "explain": "四个都是 MyBatis 标准动态 SQL 标签。<code>&lt;where&gt;</code> 只在其有内容时才插入 WHERE 并去掉首部 AND/OR；<code>&lt;trim&gt;</code> 更通用，可自定义去除前缀后缀。", "android": "类似你根据条件拼装 SQL 字符串时手动 trim 前缀 AND，MyBatis 帮你自动化了。"}, {"no": 13, "type": "judge", "body": "MyBatis 中用 <code>&lt;selectKey&gt;</code> 在插入后获取自增主键时，应配置 <code>order=\"AFTER\"</code>（以 MySQL 为例）。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "MySQL 自增主键在插入后生成，故 order=\"AFTER\"；Oracle 用序列，需插入前生成，用 order=\"BEFORE\"。也可直接用 <code>useGeneratedKeys=\"true\" keyProperty=\"id\"</code> 简化。", "android": "类似 SQLite 插入后取 last_insert_rowid()，也是\"插入后\"才拿到 id。"}, {"no": 14, "type": "single", "body": "表 t(a,b,c) 有联合索引 (a,b,c)。以下哪个 WHERE 能利用该联合索引？", "code": null, "options": [{"k": "A", "t": "WHERE b=1 AND c=2（缺最左列 a）"}, {"k": "B", "t": "WHERE a=1 AND b=2"}, {"k": "C", "t": "WHERE b=1"}, {"k": "D", "t": "WHERE c=1"}], "answer": ["B"], "explain": "联合索引遵循<b>最左前缀原则</b>，必须从最左列 a 开始才能走索引。B 用到了 (a,b)。A/C/D 都缺 a，索引失效（除非索引跳跃扫描，一般考试按失效算）。", "android": "类似复合索引/联合约束必须从左匹配，跳过头字段就全表扫。"}, {"no": 15, "type": "multi", "body": "关于 MySQL 事务隔离级别，正确的是：（多选）", "code": null, "options": [{"k": "A", "t": "READ UNCOMMITTED 可能读到未提交的脏数据（脏读）"}, {"k": "B", "t": "READ COMMITTED 解决脏读，但可能有不可重复读"}, {"k": "C", "t": "REPEATABLE READ 是 MySQL 默认，靠 MVCC 解决不可重复读"}, {"k": "D", "t": "SERIALIZABLE 隔离最高、并发性能最低"}], "answer": ["A", "B", "C", "D"], "explain": "四个描述均正确。隔离级别递进：RU→RC→RR→Serializable，安全性↑、并发性↓。MySQL 默认 RR，通过 MVCC 快照读避免不可重复读，但可能出现幻读（间隙锁解决）。", "android": "类似数据库事务在本地 Room 的隔离，只不过服务端是多连接并发，问题更突出。"}, {"no": 16, "type": "fill", "body": "SQL 中要对 <code>GROUP BY</code> 之后的分组结果再进行过滤（例如\"统计订单数大于 1 的用户\"），不能用 WHERE，而要用 【空1】 子句，如 <code>HAVING COUNT(*) &gt; 1</code>。", "code": null, "blanks": 1, "accept": [["having"]], "answerText": "HAVING", "explain": "WHERE 在分组前过滤行，HAVING 在分组后过滤组。聚合函数（COUNT/SUM/AVG）只能出现在 HAVING 中做分组筛选。", "android": "类似你在内存里先 filter 再 groupBy，再对分组结果二次 filter——HAVING 就是第二阶段 filter。"}, {"no": 17, "type": "single", "body": "Redis 中实现一个\"每小时最多访问 100 次\"的接口限流，最适合用？", "code": null, "options": [{"k": "A", "t": "计数器 INCR + EXPIRE（固定窗口）或结合时间戳"}, {"k": "B", "t": "LIST 队列"}, {"k": "C", "t": "SET 集合"}, {"k": "D", "t": "GEO 地理位置"}], "answer": ["A"], "explain": "限流本质是计数：每次请求 INCR 一个 key，达到阈值拒绝，key 设 1 小时过期即固定窗口限流；更平滑可用滑动窗口（ZSET 记录时间戳）。LIST/SET/GEO 不适用于简单计数。", "android": "类似你做\"按钮 1 秒内只能点一次\"的点击计数器，本地用时间戳+计数，服务端用 Redis 计数。"}, {"no": 18, "type": "judge", "body": "Redis 的 RDB 是定时快照、AOF 是追加命令日志，生产环境常两者结合使用以保证性能与数据安全。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "RDB 恢复快但可能丢最近数据，AOF 更持久但文件大、恢复慢。4.0+ 支持混合持久化，兼顾两者优点。", "android": "类似你本地\"定时全量备份 + 操作日志增量\"，崩溃后能恢复到最近状态。"}, {"no": 19, "type": "multi", "body": "以下哪些做法能提升 Kafka 生产者吞吐量？（多选）", "code": null, "options": [{"k": "A", "t": "增加 topic 的 partition 数（提高并行度）"}, {"k": "B", "t": "调大 batch.size 并开启 linger.ms 批量发送"}, {"k": "C", "t": "逐条同步发送（发一条等一条确认）"}, {"k": "D", "t": "开启 compression.type（如 snappy/lz4）压缩"}], "answer": ["A", "B", "D"], "explain": "批量 + 压缩 + 分区并行是提吞吐三件套。C 是逐条同步，吞吐最低（但延迟最低）。注意吞吐与可靠性通常权衡：acks=all 会略降吞吐换安全。", "android": "类似网络请求合并打包上报（batch），比逐条上报省开销。"}, {"no": 20, "type": "fill", "body": "RabbitMQ 保证消息不丢失，需要在生产者端开启 【空1】 确认机制（publisher confirm），在消费者端关闭自动 ACK、改为 【空2】 ACK（处理成功再回执）。", "code": null, "blanks": 2, "accept": [["confirm", "publisher confirm"], ["手动", "manual"]], "answerText": "publisher confirm（或 confirm）；手动（manual）", "explain": "生产者 confirm 确认 broker 收到；消费者手动 ACK 确保\"处理完才确认\"，处理中宕机消息会重新投递，避免丢。自动 ACK 会在投递瞬间就确认，处理失败即丢。", "android": "类似你发消息后等服务端回执（ACK），收消息处理完才回 ACK，中途失败要重发。"}]}, {"name": "二、前端 FE（10 题）", "cat": "fe", "questions": [{"no": 21, "type": "single", "body": "以下代码输出？", "code": "console.log([1, 2, 3].map(parseInt));", "options": [{"k": "A", "t": "[1, 2, 3]"}, {"k": "B", "t": "[1, NaN, NaN]"}, {"k": "C", "t": "[NaN, NaN, NaN]"}, {"k": "D", "t": "报错"}], "answer": ["B"], "explain": "map 给回调传三个参 (value, index, array)，parseInt 接收前两个当 (字符串, 进制)。即 parseInt(1,0)=1、parseInt(2,1)=NaN、parseInt(3,2)=NaN。经典坑。", "android": "类似 Kotlin map 把 (item, index) 一起传，你若只想要 item 却误用双参函数就会出错。"}, {"no": 22, "type": "multi", "body": "以下值中，在 if 判断里为 truthy（真值）的有：（多选）", "code": null, "options": [{"k": "A", "t": "[]（空数组）"}, {"k": "B", "t": "{}（空对象）"}, {"k": "C", "t": "\"\"（空字符串）"}, {"k": "D", "t": "0"}], "answer": ["A", "B"], "explain": "空数组、空对象都是对象，转布尔为 true。空字符串 \"\"、数字 0、null、undefined、NaN、false 才是 falsy。这是 JS 易踩的坑。", "android": "类似 Kotlin 里空集合 isEmpty 为 true 但集合本身非空引用——别把\"空\"和\"假\"混为一谈。"}, {"no": 23, "type": "judge", "body": "<code>==</code> 会做类型转换后再比较，<code>===</code> 严格相等、不做类型转换。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "<code>==</code> 会隐式转换（如 0 == \"\" 为 true），<code>===</code> 类型和值都相等才 true。工程实践推荐一律用 === 避免意外。", "android": "类似 Kotlin 的 ==（值等，可空安全）vs ===（引用等），但 JS 的 == 还会乱转类型，更危险。"}, {"no": 24, "type": "single", "body": "以下代码输出顺序是？", "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);", "options": [{"k": "A", "t": "1, 4, 3, 2"}, {"k": "B", "t": "1, 2, 3, 4"}, {"k": "C", "t": "1, 4, 2, 3"}, {"k": "D", "t": "1, 3, 4, 2"}], "answer": ["A"], "explain": "同步代码先执行 → 1、4。Promise.then 是<b>微任务</b>，setTimeout 是<b>宏任务</b>；微任务队列清空后才执行宏任务，所以 3 先、2 后。", "android": "完全对应 Handler 的 message（宏任务） vs 优先处理的轻量回调（微任务）——JS 微任务相当于先处理的轻量回调。"}, {"no": 25, "type": "fill", "body": "Vue 2 中，已创建的响应式对象 <code>obj</code> 直接 <code>obj.b = 1</code> 新增属性，视图<b>不会</b>更新（Object.defineProperty 限制）。需调用 【空1】（或 <code>Vue.set</code>）让新属性变为响应式。", "code": null, "blanks": 1, "accept": [["$set", "set", "this.$set"]], "answerText": "this.$set(obj, 'b', 1)", "explain": "Vue 2 用 Object.defineProperty 无法监听属性新增/删除，必须用 $set / Vue.set 触发响应式。Vue 3 改 Proxy，天然支持新增属性，无需此操作。", "android": "类似 LiveData 包裹的对象，直接改内部字段不会通知 UI，必须 setValue/postValue 触发。"}, {"no": 26, "type": "judge", "body": "Vue 中 <code>v-if</code> 是真正创建/销毁 DOM 节点，<code>v-show</code> 只是切换 CSS 的 display 属性。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "v-if 有更高的切换开销（频繁切换不划算），v-show 初始渲染开销大但切换便宜。频繁显示隐藏用 v-show，条件很少变用 v-if。", "android": "类似 View 的 GONE（v-if，回收）vs INVISIBLE（v-show，占位隐藏），一个真移除一个仅隐藏。"}, {"no": 27, "type": "multi", "body": "Vue 组件间通信方式，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "父传子：props 向下传递"}, {"k": "B", "t": "子传父：$emit 触发事件"}, {"k": "C", "t": "跨多层级：provide / inject"}, {"k": "D", "t": "全局状态：Vuex / Pinia"}], "answer": ["A", "B", "C", "D"], "explain": "四种都是 Vue 标准通信方式。还有事件总线（mitt）、ref 调用子组件等。按\"距离\"选型：近用 props/emit，跨层用 provide/inject，全局用 Pinia。", "android": "props≈Intent/Bundle 传参，emit≈接口回调，Pinia≈全局单例 ViewModel/Repository。"}, {"no": 28, "type": "single", "body": "以下 CSS 选择器，优先级最高的是？", "code": null, "options": [{"k": "A", "t": "div（标签）"}, {"k": "B", "t": ".class（类）"}, {"k": "C", "t": "#id（ID）"}, {"k": "D", "t": "*（通配）"}], "answer": ["C"], "explain": "优先级：!important &gt; 内联 style &gt; #id &gt; .class/属性/伪类 &gt; 标签/伪元素 &gt; 通配。权重可用 (a,b,c) 计算。", "android": "类似布局里\"具体 id 样式\"覆盖\"通用 style\"，越具体优先级越高。"}, {"no": 29, "type": "judge", "body": "Flex 布局中，<code>justify-content</code> 控制主轴（默认水平）对齐方式，<code>align-items</code> 控制交叉轴（默认垂直）对齐方式。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "主轴由 flex-direction 决定（默认 row 即横向）。justify-content 排主轴、align-items 排交叉轴，是最常用的一组。flex-wrap 控制换行。", "android": "几乎等同 LinearLayout 的 orientation + gravity，ConstraintLayout 的 chain 也类似 flex。"}, {"no": 30, "type": "fill", "body": "HTTP 状态码中，【空1】 表示\"未认证/没登录\"（Unauthorized），【空2】 表示\"已登录但无权限访问\"（Forbidden）。", "code": null, "blanks": 2, "accept": [["401"], ["403"]], "answerText": "401；403", "explain": "401 Unauthorized（未登录/凭证缺失，常引导登录），403 Forbidden（已登录但权限不足）。200 成功、400 参数错误、404 不存在、500 服务端错误。", "android": "你调接口时拿到 401 要跳登录，403 要提示\"无权限\"，正是这套语义。"}]}, {"name": "三、测试（5 题）", "cat": "test", "questions": [{"no": 31, "type": "single", "body": "以下哪种属于白盒测试（关注代码内部逻辑）？", "code": null, "options": [{"k": "A", "t": "等价类划分"}, {"k": "B", "t": "边界值分析"}, {"k": "C", "t": "语句覆盖 / 路径覆盖"}, {"k": "D", "t": "用户场景测试"}], "answer": ["C"], "explain": "白盒测试基于代码内部结构设计用例（语句/分支/路径覆盖）。A/B 是黑盒方法，D 是黑盒场景法。白盒常由开发做单元测试，黑盒由测试做功能验证。", "android": "你写 JUnit 测某个方法的各分支，就是白盒；只测 UI 点击流程是黑盒。"}, {"no": 32, "type": "multi", "body": "关于 JUnit 5，正确的有：（多选）", "code": null, "options": [{"k": "A", "t": "@Test 标注测试方法"}, {"k": "B", "t": "@BeforeEach 在每个测试方法前执行"}, {"k": "C", "t": "assertEquals(expected, actual) 断言相等"}, {"k": "D", "t": "@Disabled 跳过该测试"}], "answer": ["A", "B", "C", "D"], "explain": "均为 JUnit 5 标准用法。注意参数顺序：assertEquals(期望, 实际)。@BeforeEach 对应旧版 @Before，@AfterEach 对应 @After。", "android": "和 Android 的 JUnit4/5 完全一样，@Before/@After 你写 Espresso 测试时都用过。"}, {"no": 33, "type": "judge", "body": "Mockito 中 <code>@Mock</code> 创建模拟对象（假依赖），<code>@InjectMocks</code> 创建被测对象并把 @Mock 的模拟依赖自动注入进去。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "这是 Mockito 单元测试的标准组合：用 @Mock 造假的 DAO/外部服务，@InjectMocks 把假依赖塞进被测 Service，从而不连真数据库/真接口就能测业务逻辑。记得配合 @ExtendWith(MockitoExtension.class)。", "android": "类似你用 MockWebServer 模拟后端响应来测网络层，把真实依赖替换成可控假对象。"}, {"no": 34, "type": "fill", "body": "测试用例设计方法中，把输入域划分为若干等价类、每类取一个代表值，称为 【空1】 法；专门取边界值（如 0、1、最小值、最大值）设计用例，称为 【空2】 法。", "code": null, "blanks": 2, "accept": [["等价类划分", "等价类"], ["边界值分析", "边界值"]], "answerText": "等价类划分；边界值分析", "explain": "等价类划分减少用例数量（同类中一个代表），边界值分析针对\"边界最易出错\"补充用例（如年龄 0/1/17/18/120/121）。两者常配合使用。", "android": "类似你对输入框做校验测试，不仅测正常值，必测空串、超长、边界长度。"}, {"no": 35, "type": "single", "body": "缺陷（Bug）生命周期通常的正确顺序是？", "code": null, "options": [{"k": "A", "t": "新建(New) → 打开(Open) → 修复(Fixed) → 关闭(Closed)"}, {"k": "B", "t": "关闭(Closed) → 新建(New) → 修复(Fixed) → 打开(Open)"}, {"k": "C", "t": "修复(Fixed) → 新建(New) → 打开(Open) → 关闭(Closed)"}, {"k": "D", "t": "打开(Open) → 新建(New) → 关闭(Closed) → 修复(Fixed)"}], "answer": ["A"], "explain": "标准流程：测试发现 → 新建 → 指派/打开 → 开发修复 → 测试验证 → 关闭。中间还可能有 Reopen（修复不通过打回）、Rejected（非缺陷）等状态。", "android": "类似你提的 issue/工单流转：待处理→处理中→已解决→已验证，状态机思想一致。"}]}]};
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span><span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div>'
+            + '<div class="android"><span class="label">Android 类比：</span>'+q.android+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q.no==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
+  ans.classList.add('show');
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
