@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .kaodian { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #f0f2f5; color: #646a73; max-width: 64%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .answer .android { margin-top: 10px; padding: 10px 12px; background: #eef4ff; border-radius: 6px; color: #2a3a55; font-size: 13px; }
+  .answer .android .label { color: #1664ff; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+    .answer .android { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script type="application/json" id="quizData">{"id": "vol12", "title": "全栈转型模拟自测卷", "sub": "可答题 · 逐题判分 · 自动记录错题", "meta": "对齐公司真实考法：<b>单选 / 多选 / 判断</b>，每题给出完整代码场景，问执行结果、补全代码或判断框架用法正误。<br>本卷共 <b>33 题</b>：单选 20（60 分）+ 多选 7（28 分）+ 判断 6（12 分）= 100 分。<br>难度：<b>实战细节型</b>，覆盖不可变集合与序列化、异常抑制、读写锁与调度线程池、事务超时与响应包装、MyBatis 缓存与批量写入、MySQL 隐式转换与唯一键冲突、Redis Stream、RabbitMQ 备份交换机、Kafka 位移重放、JS 提升与 Generator、Vue3 defineExpose 与 nextTick、路由守卫、TypeScript 映射类型、JUnit5 参数化与变异测试。", "sections": [{"name": "一、单选题（20 题 · 60 分）", "cat": "single", "questions": [{"no": 1, "type": "single", "body": "以下代码 (1)(2) 两行依次输出什么？", "code": "enum Status { PAID, SHIPPED, DONE }\n\nMap<Status, Integer> m = new EnumMap<>(Status.class);\nm.put(Status.DONE, 3);\nm.put(Status.PAID, 1);\nSystem.out.println(m);                                              // (1)\n\nSystem.out.println(EnumSet.range(Status.PAID, Status.DONE).size()); // (2)", "options": [{"k": "A", "t": "{PAID=1, DONE=3}   /   3"}, {"k": "B", "t": "{DONE=3, PAID=1}   /   3"}, {"k": "C", "t": "{PAID=1, DONE=3}   /   2"}, {"k": "D", "t": "{DONE=3, PAID=1}   /   2"}], "answer": ["A"], "explain": "(1) <b>EnumMap 的迭代顺序永远是枚举常量的声明顺序（ordinal 顺序）</b>，与 put 的先后无关。PAID 的 ordinal 是 0、DONE 是 2，所以打印 {PAID=1, DONE=3}。<br>(2) <b>EnumSet.range(from, to)</b> 取的是 ordinal 区间上的<b>闭区间</b>，即 PAID(0)、SHIPPED(1)、DONE(2) 共 3 个元素，不是「只有首尾两个」。<br>为什么要用 EnumMap/EnumSet 而不是 HashMap/HashSet：它们是<b>专为枚举优化的实现</b>——EnumMap 内部就是一个以 ordinal 为下标的数组，不需要计算 hash、不存在哈希冲突，读写是 O(1) 且常数极小；EnumSet 更极端，元素少于 64 个时用一个 long 的<b>位向量</b>表示（RegularEnumSet），contains/add 就是一次位运算，内存占用几乎可以忽略。<br>三个易错点：① EnumMap 构造时<b>必须传 Class 对象</b>（new EnumMap&lt;&gt;(Status.class)），因为它要靠它拿到 values() 来确定数组长度；② 二者都<b>不允许 null 键</b>（EnumMap 的 put(null, v) 抛 NPE），但 EnumMap 允许 null 值；③ 都不是线程安全的，并发场景要用 Collections.synchronizedMap 包装。此外枚举天然是单例，用 == 比较即可，不必用 equals。", "android": "类比 Android 里用 SparseArray 替代 HashMap&lt;Integer, V&gt;：都是「键的取值范围有限且连续时，用数组下标直接寻址，省掉装箱和哈希计算」。以前 Android 因为 dex 方法数和内存问题不推荐用枚举，但在后端 EnumMap/EnumSet 是状态机、权限位这类场景的最优解。", "kaodian": "AI 后端能力 - 语言基础层 - EnumMap 与 EnumSet"}, {"no": 2, "type": "single", "body": "以下代码依次输出什么？", "code": "Deque<Integer> stack = new ArrayDeque<>();\nstack.push(1);\nstack.push(2);\nstack.offer(3);                  // (1)\nSystem.out.println(stack);\nSystem.out.println(stack.pop());", "options": [{"k": "A", "t": "[1, 2, 3] 然后 1"}, {"k": "B", "t": "[2, 1, 3] 然后 2"}, {"k": "C", "t": "[3, 2, 1] 然后 3"}, {"k": "D", "t": "[2, 1, 3] 然后 3"}], "answer": ["B"], "explain": "ArrayDeque 是双端队列，关键是分清每个方法作用在<b>哪一端</b>：push == addFirst（压头），pop == removeFirst（弹头），offer == offerLast（入尾），poll == pollFirst（出头）。所以 push(1) → [1]；push(2) → [2, 1]；offer(3) 加到尾部 → [2, 1, 3]。toString 按<b>从头到尾</b>输出，即 [2, 1, 3]。pop() 弹出头部元素 2。要点：官方推荐用 ArrayDeque 而不是 Stack 做栈——Stack 继承自 Vector，所有方法 synchronized，性能差且迭代顺序是「从栈底到栈顶」，与 ArrayDeque 相反，替换时极易踩坑。另外 ArrayDeque 不允许存 null（用 null 作为「队列为空」的哨兵值）。", "android": "类比 Android 的 Activity 返回栈：push 相当于 startActivity 压到栈顶，pop 相当于 finish 弹出栈顶。如果你误用 offer 把新页面加到了「栈底」，那按返回键弹出的还是原来那个页面——这题的 offer(3) 就是这个坑。", "kaodian": "AI 后端能力 - 语言基础层 - Deque 双端队列与栈语义"}, {"no": 3, "type": "single", "body": "以下代码执行后，控制台依次输出什么？", "code": "static class Res implements AutoCloseable {\n    @Override public void close() {\n        throw new RuntimeException(\"close fail\");\n    }\n}\n\npublic static void main(String[] args) {\n    try (Res r = new Res()) {\n        throw new IllegalStateException(\"body fail\");\n    } catch (Exception e) {\n        System.out.println(e.getMessage());\n        System.out.println(e.getSuppressed().length);\n    }\n}", "options": [{"k": "A", "t": "close fail  /  0"}, {"k": "B", "t": "body fail  /  1"}, {"k": "C", "t": "body fail  /  0"}, {"k": "D", "t": "close fail  /  1"}], "answer": ["B"], "explain": "try-with-resources 的<b>异常抑制（Suppressed）</b>机制：当 try 块本身抛出异常 E1，随后自动调用 close() 又抛出 E2 时，向外传播的是<b>业务异常 E1</b>，而 E2 会被挂到 E1 的 suppressed 列表里（通过 addSuppressed），可用 getSuppressed() 取回，打印堆栈时显示为 “Suppressed: ...”。所以 getMessage() = body fail，getSuppressed().length = 1。这正是 try-with-resources 相对手写 try-finally 的核心优势——手写 finally 里 close 抛异常会<b>覆盖掉</b>真正的业务异常，导致线上只看到 “close fail” 而丢失根因。补充：多个资源按声明的<b>逆序</b>关闭；try-with-resources 中的资源变量是隐式 final 的，不能重新赋值。", "android": "类比 Android 里读文件：手写 finally { fis.close(); } 时如果 close 也抛 IOException，Logcat 里就只剩关闭失败的堆栈，真正的解析异常被吃掉了。Kotlin 的 use { } 与 try-with-resources 同源，同样做了 suppressed 处理。", "kaodian": "AI 后端能力 - 语言基础层 - 异常抑制与资源自动关闭"}, {"no": 4, "type": "single", "body": "把 Token 对象序列化写入文件后，<b>先把 env 静态字段改成 \"test\"</b>，再从文件反序列化读回对象。此时读回对象的 secret 与 env 分别是？", "code": "public class Token implements Serializable {\n    private static final long serialVersionUID = 1L;\n    private String userId = \"u1\";\n    private transient String secret = \"s1\";\n    private static String env = \"prod\";\n\n    // getter 省略\n}", "options": [{"k": "A", "t": "\"s1\"  /  \"prod\""}, {"k": "B", "t": "null  /  \"test\""}, {"k": "C", "t": "null  /  \"prod\""}, {"k": "D", "t": "\"s1\"  /  \"test\""}], "answer": ["B"], "explain": "两条规则：① <b>transient</b> 字段不参与序列化，反序列化后恢复为该类型的默认值（对象为 null、int 为 0），所以 secret = null——这也是密码、密钥、Session 等敏感字段的标准做法；② <b>static</b> 字段属于「类」而不属于「对象」，根本不会被写进字节流，反序列化时读到的是<b>当前 JVM 中类的实时值</b>，所以 env = \"test\"。另外要记住 serialVersionUID：若类结构变更后没有显式声明它，编译器会按字段/方法签名重新计算，与旧字节流不一致就抛 InvalidClassException；显式写死 1L 可以保证新增字段时仍能兼容反序列化（新字段取默认值）。注意反序列化<b>不走构造方法</b>，成员上的初始化赋值也不会执行。", "android": "类比 Android 的 Parcelable / Serializable 传对象：你在 writeToParcel 里没写的字段，另一端 createFromParcel 出来就是默认值。很多人踩过「Intent 传对象后某字段莫名为 null」的坑，根因就是这个字段被声明成了 transient 或者压根没写进 Parcel。", "kaodian": "AI 后端能力 - 语言基础层 - 对象序列化与 transient"}, {"no": 5, "type": "single", "body": "同一个 ReentrantReadWriteLock 实例上有如下两段代码，(1) 和 (2) 两行分别会发生什么？", "code": "private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();\n\nvoid refreshAndRead() {\n    lock.writeLock().lock();\n    try {\n        cache.reload();\n        lock.readLock().lock();      // (1)\n    } finally {\n        lock.writeLock().unlock();\n    }\n    try { use(cache.get()); }\n    finally { lock.readLock().unlock(); }\n}\n\nvoid readThenWrite() {\n    lock.readLock().lock();\n    try {\n        if (cache.isExpired()) {\n            lock.writeLock().lock(); // (2)\n        }\n    } finally { /* ... */ }\n}", "options": [{"k": "A", "t": "(1) 和 (2) 都能正常获取到锁"}, {"k": "B", "t": "(1) 正常（锁降级），(2) 会永久阻塞（自己等自己）"}, {"k": "C", "t": "(1) 会永久阻塞，(2) 正常（锁升级）"}, {"k": "D", "t": "(1) 和 (2) 都抛 IllegalMonitorStateException"}], "answer": ["B"], "explain": "ReentrantReadWriteLock 只支持<b>锁降级</b>，不支持<b>锁升级</b>。(1) 是标准的降级写法：线程已经持有写锁（排他），此时再申请读锁一定成功，然后释放写锁——中间不存在任何时刻锁被完全放开，保证了「刷新完的数据被自己第一个读到」的可见性。(2) 是升级：线程持有读锁时申请写锁，而写锁必须等<b>所有</b>读锁释放，包括它自己持有的那把，于是形成自我死锁，线程永久挂起（不会抛异常，排查起来只能靠 jstack 看到 WAITING on ReentrantReadWriteLock$NonfairSync）。正确做法是先 readLock().unlock() 再 writeLock().lock()，拿到写锁后<b>重新校验一次</b>条件（因为释放到重新加锁之间状态可能已被别人改过）。", "android": "类比主线程与子线程共享配置：读多写少时读写锁比 synchronized 吞吐高得多。而 (2) 这种「读着读着想改」的写法，相当于在 Android 里持有某个同步块又去等待同一把锁的另一种模式，最终 ANR——只是这里不会崩，只是静静卡死。", "kaodian": "AI 后端能力 - 高并发与中间件层 - 读写锁与锁降级"}, {"no": 6, "type": "single", "body": "以下定时任务运行 10 秒后，控制台的输出情况是？", "code": "ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);\nAtomicInteger c = new AtomicInteger();\n\nses.scheduleAtFixedRate(() -> {\n    int n = c.incrementAndGet();\n    System.out.println(\"run \" + n);\n    if (n == 2) {\n        throw new RuntimeException(\"boom\");\n    }\n}, 0, 1, TimeUnit.SECONDS);", "options": [{"k": "A", "t": "输出 run 1 ~ run 10，第 2 次的异常堆栈被打印在控制台"}, {"k": "B", "t": "只输出 run 1、run 2，之后任务不再被调度，且看不到任何异常堆栈"}, {"k": "C", "t": "输出 run 1、run 2，打印异常堆栈后继续 run 3 ~ run 10"}, {"k": "D", "t": "第 2 次抛出的异常会导致整个 JVM 退出"}], "answer": ["B"], "explain": "这是定时任务最经典的<b>静默死亡</b>问题。scheduleAtFixedRate / scheduleWithFixedDelay 返回的是 ScheduledFutureTask，任务抛出未捕获异常时：① 异常被<b>包进 Future</b>，不会走线程的 UncaughtExceptionHandler，所以控制台一行堆栈都看不到；② 该周期任务被<b>永久取消</b>，后续调度全部停止。线上表现就是「昨天还在跑的定时任务今天悄无声息地不跑了，日志里什么都没有」。三条修复原则：<b>任务体内 try-catch 兜住所有 Throwable</b>（最重要）；如需感知失败，可用 future.get() 或包装 Runnable 打日志上报；Spring 的 @Scheduled 同样基于此，也必须自己 catch。另外 scheduleAtFixedRate 的「固定频率」在任务耗时超过周期时会退化成串行连续执行，不会并发跑同一个任务。", "android": "类比 Handler.postDelayed 里的循环任务：如果回调里抛了异常，主线程直接崩溃你还能看到堆栈；而线程池里的定时任务是「无声无息地停掉」，比崩溃更难排查。所以后端定时任务一律 try-catch 包全，是硬性规范。", "kaodian": "AI 后端能力 - 高并发与中间件层 - 调度线程池的异常传播"}, {"no": 7, "type": "single", "body": "以下线程池提交 4 个瞬时完成的任务后，空闲 5 分钟，此时 getPoolSize() 返回多少？", "code": "ThreadPoolExecutor pool = new ThreadPoolExecutor(\n        4, 8, 60, TimeUnit.SECONDS,\n        new LinkedBlockingQueue<>(100));\npool.allowCoreThreadTimeOut(true);        // (1)\n\nfor (int i = 0; i < 4; i++) {\n    pool.execute(() -> System.out.println(\"done\"));\n}\nTimeUnit.MINUTES.sleep(5);\nSystem.out.println(pool.getPoolSize());", "options": [{"k": "A", "t": "4，核心线程一旦创建就永不回收"}, {"k": "B", "t": "0"}, {"k": "C", "t": "8，因为最大线程数是 8"}, {"k": "D", "t": "(1) 行抛 IllegalArgumentException，keepAliveTime 对核心线程无效"}], "answer": ["B"], "explain": "默认情况下 keepAliveTime 只作用于「超过 corePoolSize 的那部分线程」，核心线程即使空闲也常驻。调用 <b>allowCoreThreadTimeOut(true)</b> 后，核心线程也纳入超时回收范围，空闲超过 keepAliveTime（这里 60 秒）就会退出，最终 poolSize 可以降到 0；当新任务再来时会重新创建线程。注意 D 项的陷阱：allowCoreThreadTimeOut(true) 确实会校验 keepAliveTime 必须 &gt; 0，若构造时传 0 才会抛 IllegalArgumentException，这里传的是 60 秒所以合法。这个开关适合「白天有流量、夜里完全空闲」的服务，能省下常驻线程的栈内存（每个线程默认 1MB）。反面还有一个 prestartAllCoreThreads()，用于启动时就把核心线程全部预热出来，避免首批请求承担建线程的开销。", "android": "类比 Android 的 ThreadPoolExecutor（AsyncTask 内部就用它）：allowCoreThreadTimeOut 相当于让后台常驻线程在应用长时间无操作时自行释放，减少内存占用——和后端为了省内存关掉常驻线程是同一个思路。", "kaodian": "AI 后端能力 - 高并发与中间件层 - 线程池核心线程回收策略"}, {"no": 8, "type": "single", "body": "MySQL + InnoDB，Spring Boot 默认配置，调用下面的方法（Thread.sleep 的异常已处理），最终结果是？", "code": "@Transactional(timeout = 2)\npublic void handle(Order o) {\n    orderMapper.insert(o);                  // (1) 立刻执行\n    Thread.sleep(5000);                     // (2) 阻塞 5 秒（纯 Java 逻辑）\n    orderMapper.updateStatus(o.getId(), 1); // (3)\n}", "options": [{"k": "A", "t": "执行到 (2) 满 2 秒时立刻被打断，抛 TransactionTimedOutException 并回滚"}, {"k": "B", "t": "(2) 正常睡满 5 秒，在执行 (3) 访问数据库之前检测到超时，抛 TransactionTimedOutException，整个事务回滚"}, {"k": "C", "t": "正常提交，timeout 只是给连接池的建议值，不影响执行"}, {"k": "D", "t": "(1) 会在 2 秒后被单独提交，(3) 另起一个事务执行"}], "answer": ["B"], "explain": "@Transactional 的 timeout 是<b>被动检查</b>而不是<b>主动打断</b>。原理：开启事务时 Spring 在 ResourceHolder 上记录 deadline，之后每次通过 DataSourceUtils 获取 Connection / 创建 Statement 时调用 applyTimeout()，若已超过 deadline 就抛 TransactionTimedOutException；同时会把剩余秒数设置成 JDBC 的 queryTimeout。所以：纯 CPU 计算、Thread.sleep、调用第三方 HTTP 接口这些<b>不碰数据库</b>的耗时，都不会在中途被打断，只有下一次访问 DB 时才「秋后算账」。若方法里超时之后再没有任何 SQL，事务甚至能正常提交。工程建议：timeout 用于兜底防止长事务占用连接，真正控制外部调用耗时要靠 HTTP 客户端自身的 connectTimeout/readTimeout，并且<b>不要把远程调用放进事务里</b>。", "android": "类比 Android 的 ANR 检测：系统不是每毫秒都在盯着你，而是在下一次消息处理时才发现「上一个消息处理超时了」。事务 timeout 也是这种「到检查点才发现」的机制，而不是有个守护线程拿着秒表随时中断你。", "kaodian": "AI 后端能力 - 框架与容器层 - 事务超时语义"}, {"no": 9, "type": "single", "body": "项目里做了统一响应包装，上线后发现除 /ping 外所有接口都正常，唯独访问 /ping 时报 500。最可能的原因是？", "code": "@RestControllerAdvice\npublic class WrapAdvice implements ResponseBodyAdvice<Object> {\n    @Override public boolean supports(MethodParameter p, Class<? extends HttpMessageConverter<?>> c) {\n        return true;\n    }\n    @Override public Object beforeBodyWrite(Object body, MethodParameter p, MediaType mt,\n            Class<? extends HttpMessageConverter<?>> c, ServerHttpRequest req, ServerHttpResponse resp) {\n        return Result.ok(body);          // Result 是普通 POJO\n    }\n}\n\n@GetMapping(\"/ping\")\npublic String ping() { return \"pong\"; }\n\n@GetMapping(\"/user\")\npublic UserVO user() { return userService.get(); }", "options": [{"k": "A", "t": "supports 返回 true 会让 Advice 对静态资源也生效，导致启动即报错"}, {"k": "B", "t": "String 返回值由 StringHttpMessageConverter 处理，它期望的 body 类型是 String，拿到 Result 对象后强转失败抛 ClassCastException"}, {"k": "C", "t": "@RestControllerAdvice 不能与 ResponseBodyAdvice 同时使用，必须换成 @ControllerAdvice"}, {"k": "D", "t": "Result 没有实现 Serializable，Jackson 无法序列化"}], "answer": ["B"], "explain": "Spring MVC 会按<b>返回值类型</b>挑选 HttpMessageConverter，而 StringHttpMessageConverter 的优先级<b>高于</b> MappingJackson2HttpMessageConverter。当控制器返回 String 时，选中的是 StringHttpMessageConverter；随后 beforeBodyWrite 把 body 换成了 Result 对象，转换器再执行 writeInternal((String) body, ...) 就抛 ClassCastException（表现为 500）。返回 UserVO 时选中的是 Jackson 转换器，泛型是 Object，所以毫无问题——这就是「只有返回 String 的接口挂掉」的经典现象。三种修复：① 在 beforeBodyWrite 中判断 body instanceof String（或 selectedConverterType == StringHttpMessageConverter.class）时，用 ObjectMapper 手动把 Result 序列化成 JSON 字符串返回，并把 Content-Type 改成 application/json；② 在 supports() 中直接排除 String 返回值；③ 调整 converter 顺序把 Jackson 提前（副作用较大，不推荐）。", "android": "类比 Retrofit 的 Converter.Factory：你给 ScalarsConverterFactory 处理的接口塞了一个对象，它只会 toString 或者直接崩。选转换器看的是<b>声明类型</b>，不是你运行时换了什么值。", "kaodian": "AI 后端能力 - 框架与容器层 - 消息转换器与统一响应包装"}, {"no": 10, "type": "single", "body": "Spring Boot 应用启动后，控制台的输出顺序是？", "code": "@Component\n@Order(2)\nclass RunnerA implements CommandLineRunner {\n    public void run(String... args) { System.out.println(\"A\"); }\n}\n\n@Component\n@Order(1)\nclass RunnerB implements ApplicationRunner {\n    public void run(ApplicationArguments args) { System.out.println(\"B\"); }\n}\n\n@Component\nclass BeanC {\n    @PostConstruct void init() { System.out.println(\"C\"); }\n}", "options": [{"k": "A", "t": "C → B → A"}, {"k": "B", "t": "A → B → C"}, {"k": "C", "t": "C → A → B"}, {"k": "D", "t": "B → A → C"}], "answer": ["A"], "explain": "分两个阶段看：① <b>@PostConstruct</b> 属于 Bean 的初始化回调，在容器 refresh() 期间、单例 Bean 实例化时就执行，所以 C 一定最早；② <b>Runner 回调</b>发生在 SpringApplication.run() 的最后一步 callRunners()，此时容器已完全就绪。关键细节：Spring Boot 把所有 ApplicationRunner 和 CommandLineRunner 放进<b>同一个集合</b>，用 AnnotationAwareOrderComparator 统一排序，而不是「先跑完所有 ApplicationRunner 再跑 CommandLineRunner」。因此 @Order(1) 的 B 先于 @Order(2) 的 A。二者唯一区别是入参：ApplicationRunner 拿到的是解析过的 ApplicationArguments（能区分 --key=value 选项参数和非选项参数），CommandLineRunner 拿到的是原始 String[]。注意 Runner 抛出异常会导致启动失败（ApplicationFailedEvent），适合放「启动自检、缓存预热」，不适合放耗时的常驻任务。", "android": "类比 Application.onCreate 与 Activity.onCreate 的先后：@PostConstruct 像各组件自己的 onCreate（构造完自己就跑），Runner 像 Application 全部初始化完成后统一执行的启动任务；@Order 就相当于你手动排的初始化任务优先级。", "kaodian": "AI 后端能力 - 框架与容器层 - 启动回调与执行顺序"}, {"no": 11, "type": "single", "body": "用 MyBatis-Plus 批量插入 1000 条数据，DBA 抓包发现发往 MySQL 的仍是 1000 条独立 INSERT 语句，耗时 8 秒。原因与最有效的优化是？", "code": "# application.yml\nspring:\n  datasource:\n    url: jdbc:mysql://10.0.0.9:3306/ziroom?useUnicode=true&characterEncoding=utf8\n\n// 业务代码\n@Transactional\npublic void importUsers(List<User> list) {   // list.size() == 1000\n    userService.saveBatch(list, 1000);\n}", "options": [{"k": "A", "t": "saveBatch 本身不支持批量，只能改成 XML 里手写 foreach 拼接"}, {"k": "B", "t": "saveBatch 底层用的是 JDBC 的 addBatch/executeBatch，但 JDBC URL 缺少 rewriteBatchedStatements=true，MySQL 驱动不会把多条 INSERT 重写合并成一条网络请求"}, {"k": "C", "t": "batchSize 传 1000 超过了默认上限 500，会自动退化为逐条插入"}, {"k": "D", "t": "必须关闭事务，批量提交才会生效"}], "answer": ["B"], "explain": "saveBatch 确实调用了 addBatch()/executeBatch()，但这只是把 SQL 攒在<b>客户端</b>。MySQL 的 JDBC 驱动默认不做语句重写，executeBatch 时仍然是一条一条发出去，网络往返次数没有减少，所以「批量」名不副实。加上 <b>rewriteBatchedStatements=true</b> 后，驱动会把同构的 INSERT 重写为 INSERT INTO t(...) VALUES (...),(...),(...) 一次性发送，实测常有 5~10 倍提升。配套注意点：① 该参数只对 INSERT/UPDATE 有明显效果，且 SQL 必须结构相同；② 重写后 executeBatch 返回的每条影响行数可能不准；③ 单个包不能超过 max_allowed_packet，所以仍要按 500~1000 分批；④ 主键策略若是 ASSIGN_ID（雪花）没问题，但用数据库自增时，重写后可能取不到每行的 generatedKeys。C 项错在 batchSize 只是分批大小，无上限退化逻辑；D 项错在批量与事务无关，反而放在一个事务里能省去 1000 次 commit。", "android": "类比 Room 的 @Insert(List) 与逐条 insert：Room 会包在一个事务里减少磁盘 fsync 次数；而后端这里减少的是<b>网络往返</b>。都是「批处理不是把循环写在哪一层，而是要让底层真的合并成一次 IO」。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 批量写入与 JDBC 语句重写"}, {"no": 12, "type": "single", "body": "下面两条 SQL 的执行计划，能否用上索引？", "code": "CREATE TABLE t_user (\n  id    BIGINT PRIMARY KEY,\n  phone VARCHAR(20) NOT NULL,\n  age   INT,\n  KEY idx_phone (phone),\n  KEY idx_age (age)\n) ENGINE=InnoDB;\n\n-- (1)\nSELECT * FROM t_user WHERE phone = 13800000000;\n-- (2)\nSELECT * FROM t_user WHERE age = '25';", "options": [{"k": "A", "t": "(1)(2) 都能走索引，MySQL 会自动做类型转换"}, {"k": "B", "t": "(1) 索引失效走全表扫描，(2) 正常走 idx_age"}, {"k": "C", "t": "(1) 正常走 idx_phone，(2) 索引失效走全表扫描"}, {"k": "D", "t": "(1)(2) 都会因为类型不匹配直接报错"}], "answer": ["B"], "explain": "记住 MySQL 的隐式转换规则：<b>字符串与数字比较时，一律把字符串转成数字</b>（数字类型优先级更高）。<br>(1) phone 是 VARCHAR，条件右边是数字，等价于 WHERE CAST(phone AS SIGNED) = 13800000000——转换函数作用在<b>索引列</b>上，索引树的有序性被破坏，只能全表扫描逐行 CAST 再比较，idx_phone 完全失效。而且还有正确性隐患：'13800000000abc' 会被转成 13800000000 从而被误匹配。<br>(2) age 是 INT，条件右边是字符串，转换作用在<b>常量</b>上（'25' → 25），索引列本身没被包装，idx_age 正常使用。<br>这是线上最高频的慢 SQL 根因之一，典型场景就是手机号、订单号、身份证号存成 varchar，Java 端却传了 Long。同类失效场景还有：索引列参与运算 WHERE age + 1 = 20、索引列用函数 WHERE DATE(create_time) = '2026-08-07'、左模糊 LIKE '%x'、以及联合索引不满足最左前缀。", "android": "类比 SQLite 里 selectionArgs 全是 String：Android 端习惯把什么都当字符串传，后端如果反过来把字符串列传成数字，就会踩到这个隐式转换。排查手段：EXPLAIN 看 type 是不是从 ref 掉到了 ALL。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 隐式类型转换与索引失效"}, {"no": 13, "type": "single", "body": "依次执行下面的 (1) 和 (2)，最终表 t 中的数据是？", "code": "CREATE TABLE t (\n  id   INT PRIMARY KEY,\n  name VARCHAR(20),\n  cnt  INT DEFAULT 0,\n  UNIQUE KEY uk_name (name)\n) ENGINE=InnoDB;\n\nINSERT INTO t VALUES (1, 'a', 5);\n\n-- (1)\nINSERT INTO t VALUES (2, 'a', 9) ON DUPLICATE KEY UPDATE cnt = cnt + 1;\n-- (2)\nREPLACE INTO t VALUES (3, 'a', 7);", "options": [{"k": "A", "t": "只有一行：(1, 'a', 6)"}, {"k": "B", "t": "只有一行：(3, 'a', 7)"}, {"k": "C", "t": "两行：(1, 'a', 6) 和 (3, 'a', 7)"}, {"k": "D", "t": "(2) 报错 Duplicate entry 'a' for key 'uk_name'"}], "answer": ["B"], "explain": "逐条拆解：<br>(1) <b>ON DUPLICATE KEY UPDATE</b>：待插入的 name='a' 撞上唯一键 uk_name，于是不插入新行，而是对<b>已存在的那一行（id=1）</b>执行 UPDATE cnt = cnt + 1 → (1,'a',6)。注意 id 保持 1 不变，VALUES 里给的 id=2、cnt=9 都被丢弃（想用它们要写 VALUES(cnt) 或 8.0.19+ 的别名语法）。此时 affected rows 返回 2（1 表示插入、2 表示更新、0 表示值没变化）。<br>(2) <b>REPLACE INTO</b> 的语义是「冲突就先 DELETE 再 INSERT」：撞上 uk_name 后把 id=1 那行<b>物理删除</b>，再插入全新的 (3,'a',7)。所以最终只剩一行 (3,'a',7)，cnt 累计值 6 被抹掉了。<br>三者选型：需要「存在则累加/部分更新」用 ON DUPLICATE KEY UPDATE；需要「存在就跳过」用 INSERT IGNORE（但它会吞掉几乎所有错误，慎用）；REPLACE INTO 会改变主键、触发外键级联删除、丢失未指定列的原值，生产环境基本不推荐。", "android": "类比 Room 的 @Insert(onConflict = REPLACE)：它底层就是 REPLACE INTO，很多人以为是 UPDATE，结果关联表因为外键 ON DELETE CASCADE 被连带删掉。想要「合并更新」就得用 @Update 或 upsert 语义，不能图省事写 REPLACE。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 唯一键冲突写入语义"}, {"no": 14, "type": "single", "body": "以下 JS 解构赋值代码，两行分别输出什么？", "code": "const { a = 1, b: { c = 2 } = {} } = { a: undefined, b: { c: null } };\nconsole.log(a, c);          // (1)\n\nconst [x = 10, y = 20] = [null, undefined];\nconsole.log(x, y);          // (2)", "options": [{"k": "A", "t": "1 null   /   null 20"}, {"k": "B", "t": "1 2   /   null 20"}, {"k": "C", "t": "1 null   /   10 20"}, {"k": "D", "t": "undefined null   /   null 20"}], "answer": ["A"], "explain": "唯一要记牢的规则：<b>解构默认值只在取到的值严格等于 undefined 时才生效，null 不触发默认值</b>。<br>(1) a 的值显式写成了 undefined → 触发默认值，a = 1（这是很多人会答错成 undefined 的地方——「属性存在但值是 undefined」和「属性不存在」在解构里是同一种情况）；b 存在所以 = {} 这个默认值不生效，继续解构其 c，c 的值是 <b>null</b>，不是 undefined，所以默认值 2 <b>不生效</b>，c = null。<br>(2) 数组解构同理：x 拿到 null → 保留 null；y 拿到 undefined → 用默认值 20。<br>这个规则在前后端交互中极其致命：后端 Java 用 Jackson 序列化时，未赋值的对象字段默认输出 <b>null</b> 而不是省略字段，于是前端写的 <code>const { pageSize = 20 } = res.data</code> 会拿到 null 而不是 20，接着 <code>null</code> 参与运算变成 0，分页直接查不出数据。<br>规避手段：① 后端配置 @JsonInclude(NON_NULL) 让 null 字段不出现在 JSON 中；② 前端改用空值合并 <code>const pageSize = res.data.pageSize ?? 20</code>（?? 对 null 和 undefined 都生效，而 || 会把 0 和空串也一并兜掉，是另一个坑）。<br>补充：解构默认值是<b>惰性求值</b>的，<code>const { a = expensive() } = obj</code> 只有在 a 为 undefined 时才会调用 expensive()。", "android": "类比 Kotlin 的 ?: 与平台类型：Java 返回的对象在 Kotlin 里是可空的，你写 <code>name ?: \"默认\"</code> 能兜住 null；但 JS 的解构默认值兜不住 null，只兜 undefined。从 Java/Kotlin 转前端时，这个「null 与 undefined 是两种东西」的差异必须刻进肌肉记忆。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 解构默认值与 null/undefined"}, {"no": 15, "type": "single", "body": "以下 Generator 代码依次输出什么？", "code": "function* gen() {\n  const a = yield 1;\n  console.log('a =', a);\n  const b = yield a + 1;\n  console.log('b =', b);\n  return 'done';\n}\n\nconst it = gen();\nconsole.log(it.next().value);      // (1)\nconsole.log(it.next(10).value);    // (2)\nconsole.log(it.next(20));          // (3)", "options": [{"k": "A", "t": "1 → a = 10 → 11 → b = 20 → { value: 'done', done: true }"}, {"k": "B", "t": "1 → a = undefined → 2 → b = undefined → { value: undefined, done: true }"}, {"k": "C", "t": "undefined → a = 10 → 11 → { value: 'done', done: false }"}, {"k": "D", "t": "1 → a = 10 → 11 → b = 20 → { value: undefined, done: true }"}], "answer": ["A"], "explain": "Generator 的核心是「<b>yield 是双向通道</b>」：<br>• 第一次 it.next() —— 执行到第一个 yield 1 就暂停，返回 { value: 1, done: false }，所以 (1) 打印 1。注意第一次 next 传的参数没有任何接收者，会被丢弃。<br>• it.next(10) —— 把 10 作为<b>上一个 yield 表达式的返回值</b>赋给 a，打印 a = 10，继续执行到 yield a + 1 暂停，返回 { value: 11, done: false }，(2) 打印 11。<br>• it.next(20) —— b = 20，打印 b = 20，函数执行到 return 'done' 结束，返回 { value: 'done', done: true }，(3) 打印整个对象。<br>其他要点：done 变 true 之后再调 next() 恒返回 { value: undefined, done: true }；it.return(x) 可提前终止并触发 finally；it.throw(err) 可把异常抛回生成器内部的 yield 处。Generator 是 async/await 的底层原型（Babel 编译 async 函数就是 generator + 自动执行器），也是 Redux-Saga 的基础。", "android": "类比 Kotlin 协程的 suspend 点：yield 就像挂起点，next(value) 相当于 resume(value) 把结果送回挂起处继续执行。理解这一点，async/await 与协程的心智模型就通了。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 迭代器与生成器"}, {"no": 16, "type": "single", "body": "以下 HTML/CSS 渲染后，两个 .child 的实际行高分别是多少？", "code": "<div class=\"parent-a\"><p class=\"child\">自如</p></div>\n<div class=\"parent-b\"><p class=\"child\">自如</p></div>\n\n<style>\n.parent-a { font-size: 20px; line-height: 1.5;  }\n.parent-b { font-size: 20px; line-height: 150%; }\n.child    { font-size: 40px; }\n</style>", "options": [{"k": "A", "t": "60px  /  60px"}, {"k": "B", "t": "60px  /  30px"}, {"k": "C", "t": "30px  /  30px"}, {"k": "D", "t": "30px  /  60px"}], "answer": ["B"], "explain": "line-height 的继承分两种情况，这是 CSS 中少数「继承的是计算方式而非计算结果」的属性：<br>• <b>纯数字（无单位）</b>：继承的是这个<b>系数</b>本身，子元素用<b>自己的 font-size</b> 去乘。所以 .parent-a 下的 child = 40px × 1.5 = <b>60px</b>。<br>• <b>百分比 / em 等相对单位</b>：在<b>父元素上就先算成具体像素值</b>，子元素继承的是这个已经算死的结果。.parent-b 的 line-height 先算成 20px × 150% = 30px，child 继承到的就是 <b>30px</b>——比自身 40px 的字号还小，文字会上下重叠、被裁切。<br>这就是各类 CSS 规范都要求「line-height 必须写无单位数字」的原因。同类「继承计算值」的还有 font-size 用 em/% 时的层层放大问题（嵌套 li 越来越大）。补充：line-height 作用在行内框上，行盒高度 = max(各行内框的行高)，半行距（half-leading）会被均分到内容区上下，所以单行文字用 line-height = 容器 height 可实现垂直居中。", "android": "类比 Android 的 TextView：lineSpacingMultiplier 相当于无单位数字（按当前 textSize 倍数算），lineSpacingExtra 相当于写死的绝对值。父容器换字号时，前者自适应，后者会出现「字大了但行距没跟上」的挤压效果。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - line-height 继承规则"}, {"no": 17, "type": "single", "body": "以下 Vue3 父子组件代码，(1)(2) 两处的实际表现是？", "code": "<!-- Child.vue -->\n<script setup>\nimport { ref } from 'vue'\nconst count = ref(0)\nfunction reset() { count.value = 0 }\n<\/script>\n<template><span>{{ count }}</span></template>\n\n<!-- Parent.vue -->\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport Child from './Child.vue'\nconst childRef = ref(null)\nonMounted(() => {\n  console.log(childRef.value.count)   // (1)\n  childRef.value.reset()              // (2)\n})\n<\/script>\n<template><Child ref=\"childRef\" /></template>", "options": [{"k": "A", "t": "(1) 输出 0，(2) 正常调用"}, {"k": "B", "t": "(1) 输出 undefined，(2) 抛 TypeError: childRef.value.reset is not a function"}, {"k": "C", "t": "(1) 输出一个 RefImpl 对象，需要 .value 才能取到 0，(2) 正常调用"}, {"k": "D", "t": "childRef.value 为 null，onMounted 时子组件还没挂载"}], "answer": ["B"], "explain": "关键规则：使用 <b>&lt;script setup&gt;</b> 的组件<b>默认是封闭的</b>——模板 ref 拿到的组件实例上访问不到内部声明的任何变量和方法（等价于一个空的 expose）。这与 Vue2 的 Options API 完全相反（后者 this 上的所有 data/methods 都能被父组件通过 $refs 访问到）。<br>修复方式：在 Child 中显式声明 <code>defineExpose({ count, reset })</code>。暴露之后还有一个细节——通过 expose 出去的 ref 会<b>自动解包</b>，父组件写 childRef.value.count 直接得到 0，不需要再 .value（所以 C 项也是错的）。<br>D 项错在时机：父组件 onMounted 触发时，子组件必然已经挂载完毕（子先于父挂载），childRef.value 已经有值，只是那个对象上什么都没有。<br>工程建议：父组件直接操作子组件内部状态属于「越权」，优先用 props/emit 或 v-model；defineExpose 只暴露少量命令式方法（如 validate()、focus()、reset()）。", "android": "类比自定义 View：Vue2 像把所有成员都设成 public，父容器随便改；script setup 更像 Kotlin 的 private 默认可见性，你必须显式提供 public fun reset() 才能被外部调用。封装性更好，但迁移老代码时最容易踩这个坑。", "kaodian": "AI 前端能力 - 框架与组件 - 模板引用与 defineExpose"}, {"no": 18, "type": "single", "body": "Vue Router 4 中，从 /list 导航到 /detail（两者是不同组件，均已同步加载），下列守卫的执行顺序是？", "code": "// 全局\nrouter.beforeEach((to, from) => { console.log('beforeEach') })\nrouter.beforeResolve((to, from) => { console.log('beforeResolve') })\nrouter.afterEach((to, from) => { console.log('afterEach') })\n\n// 路由配置\n{ path: '/detail', component: Detail,\n  beforeEnter: () => { console.log('beforeEnter') } }\n\n// List.vue 组件内\nonBeforeRouteLeave(() => { console.log('beforeRouteLeave') })\n\n// Detail.vue 组件内（选项式）\nbeforeRouteEnter(to, from, next) { console.log('beforeRouteEnter'); next() }", "options": [{"k": "A", "t": "beforeEach → beforeRouteLeave → beforeEnter → beforeResolve → afterEach"}, {"k": "B", "t": "beforeRouteLeave → beforeEach → beforeEnter → beforeRouteEnter → beforeResolve → afterEach"}, {"k": "C", "t": "beforeEach → beforeEnter → beforeRouteLeave → afterEach → beforeResolve"}, {"k": "D", "t": "beforeEnter → beforeEach → beforeRouteEnter → afterEach → beforeResolve"}], "answer": ["B"], "explain": "Vue Router 完整的导航解析流程（记「离开 → 全局前置 → 复用更新 → 路由独享 → 组件进入 → 全局解析 → 确认 → 全局后置 → DOM 更新」）：<br>1. 失活组件的 <b>beforeRouteLeave</b>（最先，用于拦截未保存的表单）<br>2. 全局 <b>beforeEach</b>（登录鉴权通常写这里）<br>3. 重用组件的 beforeRouteUpdate（同组件不同参数时才有，如 /detail/1 → /detail/2）<br>4. 路由独享 <b>beforeEnter</b><br>5. 解析异步路由组件<br>6. 被激活组件的 <b>beforeRouteEnter</b>（此时组件实例<b>还没创建</b>，拿不到 this，只能用 next(vm =&gt; ...) 回调）<br>7. 全局 <b>beforeResolve</b>（所有守卫都过了、导航即将确认，适合做数据预取）<br>8. 导航确认 → 全局 <b>afterEach</b>（不接受 next，不能取消导航，适合埋点、改标题、关闭 loading）<br>9. 触发 DOM 更新 → 调用 beforeRouteEnter 中传给 next 的回调。<br>常见坑：在 beforeEach 里写鉴权跳转必须避免死循环（判断 to.path 是否已是登录页），否则报 “Maximum call stack size exceeded”。", "android": "类比 Activity 跳转生命周期：beforeRouteLeave ≈ 当前页 onPause 前的可拦截时机，beforeRouteEnter ≈ 新页 onCreate 之前（还没有实例，所以拿不到 this），afterEach ≈ 新页 onResume 之后的埋点上报。", "kaodian": "AI 前端能力 - 框架与组件 - 路由守卫执行顺序"}, {"no": 19, "type": "single", "body": "搜索框做了输入防抖，测试反馈「用中文输入法打字时，拼音还没选词就已经发起了好几次搜索请求」。结合下面的事件监听，对浏览器事件触发行为描述<b>正确</b>的是？", "code": "<input id=\"kw\" placeholder=\"搜索房源\">\n\n<script>\nconst kw = document.getElementById('kw');\nkw.addEventListener('input',            () => console.log('input:', kw.value));\nkw.addEventListener('change',           () => console.log('change:', kw.value));\nkw.addEventListener('compositionstart', () => console.log('compositionstart'));\nkw.addEventListener('compositionend',   () => console.log('compositionend'));\n<\/script>\n\n<!-- 操作：用拼音输入法敲 z i r u，选词得到「自如」，然后点击页面空白处让输入框失焦 -->", "options": [{"k": "A", "t": "compositionstart 先触发；随后每敲一个拼音字母都会触发一次 input（此时 value 是拼音）；选定汉字后触发 compositionend 并再触发一次 input；最后失焦时触发一次 change"}, {"k": "B", "t": "输入法组合期间完全不触发 input 事件，只在选定汉字后触发唯一的一次 input"}, {"k": "C", "t": "每次 input 之后都会紧跟一次 change 事件，二者成对出现"}, {"k": "D", "t": "compositionend 会在 compositionstart 之前触发，用于通知输入法即将开始组合"}], "answer": ["A"], "explain": "这是中文场景下搜索框、@提及、实时校验的经典坑。三组事件要分清：<br>• <b>input</b>：只要输入框的 value 发生变化就触发，<b>包括输入法组合中的中间态</b>（拼音 z、zi、zir…），所以敲 4 个字母就会打出 4 次 input，此时 kw.value 拿到的是拼音而非汉字，直接拿去请求接口自然搜不到东西还白白打了几次请求。<br>• <b>compositionstart / compositionupdate / compositionend</b>：输入法组合的开始、进行中、结束。选定汉字时 compositionend 先于最后一次 input 触发（此时 event.isComposing 已为 false），value 才是最终的「自如」。<br>• <b>change</b>：对文本框而言，只在<b>值改变且失去焦点</b>（或按回车）时触发一次，不会和 input 成对出现（C 错）。D 明显颠倒了顺序。<br>标准修复：维护一个 isComposing 标志，compositionstart 置 true、compositionend 置 false 并<b>手动触发一次搜索</b>；input 回调里若 isComposing 为 true 则直接 return。现代浏览器也可直接用 <code>e.isComposing</code> 判断，Vue 的 v-model 内置就做了这层处理（这也是为什么用 v-model 不会踩坑，而自己监听 input 会踩）。再叠加 300ms 防抖，才是完整方案。", "android": "类比 Android 的 TextWatcher：onTextChanged 在中文输入法拼音阶段同样会被反复回调，很多 App 的搜索联想在中文下疯狂请求就是这个原因。Android 侧一般靠 debounce + 判断长度，Web 侧则多了一层 composition 事件可以精确识别「输入法组合中」。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 表单事件与输入法组合"}, {"no": 20, "type": "single", "body": "已知 StockUtil.deduct 的实现是 <code>return Math.max(0, stock - buy);</code>，下面这段 JUnit 5 测试的执行结果是？", "code": "@ParameterizedTest\n@CsvSource({\n    \"10, 0,  10\",\n    \"10, 5,  5\",\n    \"10, 15, 0\"\n})\nvoid testDeduct(int stock, int buy, int expected) {\n    assertEquals(expected, StockUtil.deduct(stock, buy));\n}", "options": [{"k": "A", "t": "只执行 1 次，三组参数被一次性传入"}, {"k": "B", "t": "执行 3 次，全部通过，测试报告中显示为 3 个独立的测试项"}, {"k": "C", "t": "执行 3 次，第 3 组失败，因为 10 - 15 = -5 不等于 0"}, {"k": "D", "t": "编译/运行报错，@ParameterizedTest 必须同时标注 @Test 才能被识别"}], "answer": ["B"], "explain": "@ParameterizedTest 会为<b>每一组参数</b>发起一次独立的测试调用，报告中呈现为 3 个可单独查看结果的测试项（IDEA 里能看到 [1] 10, 0, 10 这样的条目）。@CsvSource 按逗号切分字符串，并根据方法形参类型<b>自动做隐式转换</b>（String → int/long/enum/LocalDate 等）。<br>第 3 组不会失败：deduct(10, 15) = Math.max(0, -5) = 0，与 expected 相符。<br>四个必记要点：① @ParameterizedTest <b>不能</b>与 @Test 同时标注，二者是互斥的测试模板，写了 @Test 反而会重复执行/报错；② 需要额外引入 junit-jupiter-params 依赖（spring-boot-starter-test 已包含）；③ 参数源除 @CsvSource 外还有 @ValueSource（单参数）、@EnumSource、@MethodSource（复杂对象、返回 Stream&lt;Arguments&gt;）、@CsvFileSource（读 csv 文件）；④ 可用 name = \"stock={0}, buy={1}\" 自定义用例显示名，便于失败时快速定位是哪组数据。<br>参数化测试的价值在于把等价类划分和边界值分析的结果直接落成数据表，用例数量增加但代码零膨胀。", "android": "类比 Android 单测里用 @RunWith(Parameterized.class) 跑多组输入：以前要写一堆 testDeduct1/2/3 方法，现在一张数据表搞定。做边界值（0、1、最大值、超额扣减）时特别顺手。", "kaodian": "AI 质量保障 - 自动化测试与工具 - JUnit5 参数化测试"}]}, {"name": "二、多选题（7 题 · 28 分）", "cat": "multi", "questions": [{"no": 21, "type": "multi", "body": "团队用 Redis Stream 替代原来的 List 做轻量消息队列，命令序列如下。关于这套机制，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "XADD orders * oid 1001 amount 299\nXGROUP CREATE orders g1 0\nXREADGROUP GROUP g1 consumer-1 COUNT 10 BLOCK 2000 STREAMS orders >\n# 业务处理抛异常，没有执行 XACK\nXPENDING orders g1\nXAUTOCLAIM orders g1 consumer-2 60000 0", "options": [{"k": "A", "t": "XREADGROUP 读到的消息会进入该消费组的 PEL（Pending Entries List），只有显式 XACK 后才移出，因此 Stream 天然具备「至少一次」投递语义，业务侧仍需自己保证幂等"}, {"k": "B", "t": "STREAMS orders > 表示只读取「从未投递给本消费组的新消息」；若要重读本消费者已投递但未 ACK 的历史消息，应把 > 换成 0"}, {"k": "C", "t": "同一个消费组内的多个消费者会各自收到同一条消息的副本，从而实现广播消费"}, {"k": "D", "t": "XAUTOCLAIM / XCLAIM 可以把空闲时间超过阈值的 pending 消息转交给另一个消费者，用于消费者宕机后的消息接管"}], "answer": ["A", "B", "D"], "explain": "<b>A 正确</b>：PEL 记录「已投递未确认」的消息，配合 XACK 构成确认机制。宕机重启后未 ACK 的消息仍在 PEL 中可被重新处理，所以是 at-least-once，重复消费不可避免，消费端必须做幂等（唯一键、状态机、去重表）。<br><b>B 正确</b>：特殊 ID <code>&gt;</code> = 只要没投递过的新消息；传 <code>0</code> 或具体 ID = 从 PEL 里取该消费者自己的历史待确认消息，这是消费者重启后「先补做旧账再消费新消息」的标准写法。<br><b>C 错误</b>：<b>组内是竞争消费</b>——一条消息只会被投递给组内的某一个消费者，这正是它能水平扩容的原因。要广播必须创建<b>多个消费组</b>（XGROUP CREATE orders g2 0），每个组各自维护独立的游标和 PEL，语义上等价于 Kafka 的不同 consumer group。<br><b>D 正确</b>：XPENDING 查看积压明细（谁持有、空闲多久、投递几次），XCLAIM/XAUTOCLAIM（6.2+）做所有权转移，是处理「消费者进程挂掉导致消息卡在 PEL」的官方手段；配合 delivery count 超过阈值就丢进死信 Stream，可实现毒消息隔离。<br>补充：Stream 会无限增长，需用 XADD ... MAXLEN ~ 10000 或 XTRIM 做近似裁剪；被裁掉的消息即使还在 PEL 里也读不回来了。相比 List(LPUSH/BRPOP)，Stream 多了消费组、ACK、消息回溯和多播能力；但要求强可靠、高吞吐仍应上 Kafka/RabbitMQ。", "android": "类比 Android 的消息投递：PEL 就像「已发送但未收到回执」的待办列表，XACK 相当于回执。App 端做离线消息同步时也是这套思路——本地记录未确认消息，重连后先补发再拉新。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Redis Stream 消费组"}, {"no": 22, "type": "multi", "body": "为了兜住「路由不到任何队列」的消息，给交换机配置了备份交换机（alternate-exchange）。关于下面这段配置，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "Map<String, Object> args = new HashMap<>();\nargs.put(\"alternate-exchange\", \"ae.order\");\nchannel.exchangeDeclare(\"ex.order\", \"direct\", true, false, args);\n\nchannel.exchangeDeclare(\"ae.order\", \"fanout\", true, false, null);\nchannel.queueDeclare(\"q.unrouted\", true, false, false, null);\nchannel.queueBind(\"q.unrouted\", \"ae.order\", \"\");\n\n// 生产端\nchannel.confirmSelect();\nchannel.addReturnListener((code, text, ex, key, props, body) ->\n        log.warn(\"消息被退回: {}\", key));\nchannel.basicPublish(\"ex.order\", \"no.such.key\", true, null, body);  // mandatory = true", "options": [{"k": "A", "t": "由于 ex.order 配置了备份交换机，routingKey 匹配不到任何队列的消息会被转投到 ae.order，最终落到 q.unrouted，不会被静默丢弃"}, {"k": "B", "t": "此时即使 mandatory = true，ReturnListener 也不会被触发——消息已被备份交换机成功接收，对 Broker 而言不算「无法路由」"}, {"k": "C", "t": "备份交换机通常声明为 fanout 类型，因为它要接收各种 routingKey 的消息；若声明成 direct，消息会因为找不到匹配绑定而再次被丢弃"}, {"k": "D", "t": "备份交换机既能兜住「消息到达交换机但没有匹配队列」，也能兜住「目标交换机根本不存在」的情况"}], "answer": ["A", "B", "C"], "explain": "<b>A 正确</b>：alternate-exchange 是交换机级别的兜底路由。生产上常见事故就是 routingKey 拼错或队列忘了绑定，消息被 Broker 静默丢弃且毫无痕迹；配了 AE 后这些消息会集中落到一个「未路由队列」，可以告警、人工补偿。<br><b>B 正确</b>，这是最容易答错的一点：mandatory + ReturnListener 与 alternate-exchange 是<b>互斥关系</b>。Broker 的判定顺序是「先尝试正常路由 → 失败则尝试备份交换机 → 都失败才认定 unroutable 并 Return 回生产者」。既然 AE 成功接收了，就不会触发 Return 回调。所以两套机制<b>二选一</b>：要在生产端立刻感知失败用 mandatory + ReturnListener；要在服务端集中收集用 AE。<br><b>C 正确</b>：AE 必须能无差别接收，fanout 最合适；用 direct 且没有对应 key 的绑定，等于兜底又漏了一层。<br><b>D 错误</b>：交换机不存在属于<b>信道级错误</b>，Broker 会直接以 404 NOT_FOUND 关闭该 channel（AMQP 协议行为），AE 完全管不到，且此时该 channel 上后续所有操作都会失败——这也是为什么发送前要确保交换机已声明（或用幂等的 exchangeDeclare 预创建）。<br>可靠投递完整链路提醒：生产端 confirm（到交换机）+ mandatory/AE（到队列）+ 队列与消息持久化（Broker 不丢）+ 消费端手动 ack（消费不丢），四段缺一不可。", "android": "类比 Android 的隐式 Intent：routingKey 就是 action，没有任何组件能响应时 startActivity 会抛 ActivityNotFoundException（相当于 mandatory 退回）；而 alternate-exchange 就像你注册了一个「什么都能接」的兜底 Activity，从此再也不会崩，但你也就收不到异常提醒了——这正是 A/B 两项的取舍。", "kaodian": "AI 后端能力 - 高并发与中间件层 - RabbitMQ 备份交换机与路由兜底"}, {"no": 23, "type": "multi", "body": "线上需要把消费组 order-group 在 order-topic 上的位移回拨到昨天零点重新消费一遍。关于下面这条命令与位移机制，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "kafka-consumer-groups.sh --bootstrap-server 10.0.0.9:9092 \\\n  --group order-group --topic order-topic \\\n  --reset-offsets --to-datetime 2026-08-06T00:00:00.000 \\\n  --execute", "options": [{"k": "A", "t": "执行该命令要求消费组处于 Empty 状态（组内没有活跃消费者），否则会报错，必须先把所有消费者实例停掉"}, {"k": "B", "t": "消费位移保存在内置 topic __consumer_offsets 中，按 group.id 哈希决定分区；长期不消费的组，其位移会被 offsets.retention.minutes 到期清理"}, {"k": "C", "t": "代码中也可在 ConsumerRebalanceListener 的 onPartitionsAssigned 里用 offsetsForTimes + seek 精确定位，比脚本更灵活且不必停服"}, {"k": "D", "t": "把 auto.offset.reset 改成 earliest 并重启消费者，同样能让这个老消费组从头重新消费"}], "answer": ["A", "B", "C"], "explain": "<b>A 正确</b>：位移重置会修改组的元数据，Kafka 要求消费组必须为 Empty（无成员），否则报 “Assignments can only be reset if the group is inactive”。标准操作流程是：停消费者 → 先用 --dry-run 预览将要重置到的 offset → 确认无误后 --execute → 再启动消费者。<br><b>B 正确</b>：__consumer_offsets 默认 50 个分区，key 是 (group, topic, partition)，按 group.id 哈希落分区；清理策略是 compact，只保留每个 key 的最新值。offsets.retention.minutes 默认 7 天（较老版本是 1 天），组内无成员且超期后位移被删除，下次启动就会退化到按 auto.offset.reset 决定起点——很多「服务停了一周，重启后消息从头开始跑」的事故就源于此。<br><b>C 正确</b>：offsetsForTimes(Map&lt;TopicPartition, Long timestamp&gt;) 可按时间戳查出对应 offset，再 consumer.seek() 定位；必须写在 onPartitionsAssigned 回调里（分区分配完成后才能 seek），是不停服做局部重放的常用手段。<br><b>D 错误</b>：<b>auto.offset.reset 只在「找不到有效已提交位移」时才生效</b>（全新消费组，或位移已过期/越界）。对于已有提交位移的老组，改这个参数完全没有作用。想借它重放，要么换一个新的 group.id（会污染监控且重复消费全量），要么老老实实用 --reset-offsets。<br>其他重置选项：--to-earliest / --to-latest / --shift-by -1000 / --to-offset 12345 / --by-duration PT1H，均可配合 --all-topics 或 --topic t:0,1 指定分区粒度。", "android": "类比 App 的增量同步游标：__consumer_offsets 就是服务端帮你存的「读到哪儿了」的书签，auto.offset.reset 只是「书签丢了时从哪开始读」的兜底策略。书签还在的时候改兜底策略当然不起作用——这正是 D 的错处。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Kafka 位移存储与消息重放"}, {"no": 24, "type": "multi", "body": "排查一个「driver 加载不到」的问题时读到下面这段代码，关于类加载机制，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "ServiceLoader<Driver> loader = ServiceLoader.load(Driver.class);\nfor (Driver d : loader) {\n    System.out.println(d.getClass().getClassLoader());\n}\n// 输出示例: jdk.internal.loader.ClassLoaders$AppClassLoader@2437c6dc", "options": [{"k": "A", "t": "接口 java.sql.Driver 由 Bootstrap ClassLoader 加载，但 Bootstrap 只扫描 JDK 核心类库，看不到 classpath 下的厂商实现（如 mysql-connector-j）"}, {"k": "B", "t": "ServiceLoader 内部取的是线程上下文类加载器（Thread.currentThread().getContextClassLoader()），由父加载器「反向委派」给应用类加载器完成实现类加载，是对双亲委派的一种打破"}, {"k": "C", "t": "自定义类加载器若只重写 findClass 而不重写 loadClass，就能打破双亲委派机制"}, {"k": "D", "t": "同一个 .class 文件被两个不同的类加载器加载，会得到两个互不相等的 Class 对象，彼此 instanceof / 强制类型转换都会失败"}], "answer": ["A", "B", "D"], "explain": "<b>A 正确</b>：双亲委派下加载请求先上交父加载器，java.* 由 Bootstrap 加载。但 Bootstrap 的搜索路径只有 JDK 核心库，它无法「向下」看到应用 classpath 里的实现类——这就是 SPI 面临的结构性矛盾：<b>接口在上层，实现在下层</b>。<br><b>B 正确</b>：解决办法是线程上下文类加载器（TCCL）。ServiceLoader.load(Class) 默认取 TCCL（通常就是 AppClassLoader），由它去读 META-INF/services/java.sql.Driver 并反射实例化实现类。这种「父加载器借用子加载器」的做法被称为反向委派，是 JDBC、JNDI、JAXP、Dubbo SPI 等的通用套路。<br><b>C 错误，方向说反了</b>：ClassLoader.loadClass() 里写着完整的双亲委派逻辑（先查缓存 → 委派 parent → parent 失败才调 findClass）。只重写 <b>findClass</b> 是<b>遵守</b>双亲委派的推荐做法；要<b>打破</b>它必须重写 <b>loadClass</b>，自己决定哪些类不上交父加载器（Tomcat 的 WebappClassLoader、OSGi 就是这么做的，为的是每个 webapp 的类相互隔离）。<br><b>D 正确</b>：JVM 中类的唯一标识是「全限定名 + 类加载器」二元组。这就是热部署后偶发 ClassCastException（同名类不同加载器）、以及 Tomcat 部署多应用互不干扰的底层原理。<br>补充：JDK 9+ 模块化后类加载器体系变为 Bootstrap / Platform / Application 三层，扩展类加载器（Ext）已被 Platform 取代。", "android": "类比 Android 的 PathClassLoader 与 DexClassLoader：热修复框架就是先用 DexClassLoader 加载补丁 dex，再把它插到 dexElements 数组最前面，让补丁类抢先被找到——本质上也是在「自己决定委派顺序」，与打破双亲委派同源。同名类被两个 ClassLoader 加载导致 ClassCastException，也是插件化里最常见的崩溃。", "kaodian": "AI 后端能力 - 语言基础层 - 类加载机制与 SPI"}, {"no": 25, "type": "multi", "body": "首页做加载性能优化时加了下面几个资源提示标签，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "<link rel=\"preconnect\"   href=\"https://cdn.ziroom.com\">\n<link rel=\"dns-prefetch\" href=\"https://cdn.ziroom.com\">\n<link rel=\"preload\"  href=\"/fonts/main.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>\n<link rel=\"prefetch\" href=\"/js/detail.chunk.js\">", "options": [{"k": "A", "t": "preload 声明的是「当前页面一定会用到」的资源，浏览器会以较高优先级立即下载；漏写 as 属性会导致资源被下载两次并在控制台告警"}, {"k": "B", "t": "prefetch 是「下一个页面可能用到」的低优先级预取，浏览器在空闲时才下载，适合按路由拆分出来的 chunk"}, {"k": "C", "t": "preconnect 会提前完成 DNS 解析 + TCP 握手 + TLS 协商；dns-prefetch 只做 DNS 解析，成本更低、兼容性更好，二者常配合使用"}, {"k": "D", "t": "preload 的资源若在 3 秒内没有被真正使用，浏览器会自动取消这次下载以节省带宽"}], "answer": ["A", "B", "C"], "explain": "<b>A 正确</b>：preload 把资源发现时机提前，不改变执行时机（下载完只放进内存缓存，等真正引用时才生效）。as 属性决定优先级和 Accept 请求头，漏写会让浏览器按 fetch 处理，真正引用时因为缓存键不匹配<b>再下一次</b>，控制台提示 “A preload for ... is found, but is not used because the request headers do not match”。<br><b>B 正确</b>：prefetch 优先级 Lowest，只在浏览器空闲时下载，缓存到 HTTP 缓存中供下一次导航使用。Vue Router 懒加载 + webpack magic comment <code>/* webpackPrefetch: true */</code> 生成的就是它。<br><b>C 正确</b>：preconnect 把三次握手和 TLS 协商提前，对跨域 CDN、第三方 API 收益明显；但每个连接都要占用资源，官方建议不超过 4~6 个，且如果 10 秒内没用上连接会被关闭。dns-prefetch 作为老浏览器的降级方案一起写。<br><b>D 错误</b>：浏览器<b>不会</b>自动取消已发起的 preload。未被使用时只是在控制台打印 “The resource ... was preloaded using link preload but not used within a few seconds” 的警告，带宽已经花掉了。所以 preload 要精准克制，滥用会挤占关键资源的带宽，反而拖慢 LCP。<br>补充：字体的 preload 必须加 crossorigin，因为字体一律以匿名 CORS 模式获取，漏写会导致重复请求；modulepreload 则专用于 ES Module，会连带解析并预载依赖图。", "android": "类比 App 的预加载策略：preload 像进入某页面前先把首屏图片下好（马上要用），prefetch 像 WiFi 空闲时预下载下一集视频（可能要用），preconnect 像提前和服务端建好长连接省掉握手耗时。三者都要克制，否则和后台偷跑流量没区别。", "kaodian": "AI 前端能力 - 工程化与网络 - 资源提示与加载优化"}, {"no": 26, "type": "multi", "body": "初始 count 为 0，点击一次按钮后，关于下面 Vue3 代码的说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "<script setup>\nimport { ref, nextTick } from 'vue'\nconst count = ref(0)\nconst el = ref(null)\n\nasync function onClick() {\n  count.value++\n  console.log('A', el.value.textContent)   // (1)\n  await nextTick()\n  console.log('B', el.value.textContent)   // (2)\n\n  count.value++\n  count.value++\n  console.log('C')                          // (3)\n  await nextTick()\n  console.log('D', el.value.textContent)   // (4)\n}\n<\/script>\n\n<template>\n  <p ref=\"el\">{{ count }}</p>\n  <button @click=\"onClick\">+</button>\n</template>", "options": [{"k": "A", "t": "(1) 输出 A 0 —— 修改响应式数据后 DOM 不会同步更新，此刻读到的还是旧值"}, {"k": "B", "t": "(2) 输出 B 1 —— await nextTick() 之后 DOM 已完成本轮刷新"}, {"k": "C", "t": "(3) 之前连续两次 count.value++ 只会触发一次组件重新渲染，因为同一个渲染 effect 在异步更新队列中会被去重"}, {"k": "D", "t": "(4) 输出 D 2"}], "answer": ["A", "B", "C"], "explain": "Vue 的更新是<b>异步批处理</b>的：响应式数据变化时，对应的渲染 effect 被推入调度队列（同一个 effect 只入队一次，靠 id 去重），并通过 Promise.then 注册成一个<b>微任务</b>，在当前同步代码执行完、微任务阶段统一 flush。<br><b>A 正确</b>：count.value++ 只是标记了副作用待执行，DOM 还没动，读到的仍是 0。<br><b>B 正确</b>：nextTick 返回的 Promise 排在渲染 flush 之后，await 它就能拿到更新后的 DOM，读到 1。<br><b>C 正确</b>：这正是批处理的价值——连改 100 次也只渲染一次，避免了中间态的无谓 DOM 操作。<br><b>D 错误</b>：连续两次 ++ 后 count 已经是 3（1 → 2 → 3），await nextTick() 之后 DOM 刷新为 3，所以 (4) 输出的是 <b>D 3</b> 而不是 D 2。<br>实践要点：需要在数据变更后测量元素尺寸、操作滚动条、调用第三方图表 resize，都必须放在 nextTick 回调或 await nextTick() 之后；反过来，如果你在 watch 里加 flush: 'post'，回调本身就会在 DOM 更新后执行，等价于自带 nextTick。", "android": "类比 View 的 post(Runnable)：setText 之后立刻 getWidth 拿到的是旧值（还没走完 measure/layout），必须 view.post { } 等下一帧。nextTick 就是 Vue 版的 view.post，只不过它排的是微任务而不是消息队列。", "kaodian": "AI 前端能力 - 框架与组件 - 异步更新队列与 nextTick"}, {"no": 27, "type": "multi", "body": "订单服务（消费方）调用用户服务（提供方）的接口，团队引入 Pact 做<b>消费者驱动的契约测试</b>，流程如下。关于契约测试，说法<b>正确</b>的有？（多选、少选、错选均不得分）", "code": "# 1) 消费方（订单服务）单测中声明期望的交互，运行后生成 pact 文件\n{\n  \"consumer\": { \"name\": \"order-service\" },\n  \"provider\": { \"name\": \"user-service\" },\n  \"interactions\": [{\n    \"description\": \"查询用户基本信息\",\n    \"providerState\": \"存在 id=1 的用户\",\n    \"request\":  { \"method\": \"GET\", \"path\": \"/user/1\" },\n    \"response\": { \"status\": 200,\n                  \"body\": { \"id\": 1, \"name\": \"张三\", \"level\": \"VIP\" } }\n  }]\n}\n\n# 2) pact 文件发布到 Pact Broker\n# 3) 提供方（用户服务）CI 中拉取 pact 文件回放并验证", "options": [{"k": "A", "t": "核心价值在于：无需把两个服务同时部署做端到端联调，各自在自己的流水线里就能提前发现「字段改名、字段删除、状态码变更」这类破坏性改动"}, {"k": "B", "t": "「消费者驱动」意味着契约由调用方定义，只覆盖它<b>实际用到</b>的字段；因此提供方新增字段不会让契约失败，但删除或改名被消费的字段会立即失败"}, {"k": "C", "t": "契约测试可以取代提供方的单元测试与集成测试，因为它已经验证了业务逻辑的正确性"}, {"k": "D", "t": "提供方在验证时通常需要通过 provider state 把数据预置成契约所描述的状态（如「存在 id=1 的用户」），否则回放会因查不到数据而失败"}], "answer": ["A", "B", "D"], "explain": "<b>A 正确</b>：微服务/前后端分离下，端到端联调环境搭建成本高、不稳定、反馈慢。契约测试把「接口是否兼容」的验证拆成两个可独立运行的环节，消费方生成契约、提供方回放验证，双方 CI 各跑各的，几分钟就能拿到结果，是集成测试成本与覆盖度的最佳折中（位于测试金字塔的中层）。<br><b>B 正确</b>：这正是 CDC（Consumer-Driven Contract）与「提供方自己写 OpenAPI 文档」的本质区别——契约只包含消费方真正读取的字段，因此提供方可以放心做<b>向后兼容的新增</b>（加字段不违约），而一旦动了被消费的字段就立刻在 CI 里红灯。同一个提供方会被多个消费方约束，Broker 上能看到完整的依赖矩阵，配合 can-i-deploy 决定能否上线。<br><b>C 错误</b>：契约测试只验证<b>交互的格式与协议兼容性</b>（路径、方法、状态码、字段结构与类型），不验证业务逻辑对不对——响应体里的 level 是不是该给 VIP，属于提供方自己单元/集成测试的职责。把它当万能替代品是典型误用。<br><b>D 正确</b>：provider state 是契约回放的前置条件钩子，提供方需要为每个 state 实现数据准备（插测试数据或 mock 掉 DAO）。这也是落地时最主要的工作量来源。<br>补充：契约测试<b>不适用于</b>公开 API（消费方不可知）、以及双方由同一团队维护且变更同步发布的场景（收益低于维护成本）。", "android": "类比客户端与服务端约定接口：以前只能靠一份口头/文档约定，服务端偷偷改了字段名，App 上线后才崩。契约测试相当于把这份约定变成<b>可执行、能在 CI 里跑的断言</b>——客户端声明「我要用 name 和 level」，服务端改动一旦破坏它，服务端自己的流水线就先红了。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 消费者驱动契约测试"}]}, {"name": "三、判断题（6 题 · 12 分）", "cat": "judge", "questions": [{"no": 28, "type": "judge", "body": "判断：下面方法执行时，(2) 处会重新发一次 SQL 查库，因此 u2.getName() 是被别人改后的 \"小李\"，且 u1 == u2 为 false。", "code": "@Transactional\npublic void demo() {\n    User u1 = userMapper.selectById(1L);   // (1) 查到 name = \"老王\"\n\n    // ↓ 此刻另一个事务把 id=1 的 name 改成 \"小李\" 并已提交\n\n    User u2 = userMapper.selectById(1L);   // (2)\n    System.out.println(u2.getName());\n    System.out.println(u1 == u2);\n}", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "MyBatis 的<b>一级缓存</b>（本地缓存）默认作用域是 SESSION：同一个 SqlSession 内，只要「statement id + 参数 + 分页边界 + SQL 语句」完全相同，第二次查询就<b>直接命中缓存、根本不发 SQL</b>，返回的还是<b>同一个对象引用</b>。在 Spring 集成场景下，一个事务内的多次 Mapper 调用复用的正是同一个 SqlSession（由 SqlSessionTemplate 绑定到事务上下文），所以：u2.getName() 仍是 \"老王\"，u1 == u2 为 <b>true</b>。题干说法错误。<br>需要牢记的四点：① 一级缓存无法感知<b>其他事务</b>的修改，长事务里反复查同一行会读到过期数据；② 本 SqlSession 内执行任意 INSERT/UPDATE/DELETE，或 commit/rollback/close，都会<b>清空</b>整个一级缓存；③ 由于返回的是缓存中的同一个对象，如果业务代码改了 u1 的字段，u2 会「莫名其妙」跟着变——这是隐蔽性极强的 bug；④ 规避手段：在 &lt;select&gt; 上加 flushCache=\"true\"，或全局配置 mybatis.configuration.local-cache-scope=STATEMENT（每条语句执行完就清），生产上推荐后者。<br>二级缓存（namespace 级、跨 SqlSession）默认关闭，在多表关联和多节点部署下极易脏读，绝大多数团队直接禁用，缓存交给 Redis 统一管理。", "android": "类比 Room 或 Retrofit 的内存缓存：你以为每次 query 都是新数据，其实拿到的是缓存里的同一个对象引用，UI 上改了这个对象，另一处「刚查出来的数据」也跟着变了。定位这类问题只能靠打印 System.identityHashCode 比对引用。", "kaodian": "AI 后端能力 - 数据库与ORM层 - MyBatis 一级缓存"}, {"no": 29, "type": "judge", "body": "判断：下面这条建表语句可以正常执行。因为 utf8mb4 下每个字符最多 4 字节，两列合计 255×4×2 ≈ 2044 字节，未超过 InnoDB（DYNAMIC 行格式）3072 字节的索引长度上限。", "code": "CREATE TABLE t (\n  id BIGINT PRIMARY KEY,\n  a  VARCHAR(255) NOT NULL,\n  b  VARCHAR(255) NOT NULL,\n  KEY idx_ab (a, b)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "计算方式：单列 key_len = 255 字符 × 4 字节/字符 = 1020，变长类型再加 2 字节长度前缀 = 1022；两列都是 NOT NULL 不需要额外的 1 字节 NULL 标记，联合索引合计 2044 字节 &lt; 3072，因此建表成功。<br>需要记住的几条边界：<br>• InnoDB 在 <b>DYNAMIC / COMPRESSED</b> 行格式下单个索引键长度上限为 <b>3072</b> 字节（MySQL 5.7.7 起 DYNAMIC 为默认行格式）；在旧的 <b>COMPACT / REDUNDANT</b> 行格式下只有 <b>767</b> 字节——这正是「utf8（3 字节）+ varchar(255) = 765」这个经典组合的由来。<br>• 超限会直接报错 <code>Specified key was too long; max key length is 3072 bytes</code>。比如把 a 改成 VARCHAR(768)，单列就是 768×4+2 = 3074，立即失败。<br>• 应对手段是<b>前缀索引</b>：KEY idx_a (a(191))，191×4 = 764 是 utf8mb4 场景的常用取值（历史上兼容 767 上限）。代价是前缀索引<b>无法用于覆盖索引和 ORDER BY</b>，选取长度前应先用 SELECT COUNT(DISTINCT LEFT(a,n))/COUNT(*) 评估区分度。<br>• 另外 utf8mb4 才是真正的 UTF-8（支持 emoji 和部分生僻字），MySQL 的 utf8 是最多 3 字节的阉割版，新项目一律用 utf8mb4 + utf8mb4_0900_ai_ci。", "android": "类比 Android 里 SQLite 对索引没有这种字节上限，转到 MySQL 后经常在建表阶段被 “key too long” 拦住。记住换算口诀：utf8mb4 一个字符按 4 字节算，varchar(255) 约 1KB，联合索引最多堆到 3 列左右就该考虑前缀索引了。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 字符集与索引长度限制"}, {"no": 30, "type": "judge", "body": "判断：下面的 put 方法可以正常唤醒等待中的消费者线程，因为 Condition 内部自带同步机制，调用 signal() 之前不需要先获取 lock。", "code": "private final ReentrantLock lock = new ReentrantLock();\nprivate final Condition notEmpty = lock.newCondition();\nprivate final Queue<String> queue = new LinkedList<>();\n\npublic void put(String x) {\n    queue.add(x);\n    notEmpty.signal();          // (1) 没有先 lock.lock()\n}\n\npublic String take() throws InterruptedException {\n    lock.lock();\n    try {\n        while (queue.isEmpty()) {\n            notEmpty.await();\n        }\n        return queue.poll();\n    } finally {\n        lock.unlock();\n    }\n}", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "(1) 行会直接抛出 <b>IllegalMonitorStateException</b>。Condition 的 await() / signal() / signalAll() 都<b>必须在持有对应 Lock 的前提下调用</b>，其内部实现（AQS 的 ConditionObject）第一步就是检查当前线程是否为独占锁的持有者，不是就抛异常。这与 synchronized 下 Object.wait()/notify() 必须在同步块内调用是完全一致的规则。<br>正确写法：<pre>public void put(String x) {\n    lock.lock();\n    try {\n        queue.add(x);\n        notEmpty.signal();\n    } finally {\n        lock.unlock();\n    }\n}</pre>另外三个配套要点：<br>① <b>await 必须放在 while 循环里</b>而不是 if——存在虚假唤醒（spurious wakeup），且被 signal 唤醒后要重新竞争锁，等真正拿到锁时条件可能又被别的线程改回去了；<br>② await() 会<b>释放锁</b>并把线程移入条件队列，被 signal 后从条件队列转移到同步队列重新排队抢锁，返回时锁已重新持有；<br>③ Condition 相比 wait/notify 的最大优势是<b>一把锁可以创建多个条件队列</b>（如 notEmpty 与 notFull 分开），signal 时只唤醒真正关心该条件的线程，避免 notifyAll 的惊群；ArrayBlockingQueue 正是这么实现的。<br>顺带一提：生产代码里这种阻塞队列不用自己写，直接用 java.util.concurrent 下的 ArrayBlockingQueue / LinkedBlockingQueue。", "android": "类比 Android 里 wait/notify 必须写在 synchronized 块中，否则同样抛 IllegalMonitorStateException。很多人被 Condition 这个「看起来像独立对象」的 API 迷惑，忘了它其实是挂在 Lock 上的，脱离锁就没有意义。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Condition 条件队列"}, {"no": 31, "type": "judge", "body": "判断：下面的 CSS 会让页面上三个元素前面都显示出一个 ★ 符号。", "code": "<img src=\"/a.png\" class=\"pic\">\n<input type=\"text\" class=\"ipt\">\n<div class=\"box\">内容</div>\n\n<style>\n.pic::before,\n.ipt::before,\n.box::before {\n  content: \"★\";\n  color: red;\n}\n</style>", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "只有 <code>.box</code> 会显示 ★。<b>img 和 input 属于替换元素（replaced element）</b>——它们的渲染内容来自外部资源或由浏览器 UA 决定（图片位图、原生输入框控件），CSS 盒模型里不存在可供插入子内容的「内容区」，因此 ::before / ::after 生成的伪元素<b>没有地方安放，不会被渲染</b>。同类替换元素还有 video、iframe、embed、以及大部分表单控件（input、select、textarea）。<br>几个易混淆点：<br>• 部分浏览器在 <b>img 加载失败</b>（显示 alt 占位）时会渲染出伪元素，这是各家实现差异，属于不可依赖的行为，常被用作「图片加载失败兜底图」的 hack；<br>• <code>&lt;button&gt;</code> 不是替换元素（它有真实的子内容），伪元素<b>可以</b>生效，别和 input[type=button] 混为一谈；<br>• 伪元素还有两个必要条件：必须写 content 属性（哪怕是空串 content:\"\"），且默认是 display:inline，设置宽高需要改成 inline-block/block；<br>• 伪元素不在 DOM 树中，JS 取不到，只能通过 getComputedStyle(el, '::before') 读样式。<br>正确做法：给 img/input 外面包一层容器，在容器上写伪元素；或者直接用 background-image / 定位一个真实元素。", "android": "类比 Android 的 TextView 可以用 drawableStart 加图标，但 ImageView 加 drawableStart 无效——因为它的内容本身就是外部图片。替换元素的概念和这个直觉是一致的：内容由外部资源决定的控件，装饰要靠外层容器。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 伪元素与替换元素"}, {"no": 32, "type": "judge", "body": "判断：服务端对一个 POST 请求返回 301/302 时，浏览器按规范可以（且实际普遍会）把后续请求方法改成 GET 并丢弃请求体；若要求重定向后必须保持原始方法和 body，应该使用 307（临时）或 308（永久）。", "code": "POST /api/v1/order HTTP/1.1\nContent-Type: application/json\n\n{\"skuId\": 1001, \"num\": 2}\n\n--- 服务端响应 ---\nHTTP/1.1 302 Found\nLocation: /api/v2/order\n\n--- 浏览器实际发出的下一个请求 ---\nGET /api/v2/order HTTP/1.1        # 方法被改写，body 丢失", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "这是历史遗留问题：RFC 规范原本要求 301/302 重定向时保持原方法，但早期浏览器一律把它改成了 GET，最终规范只能追认这一既成事实——「用户代理<b>可以</b>把 POST 改成 GET」。因此 301/302 用于 POST 场景是不安全的，请求体会被静默丢弃。<br>完整对照表：<br>• <b>301</b> 永久重定向，方法可能被改为 GET，SEO 权重转移，浏览器会强缓存（改错了很难回退，慎用）<br>• <b>302</b> 临时重定向，方法可能被改为 GET<br>• <b>303 See Other</b>：<b>明确要求</b>改用 GET，是 POST/Redirect/GET 模式的标准做法，用于「提交表单后跳转到结果页」，可防止刷新导致重复提交<br>• <b>307 Temporary Redirect</b>：临时，<b>严格保持</b>原方法和请求体<br>• <b>308 Permanent Redirect</b>：永久，<b>严格保持</b>原方法和请求体<br>工程注意：① 前后端分离项目里，接口重定向对 Axios/fetch 是「自动跟随」的，跨域时还会重新触发预检，出现「明明发的 POST，后端却收到 GET/OPTIONS」时优先怀疑重定向；② Spring Security 未登录时默认 302 跳登录页，会让 Ajax 请求拿到一坨 HTML，正确做法是配置成返回 401 JSON；③ HTTP → HTTPS 的强制跳转应该用 301 配合 HSTS，且不要让 POST 接口走这条链路。", "android": "类比 OkHttp 的 followRedirects：默认自动跟随，遇到 302 时同样会把 POST 降级成 GET 并丢掉 body，于是「接口调用没报错但服务端说没收到参数」。定位手段是抓包看重定向链，或关掉自动跟随手动处理。", "kaodian": "AI 前端能力 - 工程化与网络 - 重定向状态码语义"}, {"no": 33, "type": "judge", "body": "判断：下面两条用例已经让 discount 方法的行覆盖率和分支覆盖率都达到 100%，说明该方法的测试质量是合格的；用变异测试（Mutation Testing，如 PIT）跑一遍也会全部通过。", "code": "// 被测代码\nint discount(int amount) {\n    if (amount > 100) {\n        return 10;\n    }\n    return 0;\n}\n\n// 现有用例\n@Test void t1() { discount(200); }   // 无断言\n@Test void t2() { discount(50);  }   // 无断言", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "两条用例确实把 if 的真假两条分支都走了一遍，JaCoCo 报告会显示 100% 行覆盖 + 100% 分支覆盖——但它们<b>没有任何断言</b>，属于典型的「<b>假覆盖</b>」：把方法体重写成 <code>return 42;</code> 用例照样绿灯。覆盖率只回答「代码有没有被执行到」，回答不了「结果对不对」。<br><b>变异测试</b>正是为解决这个盲区而生：工具（Java 生态常用 PIT/pitest）会自动对字节码做<b>变异</b>——把 <code>&gt;</code> 改成 <code>&gt;=</code> 或 <code>&lt;</code>、把 return 10 改成 return 0、把条件取反、删掉方法调用等，每制造一个变异体（mutant）就跑一遍测试集：<br>• 测试<b>失败</b> → 变异体被「杀死」（killed），说明用例有效<br>• 测试<b>仍然通过</b> → 变异体「存活」（survived），说明这处逻辑没有被真正校验<br><b>变异得分 = 被杀死数 / 变异体总数</b>。本题因为完全没有断言，所有变异体都会存活，得分接近 0，恰好把「高覆盖率、低有效性」的问题暴露出来。<br>工程实践：变异测试计算量大（每个变异体都要跑一次测试），通常只对核心域模型/计价/风控这类关键模块开启，并在 CI 中设置变异得分门槛（如 &gt;= 60%）；日常仍以覆盖率作为廉价的第一道门禁，配合代码评审确认断言质量。", "android": "类比 Android 单测里只写 <code>presenter.load()</code> 却不 verify(view).showData(...)：覆盖率报告很好看，但 Presenter 逻辑改错了测试照样过。变异测试就是自动帮你「故意改错代码」，看测试能不能抓住——本质上是在测试你的测试。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 变异测试与覆盖率有效性"}]}]}</script>
+<script>
+window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
+      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div>'
+            + '<div class="android"><span class="label">Android 类比：</span>'+q.android+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q.no==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
+  ans.classList.add('show');
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
