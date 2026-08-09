@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .kaodian { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #f0f2f5; color: #646a73; max-width: 64%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .answer .android { margin-top: 10px; padding: 10px 12px; background: #eef4ff; border-radius: 6px; color: #2a3a55; font-size: 13px; }
+  .answer .android .label { color: #1664ff; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+    .answer .android { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script type="application/json" id="quizData">{"id": "vol14", "title": "全栈转型模拟自测卷", "sub": "可答题 · 交卷判分 · 自动记录错题", "meta": "对齐公司真实考法：<b>单选 / 多选 / 判断</b>，每题包含完整代码场景，问执行结果、补全代码、判断框架用法正误。<br>本卷共 <b>33 题</b>：单选 20（60 分）+ 多选 7（28 分）+ 判断 6（12 分）= 100 分。<br>难度：<b>实战细节型</b>，考点标签采用公司标准层级命名。", "sections": [{"name": "一、单选题（20 题 · 60 分）", "cat": "single", "questions": [{"no": 1, "type": "single", "body": "以下代码的输出是？", "code": "String a = null;\nString b = \"ziroom\";\nSystem.out.println(Objects.equals(a, b));\nSystem.out.println(a.equals(b));   // 注意：a 为 null", "options": [{"k": "A", "t": "false / 抛 NullPointerException"}, {"k": "B", "t": "true / 抛 NullPointerException"}, {"k": "C", "t": "false / false"}, {"k": "D", "t": "true / true"}], "answer": ["A"], "explain": "Objects.equals 是 null 安全的：任一参数为 null 时返回 false，不会产生 NPE；而 a.equals(b) 在 a 为 null 时直接抛 NullPointerException。因此第一行输出 false，第二行抛 NPE。日常比较可空对象一律优先用 Objects.equals。", "android": "类似 Kotlin 的 a == b（可空比较安全）或 Android 的 TextUtils.equals，都做了 null 保护；手写 a.equals(b) 是经典 NPE 来源。", "kaodian": "AI 后端能力 - 语言基础层 - Objects 工具类"}, {"no": 2, "type": "single", "body": "对含有 null 的 List 排序，以下代码的结果是？", "code": "List<Integer> list = Arrays.asList(3, null, 1, 2);\nlist.sort(Comparator.nullsFirst(Integer::compareTo));\nSystem.out.println(list);", "options": [{"k": "A", "t": "[1, 2, 3, null]"}, {"k": "B", "t": "[null, 1, 2, 3]"}, {"k": "C", "t": "抛 NullPointerException"}, {"k": "D", "t": "[3, 2, 1, null]"}], "answer": ["B"], "explain": "Comparator.nullsFirst 把 null 视为最小，排在所有非 null 元素之前（nullsLast 则排最后）。若直接 list.sort(Integer::compareTo) 会因遇到 null 抛 NPE。这是处理「可空字段排序」的标准写法。", "android": "类似 Kotlin 的 sortedWith(nullsFirst())；Room/MySQL 查询 ORDER BY 含 NULL 列时数据库默认把 NULL 排最小，前后端排序规则要一致。", "kaodian": "AI 后端能力 - 语言基础层 - 比较器与排序"}, {"no": 3, "type": "single", "body": "要把 1234567.891 格式化为「1,234,567.89」并四舍五入，以下写法输出的是？", "code": "DecimalFormat df = new DecimalFormat(\"#,##0.00\");\nSystem.out.println(df.format(1234567.891));", "options": [{"k": "A", "t": "1,234,567.89"}, {"k": "B", "t": "1,234,567.891"}, {"k": "C", "t": "1234567.89"}, {"k": "D", "t": "抛 IllegalArgumentException"}], "answer": ["A"], "explain": "DecimalFormat(\"#,##0.00\") 中 #,## 表示每三位加千分位逗号，0.00 表示保留两位小数并补零，且会对第三位四舍五入（1234567.891 → .89）。金额展示务必用 DecimalFormat 或 BigDecimal，别用裸 double 拼接。", "android": "与 Android 的 DecimalFormat / String.format(\"%,.2f\") 完全一致，是支付/账单页展示金额的标准做法。", "kaodian": "AI 后端能力 - 语言基础层 - 数字格式化"}, {"no": 4, "type": "single", "body": "以下代码能否编译通过？", "code": "int total = 0;\nList<Integer> list = Arrays.asList(1, 2, 3);\nlist.forEach(n -> total += n);   // 在 lambda 中修改 total\nSystem.out.println(total);", "options": [{"k": "A", "t": "编译通过，输出 6"}, {"k": "B", "t": "编译错误：lambda 中访问的局部变量必须是 final 或 effectively final（total 被重新赋值）"}, {"k": "C", "t": "编译通过，输出 0"}, {"k": "D", "t": "运行时抛 ConcurrentModificationException"}], "answer": ["B"], "explain": "lambda / 匿名类只能捕获 effectively final 的局部变量（即初始化后不再被赋值）。total += n 修改了它，失去 effectively final 资格，编译错误。Java 闭包捕获的是变量引用的副本、无法回写，故禁止修改。要累加应使用外部原子类或改成 stream 的 reduce/sum。", "android": "Kotlin 的 lambda 捕获 var 同样受限；要用可变状态需显式 AtomicInteger 或 array[0] 技巧，思路一致。", "kaodian": "AI 后端能力 - 语言基础层 - Lambda 与闭包"}, {"no": 5, "type": "single", "body": "以下代码的输出是？", "code": "BigDecimal a = new BigDecimal(\"10\");\nBigDecimal b = new BigDecimal(\"3\");\nSystem.out.println(a.divide(b));", "options": [{"k": "A", "t": "3.33...（无限循环，按需显示）"}, {"k": "B", "t": "抛 ArithmeticException: Non-terminating decimal expansion"}, {"k": "C", "t": "3"}, {"k": "D", "t": "3.3333333333"}], "answer": ["B"], "explain": "BigDecimal 的 divide 在不指定舍入模式、且除法结果是无限小数时会直接抛 ArithmeticException（不会像 double 那样默默截断）。必须显式 a.divide(b, 2, RoundingMode.HALF_UP)。这正是金融计算里 BigDecimal 比 double 安全但更啰嗦的地方。", "android": "与 Android 金额计算同坑：除法必须指定标度和舍入模式，否则生产环境偶发 ArithmeticException。", "kaodian": "AI 后端能力 - 语言基础层 - BigDecimal 精度"}, {"no": 6, "type": "single", "body": "关于 Java 10 引入的局部变量类型推断 var，以下说法正确的是？", "code": "var list = new ArrayList<String>();   // ①\nvar x;                                // ② 未初始化\nvar s = \"hello\";\nlist.add(123);                        // ③ 能否加入 Integer？", "options": [{"k": "A", "t": "① list 实际类型为 ArrayList<String>，编译期确定；② 编译错误（var 必须初始化）；③ 编译错误（类型已固定为 String）"}, {"k": "B", "t": "① list 类型为 Object；② 合法；③ 合法"}, {"k": "C", "t": "var 可用于方法参数和返回值类型"}, {"k": "D", "t": "② 合法，因为 var 会推断为 null 类型"}], "answer": ["A"], "explain": "var 是局部变量的类型推断，类型在编译期由初始化表达式确定（仍是静态类型，不是动态类型）：① 推断为 ArrayList<String>；② 没有初始化表达式则无法推断，编译错误；③ 类型已锁定为 String，add(123) 类型不符编译错误。var 不能用于字段、方法参数、返回值、catch 参数。", "android": "类似 Kotlin 的 val/var 类型推断、TypeScript 的 let/const 推断；但 Java 的 var 限制更多（必须初始化、不能用于方法签名）。", "kaodian": "AI 后端能力 - 语言基础层 - 局部变量类型推断"}, {"no": 7, "type": "single", "body": "以下代码的输出是？", "code": "String s = String.join(\"-\", \"2026\", \"08\", \"09\");\nString t = \"*\".repeat(3);\nSystem.out.println(s);\nSystem.out.println(t);", "options": [{"k": "A", "t": "2026-08-09 / ***"}, {"k": "B", "t": "20260809 / ***"}, {"k": "C", "t": "2026-08-09 / *"}, {"k": "D", "t": "[\"2026\",\"08\",\"09\"] / ***"}], "answer": ["A"], "explain": "String.join(delimiter, 可变参/Iterable) 用分隔符拼接元素 → \"2026-08-09\"；String.repeat(n) 把字符串重复 n 次 → \"***\"。二者都是 Java 8/11 新增的便捷 API，替代手写循环或 StringUtils，拼接路径、生成占位符很常用。", "android": "类似 Kotlin 的 joinToString(\"-\") 与 repeat(3)，语义几乎一致；Android 老代码常用 TextUtils.join，新代码可直接用 Java 标准 API。", "kaodian": "AI 后端能力 - 语言基础层 - String 拼接与重复"}, {"no": 8, "type": "single", "body": "以下代码的输出是？", "code": "System.out.println(\"abc123\".matches(\"[a-z]+\\\\d+\"));   // ①\nSystem.out.println(\"abc\".matches(\"[a-z]+\\\\d+\"));      // ②\nPattern p = Pattern.compile(\"[a-z]+\");\nSystem.out.println(p.matcher(\"ABC\").matches());       // ③", "options": [{"k": "A", "t": "true / false / false"}, {"k": "B", "t": "true / true / false"}, {"k": "C", "t": "false / false / true"}, {"k": "D", "t": "true / false / true"}], "answer": ["A"], "explain": "String.matches 隐含「全字符串匹配」（等价于用 ^...$ 包一层）：① \"abc123\" 全匹配 [a-z]+\\d+ → true；② \"abc\" 没有数字 → false；③ Pattern 默认区分大小写，\"ABC\" 不匹配 [a-z]+ → false（忽略大小写需加 Pattern.CASE_INSENSITIVE）。注意 matches 是「全匹配」不是「包含」，要查包含用 find()；高频正则应 Pattern.compile 预编译复用，别在循环里每次 new。", "android": "类似 Android 的 Pattern.compile 预编译（避免每次匹配 new Pattern 的性能损耗）；Kotlin 的 Regex 默认也是全匹配语义。", "kaodian": "AI 后端能力 - 语言基础层 - 正则表达式"}, {"no": 9, "type": "single", "body": "以下代码的输出可能是？（假设第二行用并行流）", "code": "List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);\nSystem.out.println(list.stream().findFirst().get());\nSystem.out.println(list.parallelStream().findAny().get());", "options": [{"k": "A", "t": "一定都输出 1"}, {"k": "B", "t": "串行流一定输出 1；并行流可能返回任意一个元素（1~5 之一）"}, {"k": "C", "t": "都抛出 NoSuchElementException"}, {"k": "D", "t": "并行流一定输出 5"}], "answer": ["B"], "explain": "findFirst 返回相遇顺序的第一个（串行固定为 1，并行也尽量保序返回第一个）；findAny 返回任意一个（并行下为性能允许返回任意，可能是 1~5 任一）。两者都返回 Optional，空流调用 get() 抛 NoSuchElementException（应先 isPresent 或用 orElse）。需要「取任意一个即可」的场景用 findAny 并行更快。", "android": "类似 Kotlin 的 first()/firstOrNull() 与随机取一个；并行流里 findAny 与 findFirst 的差异是面试常考点。", "kaodian": "AI 后端能力 - 语言基础层 - Stream 终止操作"}, {"no": 10, "type": "single", "body": "按城市统计订单平均金额，以下写法正确的是？", "code": "Map<String, Double> avg = orders.stream()\n    .collect(Collectors.groupingBy(\n        Order::getCity,\n        Collectors.averagingInt(Order::getAmount)));", "options": [{"k": "A", "t": "编译通过，avg 的 value 为各城市订单金额的平均值（double）"}, {"k": "B", "t": "编译错误，groupingBy 第二个参数只能是 toList()"}, {"k": "C", "t": "编译通过，但 avg 的 value 为各城市的订单数量"}, {"k": "D", "t": "运行时抛 NullPointerException"}], "answer": ["A"], "explain": "Collectors.groupingBy(分类函数, 下游收集器) 支持把分组后的元素再聚合：averagingInt 求平均（返回 Double），counting 计数，summingInt 求和，maxBy/minBy 取极值。这是 Stream 做「分组统计」的标准写法，等价于 SQL 的 GROUP BY + 聚合函数。", "android": "类似 Kotlin 的 groupBy + mapValues { it.average() }；Room/SQL 的 GROUP BY city, AVG(amount) 一一对应。", "kaodian": "AI 后端能力 - 语言基础层 - Stream 分组聚合"}, {"no": 11, "type": "single", "body": "提交多个任务，关于 ExecutorService 的 invokeAll 与 invokeAny，正确的是？", "code": "List<Future<String>> all = exec.invokeAll(tasks);     // ①\nString one = exec.invokeAny(tasks);                  // ②", "options": [{"k": "A", "t": "① 返回所有任务的 Future 列表（全部完成后才返回）；② 返回任意一个率先成功完成的任务结果（其余取消）"}, {"k": "B", "t": "① 返回任意一个完成的 Future；② 返回所有任务的结果列表"}, {"k": "C", "t": "两者都返回所有任务的字符串结果列表"}, {"k": "D", "t": "② 会等所有任务都完成才返回第一个"}], "answer": ["A"], "explain": "invokeAll 阻塞直到全部任务完成，返回与任务等长的 Future 列表（可逐个 get 取结果或异常）；invokeAny 阻塞直到「至少一个」任务成功完成，返回那个最快成功的结果，并取消其余未完成的任务。两者都带超时重载（invokeAll(tasks, timeout, unit)）。适合「多数据源竞速取最快」或「批量并行汇总」。", "android": "类似 Android 用 CountDownLatch 等所有任务完成、或「哪个接口先返回有效数据用哪个」的竞速逻辑，ExecutorService 已内置这两套语义。", "kaodian": "AI 后端能力 - 高并发与中间件层 - 线程池任务编排"}, {"no": 12, "type": "single", "body": "Web 过滤器把当前用户存入 ThreadLocal，请求结束时未调用 remove()。在 Tomcat 线程池复用下，最可能出现的问题是？", "code": "threadLocalUser.set(user);\ntry { chain.doFilter(req, resp); }\nfinally { /* 忘记 threadLocalUser.remove() */ }", "options": [{"k": "A", "t": "内存立即溢出（OOM）"}, {"k": "B", "t": "后续复用该线程的请求可能读到上一个用户的数据（串号/越权），且 ThreadLocalMap 的 entry 不被回收导致内存泄漏"}, {"k": "C", "t": "没有任何影响，因为每次 set 都会覆盖"}, {"k": "D", "t": "只有单线程环境下才会出问题"}], "answer": ["B"], "explain": "应用服务器用线程池复用线程；若不清 ThreadLocal，下一个请求复用同一线程时会读到上一次的残留值 → 串号甚至越权。同时 ThreadLocalMap 的 key 是弱引用、value 是强引用，线程不销毁且未 remove 时 value 无法回收 → 内存泄漏。规范做法：在 finally 中 remove()。Spring 的 RequestContextHolder 也在请求结束时清理。", "android": "与 Android 主线程/Looper 复用下「静态变量残留」同理；后端 Web 层更要警惕线程池复用导致的 ThreadLocal 串号。", "kaodian": "AI 后端能力 - 高并发与中间件层 - ThreadLocal 串号与泄漏"}, {"no": 13, "type": "single", "body": "关于 Spring 的 @Controller 与 @RestController，以下说法正确的是？", "code": "@Controller\npublic class PageCtrl {\n    @GetMapping(\"/hello\")\n    public String hello() { return \"hello\"; }   // ①\n}\n@RestController\npublic class ApiCtrl {\n    @GetMapping(\"/api/user\")\n    public User user() { return new User(1); }    // ②\n}", "options": [{"k": "A", "t": "① 把 \"hello\" 当作视图名交给视图解析器渲染；② 把 User 序列化为 JSON 写入响应体"}, {"k": "B", "t": "① 和 ② 都返回 JSON"}, {"k": "C", "t": "① 返回 JSON；② 渲染名为 user 的页面"}, {"k": "D", "t": "@RestController 等价于 @Controller，没有区别"}], "answer": ["A"], "explain": "@Controller 的方法返回值默认被当作「逻辑视图名」交给 ViewResolver；要返回数据需额外加 @ResponseBody。@RestController = @Controller + @ResponseBody，方法返回值直接写入响应体（默认 JSON 序列化），专用于写 API。简单记：写页面用 @Controller，写接口用 @RestController。", "android": "类比 Android 里「返回 View（页面）」与「返回数据（JSON 给前端）」的分工；后端接口层统一用 @RestController 是约定。", "kaodian": "AI 后端能力 - 框架与容器层 - Spring MVC 注解"}, {"no": 14, "type": "single", "body": "以下代码的输出是？", "code": "console.log(Number.isNaN(\"abc\"));\nconsole.log(isNaN(\"abc\"));\nconsole.log(Number.isNaN(NaN));", "options": [{"k": "A", "t": "false / true / true"}, {"k": "B", "t": "true / true / true"}, {"k": "C", "t": "false / false / true"}, {"k": "D", "t": "true / false / true"}], "answer": ["A"], "explain": "Number.isNaN 只对「值为数字类型的 NaN」返回 true，且不会做类型转换 → Number.isNaN(\"abc\") 为 false（\"abc\" 本身不是 NaN）。而全局 isNaN 会先尝试把参数转成数字，\"abc\" 转数字得 NaN，于是 isNaN(\"abc\") 为 true——这是经典的隐式转换陷阱。判断 NaN 一律用 Number.isNaN。", "android": "类似 Kotlin 没有隐式转换、isNaN 语义清晰；JS 这个全局函数陷阱正是 Android 转前端容易踩的坑。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - JS 类型判断"}, {"no": 15, "type": "single", "body": "以下代码的输出是？", "code": "const arr = [1, 2, 3, 4];\nconst a = arr.slice(1, 3);\nconst b = arr.splice(1, 2);\nconsole.log(arr);\nconsole.log(a);\nconsole.log(b);", "options": [{"k": "A", "t": "[1, 4] / [2, 3] / [2, 3]"}, {"k": "B", "t": "[1, 2, 3, 4] / [2, 3] / [2, 3]"}, {"k": "C", "t": "[1, 4] / [1, 4] / [2, 3]"}, {"k": "D", "t": "[2, 3] / [2, 3] / [1, 4]"}], "answer": ["A"], "explain": "slice(start,end) 返回 [start,end) 的浅拷贝副本，不修改原数组 → a=[2,3]、arr 不变仍为 [1,2,3,4]。splice(start,deleteCount) 原地删除并返回被删元素，会修改原数组 → b=[2,3]、arr 变成 [1,4]。splice 还可插入（第三个起参数）。二者极易混淆：slice 是「切出副本」，splice 是「剪掉并改原数组」。", "android": "类比 Kotlin 的 subList（视图，改子列表影响原列表）与 List.take/slice（副本）；JS 的 slice 是副本、splice 是原地改，和 Kotlin 区分视图与副本一样要注意。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - JS 数组方法"}, {"no": 16, "type": "single", "body": "以下代码的输出是？", "code": "const a = { user: { name: \"tom\" } };\nconst b = Object.assign({}, a);\nb.user.name = \"jerry\";\nconsole.log(a.user.name);", "options": [{"k": "A", "t": "tom"}, {"k": "B", "t": "jerry"}, {"k": "C", "t": "undefined"}, {"k": "D", "t": "抛 TypeError"}], "answer": ["B"], "explain": "Object.assign 是浅拷贝：只复制第一层属性，嵌套对象（user）仍是同一个引用。改 b.user.name 实际改的是共享的嵌套对象，a.user.name 也变成 jerry。要深拷贝需用 structuredClone / JSON 往返 / 手写递归。这也是「为什么改了副本源对象也变」的常见 bug 来源。", "android": "类比 Android 的浅拷贝（实现 Cloneable 只拷贝引用）；Kotlin 的 copy() 对 data class 也是浅拷贝，嵌套对象同样共享——前后端都要注意。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - JS 对象拷贝"}, {"no": 17, "type": "single", "body": "以下代码的输出是？", "code": "console.log(\"7\".padStart(3, \"0\"));\nconsole.log(\"abc\".padEnd(6, \"*\"));\nconsole.log(\"12345\".padStart(3, \"0\"));", "options": [{"k": "A", "t": "007 / abc*** / 12345"}, {"k": "B", "t": "007 / abc*** / 123"}, {"k": "C", "t": "700 / abc*** / 12345"}, {"k": "D", "t": "007 / abc / 12345"}], "answer": ["A"], "explain": "padStart(len, pad) 在字符串前补字符到指定长度；padEnd 在尾部补。\"7\".padStart(3,\"0\") → \"007\"；\"abc\".padEnd(6,\"*\") → \"abc***\"；若原串已≥目标长度则原样返回（\"12345\".padStart(3) → \"12345\"）。常用于补零编号、对齐日志。", "android": "类似 Android 的 String.format(\"%03d\", 7) → \"007\"；两者都是定宽补零，金额/编号展示常用。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - JS 字符串格式化"}, {"no": 18, "type": "single", "body": "关于 CSS 函数 clamp()，以下说法正确的是？", "code": ".title { font-size: clamp(16px, 4vw, 32px); }", "options": [{"k": "A", "t": "字号在 16px ~ 32px 之间随视口宽度（4vw）平滑变化，小于 16px 取 16px，大于 32px 取 32px"}, {"k": "B", "t": "固定为 4vw，与 16px/32px 无关"}, {"k": "C", "t": "只在移动端生效，桌面端忽略"}, {"k": "D", "t": "等价于 calc(16px + 4vw + 32px)"}], "answer": ["A"], "explain": "clamp(min, preferred, max) 返回「介于 min 与 max 之间的 preferred 值」，即 max(min, min(preferred, max))。本例视口很窄时取 16px 下限、很宽时取 32px 上限、中间随 4vw 缩放——一个声明实现流式响应式排版，替代大量媒体查询。clamp 现代浏览器均支持。", "android": "类似 Android 用 dp + 最小/最大约束做响应式尺寸；clamp 是 CSS 的「取值范围」表达，思路一致。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - CSS 响应式函数"}, {"no": 19, "type": "single", "body": "以下 Axios 拦截器的执行顺序是？（请求拦截器先注册 A 后注册 B；响应拦截器先注册 A 后注册 B）", "code": "axios.interceptors.request.use(cfg => { console.log(\"req-A\"); return cfg; });\naxios.interceptors.request.use(cfg => { console.log(\"req-B\"); return cfg; });\naxios.interceptors.response.use(r => { console.log(\"res-A\"); return r; });\naxios.interceptors.response.use(r => { console.log(\"res-B\"); return r; });\naxios.get(\"/api\");", "options": [{"k": "A", "t": "req-A → req-B → 请求发出 → res-A → res-B"}, {"k": "B", "t": "req-B → req-A → 请求发出 → res-A → res-B"}, {"k": "C", "t": "req-A → req-B → 请求发出 → res-B → res-A"}, {"k": "D", "t": "req-B → req-A → 请求发出 → res-B → res-A"}], "answer": ["C"], "explain": "请求拦截器（request）按「注册顺序」执行（先 A 后 B）；响应拦截器（response）按「后进先出」的逆序执行（先 B 后 A）——因为响应要从外到内层层剥离。所以顺序是 req-A→req-B→发请求→res-B→res-A。这个顺序差是 Axios 的常见踩坑点，全局加 token（请求拦截）和统一解包（响应拦截）时要注意。", "android": "类比 OkHttp 的 Interceptor（链式、按添加顺序）与 NetworkInterceptor；Axios 的响应逆序是它特有的，需要注意。", "kaodian": "AI 前端能力 - 工程化与网络 - Axios 拦截器"}, {"no": 20, "type": "single", "body": "关于「测试右移（Shift-Right）」与「测试左移（Shift-Left）」的关系，以下说法正确的是？", "code": null, "options": [{"k": "A", "t": "测试右移是把部分测试活动延伸到生产环境（金丝雀发布、影子流量、线上监控与混沌工程），与左移互补而非替代"}, {"k": "B", "t": "测试右移意味着可以不做任何上线前的测试，全靠生产环境发现问题"}, {"k": "C", "t": "测试左移与测试右移是矛盾的，只能选其一"}, {"k": "D", "t": "测试右移只适用于前端，后端不需要"}], "answer": ["A"], "explain": "测试左移是把测试提前到需求/设计/编码阶段；测试右移是把验证延伸到生产环境——金丝雀发布（小流量验证）、影子流量（复制真实流量压测）、APM 监控、混沌工程（主动注入故障）等。两者互补：左移降成本、右移兜终极风险。绝不是「上线后随便测」。", "android": "类比 Android 的发布流程：内部测试轨道/灰度（上线前充分验证）＋ 线上 Bugly/APM 监控与远端配置开关降级（右移兜底），两端结合。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 测试左移与右移"}]}, {"name": "二、多选题（7 题 · 28 分）", "cat": "multi", "questions": [{"no": 21, "type": "multi", "body": "要查出每个部门薪资排名前三的员工。关于 MySQL 8.0 窗口函数，说法正确的有？（多选、少选、错选均不得分）", "code": "SELECT dept, name, salary,\n       RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS rk\nFROM emp;", "options": [{"k": "A", "t": "ROW_NUMBER() 给每行一个唯一连续序号，即使有并列也递增加 1（不并列跳号）"}, {"k": "B", "t": "RANK() 遇并列同排名，下一个名次会「跳过」（如两个第1后下一个是第3）"}, {"k": "C", "t": "DENSE_RANK() 遇并列同排名，但下一个名次「不跳过」（两个第1后下一个是第2）"}, {"k": "D", "t": "PARTITION BY 等价于 GROUP BY，窗口函数会把多行聚成一行"}], "answer": ["A", "B", "C"], "explain": "三者区别：ROW_NUMBER 唯一连续号（并列也 1,2,3）；RANK 并列同号且跳号（1,1,3）；DENSE_RANK 并列同号不跳号（1,1,2）。它们都「保留原行」并在每行附加排名，不会像 GROUP BY 那样把多行聚成一行——这正是窗口函数（OVER 子句）与聚合函数的根本区别（PARTITION BY 只分组计算、不合并行）。取 Top-N 用 ROW_NUMBER/RANK + 子查询过滤 rk<=3。", "android": "类比 Android/Room 想在查询里给每条记录标排名，以往要自连接或大 SQL；MySQL 8 窗口函数与 Kotlin 的 sortedWith + 名次更直观对应。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 窗口函数与排名"}, {"no": 22, "type": "multi", "body": "关于 Spring 事务的 readOnly=true，说法正确的有？（多选、少选、错选均不得分）", "code": "@Transactional(readOnly = true)\npublic List<Order> listOrders(Long userId) { ... }", "options": [{"k": "A", "t": "readOnly 只是「提示」，InnoDB 仍走事务；它告诉优化器「本次只读」，可避免不必要的 undo/锁开销"}, {"k": "B", "t": "在配置了读写分离中间件（如 ShardingSphere）时，readOnly=true 常被用来把请求路由到从库"}, {"k": "C", "t": "在 readOnly 事务里执行 update/insert，多数 JPA/Hibernate 环境下会抛异常或被忽略，因此只读方法应标注它以防误写"}, {"k": "D", "t": "readOnly 能让 MySQL 真正把表锁变成读锁，从而彻底避免任何并发问题"}], "answer": ["A", "B", "C"], "explain": "readOnly=true 是给底层（JDBC/ORM/中间件）的优化提示：① 让 Hibernate 跳过脏检查、避免 flush；② 配合读写分离将流量导向从库；③ 防止在「只读」方法里误写（部分实现会抛异常）。但它不是物理锁，不会把表锁成读锁，也不保证隔离级别，D 夸大其词。注意：若事务里实际有写操作，readOnly 可能触发异常或产生非预期行为。", "android": "类比 Android 的 @WorkerThread/@UiThread 注解——也是一种「意图提示」，帮助框架/编译器做优化与校验，但不是运行时强制锁。", "kaodian": "AI 后端能力 - 框架与容器层 - 事务只读属性"}, {"no": 23, "type": "multi", "body": "关于 Redis 大 key（如一个含百万成员的 Set）与热 key（超高并发访问的单 key），说法正确的有？（多选、少选、错选均不得分）", "code": "HGETALL bigHash     // 大 key 读\nGET hotKey           // 热 key 高频访问", "options": [{"k": "A", "t": "大 key 用 DEL 删除会阻塞单线程、热 key 集中访问会打满单分片，二者都会引发性能抖动甚至雪崩"}, {"k": "B", "t": "大 key 治理：拆分为多个小 key（如 user:tags:{shard}）、用 SCAN/UNLINK 异步删除、集合改分片"}, {"k": "C", "t": "热 key 治理：本地缓存（如 Caffeine）前置、多副本分摊（key 加随机后缀打散到不同分片）、或限流"}, {"k": "D", "t": "大 key 无所谓，Redis 内存够大就不会有问题"}], "answer": ["A", "B", "C"], "explain": "大 key：读写/删除都是 O(N)，DEL 在单线程下阻塞其它请求（用 UNLINK 异步释放）；热 key：单分片 CPU 被打满，集群下无法靠扩容解决。治理：大 key 拆片 + 异步删除；热 key 本地缓存前置 + 打散（如 key 加 {0..9} 后缀分布到多个分片）+ 限流兜底。D 错：内存够不代表不阻塞，单线程模型下任何 O(N) 命令都会卡住整实例。", "android": "类比 Android 主线程大对象操作（如一次性解析超大 JSON）会 ANR；大 key/热 key 对 Redis 单线程正如主线程阻塞对 UI，都是「单线程瓶颈」问题。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Redis 大key与热key治理"}, {"no": 24, "type": "multi", "body": "关于微服务高可用的「熔断、降级、限流」三件套，说法正确的有？（多选、少选、错选均不得分）", "code": null, "options": [{"k": "A", "t": "限流（Rate Limiting）：控制单位时间请求量，保护自身不被压垮（如令牌桶/漏桶/Sentinel 流控规则）"}, {"k": "B", "t": "熔断（Circuit Breaker）：依赖方持续失败率超阈值时「跳闸」快速失败，避免雪崩，并周期性尝试恢复"}, {"k": "C", "t": "降级（Fallback）：非核心功能在异常/高负载时返回兜底数据或直接关闭，保住核心链路"}, {"k": "D", "t": "三者作用完全相同，只是名字不同"}], "answer": ["A", "B", "C"], "explain": "三者目标都是提升系统韧性但着力点不同：限流是「入口控量」防止被压垮；熔断是「依赖保护」——下游持续失败时快速失败（跳闸）+ 半开试探恢复，防止级联雪崩；降级是「舍车保帅」——非核心功能在异常/高负载时走兜底或关闭，保核心链路。Sentinel/Hystrix 把这三件套工程化。D 错：语义与粒度都不同。", "android": "类比 Android 的 App 健壮性：网络层超时/重试上限（限流/熔断思想）、非关键模块（如个性化推荐）失败走本地缓存兜底（降级），思路完全一致。", "kaodian": "AI 后端能力 - 高并发与中间件层 - 服务限流熔断降级"}, {"no": 25, "type": "multi", "body": "关于 MyBatis 动态 SQL 标签，说法正确的有？（多选、少选、错选均不得分）", "code": "<select id=\"list\">\n  SELECT * FROM t_user\n  <where>\n    <if test=\"name != null\">AND name = #{name}</if>\n    <if test=\"age != null\">AND age = #{age}</if>\n  </where>\n  <choose>\n    <when test=\"sort=='new'\">ORDER BY id DESC</when>\n    <otherwise>ORDER BY id ASC</otherwise>\n  </choose>\n</select>", "options": [{"k": "A", "t": "<where> 会自动剔除首条条件前多余的 AND/OR，避免「WHERE AND ...」语法错误"}, {"k": "B", "t": "<if test=\"...\"> 在条件为 false 时不拼接该片段，等价于 MyBatis-Plus 的 condition 参数"}, {"k": "C", "t": "<choose>/<when>/<otherwise> 类似 switch-case，只命中第一个满足条件的分支"}, {"k": "D", "t": "#{} 会被预编译成 ? 防 SQL 注入；${} 是字符串原样拼接，严禁拼用户输入"}], "answer": ["A", "B", "C", "D"], "explain": "四个都对：<where> 智能去掉首 AND/OR（否则手写 WHERE 1=1 兜底）；<if> 条件 false 不拼；<choose> 多路选一（类似 if-elseif-else）；#{} 用预编译占位符防注入，${} 直接拼接（只能用于排序字段名等可信输入，绝不能拼用户输入，否则 SQL 注入）。动态 SQL 是 MyBatis 的核心，与 MP 的 Wrapper 互补。", "android": "类比 Room 的 @Query 用 :param 与条件拼接（Room 也用 ? 占位防注入）；MyBatis 的 #{} 与 Room 的参数绑定同理。", "kaodian": "AI 后端能力 - 数据库与ORM层 - MyBatis 动态SQL"}, {"no": 26, "type": "multi", "body": "关于 Vue3 的响应式原理，说法正确的有？（多选、少选、错选均不得分）", "code": "const state = reactive({ count: 0, nested: { val: 1 } });\nconst n = ref(10);", "options": [{"k": "A", "t": "Vue3 用 Proxy 代理对象（reactive），能拦截属性的读取/设置/删除，比 Vue2 的 Object.defineProperty 可监听新增/删除属性与数组下标"}, {"k": "B", "t": "ref 用于基本类型，在模板中自动解包（不必 .value）；在 reactive 对象里的 ref 也会自动解包"}, {"k": "C", "t": "reactive 返回的是原对象的代理，直接替换整个 reactive 对象（state = {count:1}）会丢失响应性"}, {"k": "D", "t": "深层嵌套对象也是递归代理的，修改 state.nested.val 同样能触发更新"}], "answer": ["A", "B", "C", "D"], "explain": "Vue3 响应式基于 Proxy（告别 Vue2 的 Object.defineProperty 的缺陷：监听不到新增属性、数组索引/长度变化需用 hack）；ref 对基本类型包一层 {value}，模板与 reactive 内部自动解包；reactive 是深层递归代理，改嵌套属性也能触发；但「整体重新赋值 reactive 变量」会断开原代理引用、丢失响应——应改属性或用 ref 包对象。四个都对。", "android": "类比 Android 的 DataBinding/ObservableField 的字段级通知；Vue3 Proxy 是「对象整体可观察」，比字段级注解更通用。", "kaodian": "AI 前端能力 - 框架与组件 - Vue3 响应式原理"}, {"no": 27, "type": "multi", "body": "关于浏览器 HTTP 缓存，说法正确的有？（多选、少选、错选均不得分）", "code": "Cache-Control: max-age=3600, public\nETag: \"v1\"\nLast-Modified: Wed, 01 Jan 2026 00:00:00 GMT", "options": [{"k": "A", "t": "强缓存（Cache-Control / Expires）命中时浏览器不发起请求，直接用本地副本（200 from cache）"}, {"k": "B", "t": "协商缓存（ETag / Last-Modified）命中时浏览器发请求，服务端返回 304 Not Modified，浏览器用缓存"}, {"k": "C", "t": "ETag 是内容哈希，优先级高于 Last-Modified，能更精确识别内容是否变化"}, {"k": "D", "t": "加了 Cache-Control: no-cache 表示「不缓存」，与 no-store 效果完全相同"}], "answer": ["A", "B", "C"], "explain": "强缓存（max-age 等）未过期直接本地用、不发请求；过期后再走协商缓存：带 If-None-Match(ETag)/If-Modified-Since 问服务端，没变返回 304 用缓存。ETag（内容哈希）比 Last-Modified（秒级时间）更精确。D 错：no-cache 是「每次都校验（可走 304）」并非不缓存；no-store 才是彻底不存。两者语义不同。", "android": "类比 Android 的 HTTP 缓存（OkHttp 的 Cache + 响应头）/ 图片三级缓存的「内存命中不请求」与「磁盘校验 304」，机制完全对应。", "kaodian": "AI 前端能力 - 工程化与网络 - HTTP 缓存机制"}]}, {"name": "三、判断题（6 题 · 12 分）", "cat": "judge", "questions": [{"no": 28, "type": "judge", "body": "判断：从 JDK 7 开始，Java 的「字符串常量池（String Pool）」从永久代（PermGen）移到了堆（Heap）中，因此字符串对象也受 GC 管理，不再导致永久代的 OutOfMemoryError。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "JDK 6 及之前字符串常量池在永久代，容易因大量 intern 字符串导致 PermGen OOM；JDK 7 起移到堆中，字符串对象可被 GC 回收，降低了 OOM 风险（但滥用 intern 仍可能撑大堆）。这也解释了为什么 String 现在和普通对象一样受垃圾回收管理。", "android": "类比 Android（ART）的字符串驻留也在堆受 GC 管理；理解「字符串在哪」有助于排查内存问题。", "kaodian": "AI 后端能力 - 语言基础层 - 字符串常量池"}, {"no": 29, "type": "judge", "body": "判断：JDK 7 之后的 String.substring() 不再与原字符串共享底层 char 数组，而是拷贝出独立的字符序列，因此不会因为截取大字符串的子串而导致原大字符串无法被 GC 回收（内存泄漏）。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "JDK 6 及之前 substring 通过 offset/count 复用同一个 char[]，导致一个很小子串会「拽住」整个大字符串不被回收（内存泄漏隐患）；JDK 7 起 substring 会新建独立 char[]，子串与原串互不牵连，可用后即被回收。这也是为什么大文本解析后只保留小片段时，现代 JDK 不会再泄漏。", "android": "类比 Android 解析超大 JSON 后只保留少量字段——现代 JDK 的 substring 不再持有大数组引用，配合 Gson 流式解析更安全。", "kaodian": "AI 后端能力 - 语言基础层 - String substring 实现"}, {"no": 30, "type": "judge", "body": "判断：在移动端浏览器中，CSS 的 100vh 始终精确等于「当前可视区域高度」，用它做全屏容器布局在所有机型上都不会出现内容被地址栏遮挡或留白的问题。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "移动端浏览器（尤其 iOS Safari/Chrome）的地址栏会动态收缩/展开，100vh 取的是「最大视口高度（含地址栏）」，当地址栏收起时实际可视区变小，导致用 100vh 的全屏元素底部被地址栏遮挡或出现多余留白。现代解法：用 100dvh（dynamic viewport height）或 JS 动态设置 --vh 变量。所以「始终精确」是错的。", "android": "类比 Android 的 fitsSystemWindows / 刘海屏安全区（WindowInsets）——「固定 100% 高度」在带系统栏/动态栏的环境都会踩坑，要用动态视口单位或安全区适配。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 视口单位与移动端兼容"}, {"no": 31, "type": "judge", "body": "判断：给 <img> 加上 loading=\"lazy\" 后，浏览器会将该图片推迟到「接近进入视口」时才发起请求，从而显著减少首屏的请求数与带宽消耗。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "loading=\"lazy\" 是浏览器原生懒加载：图片进入「与视口距离阈值」内才下载，首屏外的大量图片不再阻塞首屏请求，提升 LCP/减少带宽。相比 JS 方案（IntersectionObserver）零成本、语义化。注意：首屏 Above-the-fold 图片不要用 lazy（反而延迟）；关键图建议用 fetchpriority=\"high\"。", "android": "类比 Android 的 RecyclerView 图片懒加载（Glide 只加载可见 item）/ 列表图片按需加载——「不进视口不加载」的思想前后端一致。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 图片原生懒加载"}, {"no": 32, "type": "judge", "body": "判断：性能测试中的「负载测试（Load）」「压力测试（Stress）」「容量测试（Capacity）」是同一种测试，区别只在于叫法不同。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "三者目标不同：负载测试在「预期负载」下验证系统是否达标（看稳态表现）；压力测试逐步加压到「超过极限」找出崩溃点与拐点（看天花板与恢复）；容量测试确定「最大支撑规模」（如最大并发用户数/数据量）以支持容量规划。混淆它们会导致测试设计缺项——只做压力不做负载可能漏掉稳态性能问题。", "android": "类比 Android 性能测试：常规场景帧率（负载）、极端操作连点/低内存压测（压力）、最大列表量级（容量），三者也是不同维度。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 性能测试分类"}, {"no": 33, "type": "judge", "body": "判断：「缺陷逃逸率（Escaped Defect Rate = 逃逸到生产的缺陷数 / 总缺陷数）」是衡量测试有效性的重要指标，逃逸率越低，说明测试越能在上线前拦截问题。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "缺陷逃逸率（也叫漏测率）反映「测试没拦住、流到线上」的缺陷占比，是质量门禁的核心度量之一：越低说明测试/CI/评审越有效。与之配合的还有缺陷密度、自动化覆盖率、平均修复时间等。它不是唯一指标，但能直观暴露「上线前测试不充分」的风险。", "android": "类比 Android 的线上崩溃率（Crash-Free Users）/ 灰度期间 Bug 数——都是「漏到用户侧的缺陷」度量，与缺陷逃逸率本质相同。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 缺陷度量"}]}]}</script>
+<script>
+window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
+      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div>'
+            + '<div class="android"><span class="label">Android 类比：</span>'+q.android+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q.no==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
+  ans.classList.add('show');
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
