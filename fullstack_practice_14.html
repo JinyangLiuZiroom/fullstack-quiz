@@ -232,13 +232,19 @@ function revealCard(card,q,ua,ok){
     });
   }
   const ans=card.querySelector('.answer');
-  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
-  ans.classList.add('show');
+  if(ans){
+    let ansText='';
+    if(q.type==='fill'){ ansText = (q.answerText!==undefined)? q.answerText : (Array.isArray(q.answer)? q.answer.join('、') : ''); }
+    else { const arr = Array.isArray(q.answer)? q.answer : (q.answer!=null? String(q.answer).split('') : []); ansText = arr.join('、'); }
+    const ansEl=ans.querySelector('.ans');
+    if(ansEl) ansEl.textContent='答案：'+ansText;
+    ans.classList.add('show');
+  }
 }
 function gradeCard(card){
   if(card.classList.contains('graded')) return;
   const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
-  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  // 未作答也直接展示答案（不再用 confirm 阻断：部分浏览器/WebView 会静默拒绝 confirm，导致答案永远不显示）
   const ok=judge(q,ua);
   revealCard(card,q,ua,ok);
   card.classList.add('graded');
