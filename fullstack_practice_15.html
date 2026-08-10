@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .kaodian { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #f0f2f5; color: #646a73; max-width: 64%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .answer .android { margin-top: 10px; padding: 10px 12px; background: #eef4ff; border-radius: 6px; color: #2a3a55; font-size: 13px; }
+  .answer .android .label { color: #1664ff; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+    .answer .android { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script type="application/json" id="quizData">{"id": "vol15", "title": "全栈转型模拟自测卷", "sub": "可答题 · 交卷判分 · 自动记录错题", "meta": "对齐公司真实考法：<b>单选 / 多选 / 判断</b>，每题包含完整代码场景，问执行结果、补全代码、判断框架用法正误。<br>本卷共 <b>33 题</b>：单选 20（60 分）+ 多选 7（28 分）+ 判断 6（12 分）= 100 分。<br>难度：<b>实战细节型</b>，考点标签采用公司标准层级命名。", "sections": [{"name": "一、单选题（20 题 · 60 分）", "cat": "single", "questions": [{"no": 1, "type": "single", "body": "判断一个 int 是否为 2 的幂，常用技巧 n>0 && (n & (n-1))==0。对于 n=16，表达式 16 & 15 的值是？", "code": "int n = 16;   // 二进制 10000\nint m = 15;   // 二进制 01111\nSystem.out.println(n & m);", "options": [{"k": "A", "t": "0"}, {"k": "B", "t": "1"}, {"k": "C", "t": "16"}, {"k": "D", "t": "15"}], "answer": ["A"], "explain": "2 的幂的二进制只有最高位一个 1，n-1 会把这一位及其以下全部取反（低位全 1）。两者按位与结果为 0，因此 (n & (n-1))==0 是判断 2 的幂的经典写法（需 n>0，因为 0 也会满足）。", "android": "和 Android 里权限/Flag 位运算（如 FLAG_ACTIVITY_NEW_TASK）同理：用 & 判断某一位是否置位、用 | 置位、用 & ~mask 清位。", "kaodian": "AI 后端能力 - 语言基础层 - 位运算"}, {"no": 2, "type": "single", "body": "以下代码输出是？", "code": "int max = Integer.MAX_VALUE;   // 2147483647\nSystem.out.println(max + 1);\nSystem.out.println(max + 1 > 0);", "options": [{"k": "A", "t": "-2147483648 / false"}, {"k": "B", "t": "2147483648 / true"}, {"k": "C", "t": "-2147483648 / true"}, {"k": "D", "t": "编译错误"}], "answer": ["A"], "explain": "有符号 int 溢出按二进制补码回绕：MAX_VALUE+1 直接变成 Integer.MIN_VALUE（-2147483648），这是确定性的溢出而非异常；-2147483648 > 0 显然为 false。与是否“看起来很大”无关，它已经是个负值。", "android": "和 Android 里别用 int 做时长累加（毫秒），很容易溢出变成负值；涉及累计时间/计数优先用 long。", "kaodian": "AI 后端能力 - 语言基础层 - 整数溢出与边界"}, {"no": 3, "type": "single", "body": "以下代码，两处赋值哪行会编译错误？", "code": "final int[] arr = {1, 2, 3};\narr[0] = 99;          // ①\narr = new int[]{4, 5};  // ②", "options": [{"k": "A", "t": "① 和 ② 都编译错误"}, {"k": "B", "t": "① 编译错误，② 正常"}, {"k": "C", "t": "① 正常，② 编译错误"}, {"k": "D", "t": "① 和 ② 都正常"}], "answer": ["C"], "explain": "final 修饰引用变量只保证“引用本身不能再指向别的对象”，不保证对象内容不可变。arr[0]=99 改的是数组内部元素（合法）；arr = new... 是重新给引用赋值（非法，编译错误）。想要内容也不可变得用不可变集合或 copyOf。", "android": "和 Android 里 final Activity a 在匿名内部类捕获时不能重新赋值，但可以照常调用它的方法；想让集合内容不可变要用 Collections.unmodifiableList 或 List.of。", "kaodian": "AI 后端能力 - 语言基础层 - final 关键字语义"}, {"no": 4, "type": "single", "body": "以下代码输出是？", "code": "int[] a = {1, 2, 3};\nint[] b = a.clone();\nb[0] = 99;\nSystem.out.println(a[0]);", "options": [{"k": "A", "t": "1"}, {"k": "B", "t": "99"}, {"k": "C", "t": "编译错误"}, {"k": "D", "t": "运行时抛异常"}], "answer": ["A"], "explain": "数组的 clone() 会创建新数组，元素是基本类型因此各自独立拷贝；修改 b[0] 不影响原数组 a。若换成对象数组，clone 拷贝的是引用（浅拷贝），改共享对象才会互相影响。", "android": "和 Android 里 Bitmap.copy() 与浅/深拷贝要分清；引用共享会导致“明明只改了副本，原图也被改”的诡异 bug。", "kaodian": "AI 后端能力 - 语言基础层 - Object.clone 与浅拷贝"}, {"no": 5, "type": "single", "body": "关于泛型通配符，下列说法正确的是？", "code": "List<Integer> ints = Arrays.asList(1, 2, 3);\n// 下面哪个声明能编译通过？\n// A: List<Number> t = ints;\n// B: List<? extends Number> t = ints;", "options": [{"k": "A", "t": "List<Number> 与 List<Integer> 是父子类型，可互相赋值"}, {"k": "B", "t": "List<? extends Number> 适合“生产者”（只读）场景，不能写入具体元素"}, {"k": "C", "t": "List<? extends Number> 可以添加 Integer 元素"}, {"k": "D", "t": "List<? super Integer> 读取出来一定是 Integer"}], "answer": ["B"], "explain": "泛型是不变的：List<Integer> 不是 List<Number> 的子类（A 错）。PECS 原则：Producer Extends、Consumer Super。? extends Number 是上界通配，只能读取为 Number、不能 add 具体类型（除 null），适合只读生产者（B 对 C 错）。? super Integer 是下界，可写入 Integer 及其子类，但读出来只能当 Object（D 错）。", "android": "和 Android 里 RecyclerView Adapter 泛型、Parcelable 列表的类型擦除，常遇到 List<? extends T> 作为只读数据源。", "kaodian": "AI 后端能力 - 语言基础层 - 泛型通配符 PECS"}, {"no": 6, "type": "single", "body": "以下代码输出是？", "code": "int[] a = {5, 2, 9, 1, 3};\nArrays.sort(a);\nSystem.out.println(Arrays.binarySearch(a, 9));\nSystem.out.println(Arrays.binarySearch(a, 4));", "options": [{"k": "A", "t": "4 / -4"}, {"k": "B", "t": "3 / -3"}, {"k": "C", "t": "4 / -3"}, {"k": "D", "t": "编译错误"}], "answer": ["A"], "explain": "排序后 a = [1,2,3,5,9]。binarySearch(9) 命中，返回下标 4。binarySearch(4) 未命中，返回 -(插入点)-1：4 应插在下标 3（3 与 5 之间），所以返回 -(3)-1 = -4。未命中时千万别把返回值当下标直接用。", "android": "和 Android 里二分查找工具（如 Collections.binarySearch）同样：未命中返回负数插入点，处理数据前要先判断 >=0。", "kaodian": "AI 后端能力 - 语言基础层 - Arrays 工具类"}, {"no": 7, "type": "single", "body": "多线程下频繁生成随机数，new Random().nextInt() 存在竞争，官方推荐用哪个？", "code": "// 高并发接口里生成随机序号\nRandom r = new Random();\nint x = r.nextInt(1000);  // 多线程共用", "options": [{"k": "A", "t": "Math.random()"}, {"k": "B", "t": "ThreadLocalRandom.current().nextInt()"}, {"k": "C", "t": "共享一个静态 Random 并加 synchronized"}, {"k": "D", "t": "SecureRandom.getInstanceStrong()"}], "answer": ["B"], "explain": "Random 内部用 AtomicLong 维护种子，高并发下大量线程争用同一原子变量，性能急剧下降。ThreadLocalRandom 为每个线程维护独立种子、无锁，是高并发首选。Math.random() 内部其实也共享一个 Random；SecureRandom 偏慢，适合安全/加密场景。", "android": "和 Android 里生成一次性 token/随机数，高并发接口用 ThreadLocalRandom 更稳，不要每个请求 new Random。", "kaodian": "AI 后端能力 - 语言基础层 - 随机数线程安全"}, {"no": 8, "type": "single", "body": "两个线程需要在某个汇合点交换数据，Exchanger<V> 的语义是？", "code": "Exchanger<String> ex = new Exchanger<>();\n// 线程A: String got = ex.exchange(\"A-data\");\n// 线程B: String got = ex.exchange(\"B-data\");", "options": [{"k": "A", "t": "一个线程 put 后立刻返回，另一个稍后 get"}, {"k": "B", "t": "两个线程都到达 exchange() 时才彼此交换对象并各自返回"}, {"k": "C", "t": "类似阻塞队列，可缓存多个对象"}, {"k": "D", "t": "只能交换基本类型"}], "answer": ["B"], "explain": "Exchanger 是成对线程的同步汇合点：两线程都调用 exchange() 时阻塞，直到对方也到达，然后互换对象并各自返回。常用于流水线两个阶段的缓冲区交换（如一个填充、一个消费）。", "android": "和 Android 里两个线程（如数据线程与渲染线程）在固定点交换 buffer 可用 Exchanger 思路，本质是一次性的双向同步交换。", "kaodian": "AI 后端能力 - 语言基础层 - 线程协作 Exchanger"}, {"no": 9, "type": "single", "body": "关于 ForkJoinPool，下列说法正确的是？", "code": "ForkJoinPool pool = new ForkJoinPool();\n// 提交 RecursiveTask / RecursiveAction", "options": [{"k": "A", "t": "适合处理大量细粒度、可递归拆分的 CPU 密集型任务"}, {"k": "B", "t": "采用单队列 + 全局锁"}, {"k": "C", "t": "工作窃取(work-stealing) 是从自己的队头取任务"}, {"k": "D", "t": "不能执行有返回值的任务"}], "answer": ["A"], "explain": "ForkJoinPool 每个 worker 线程持有双端队列，空闲线程去“偷”别人队列尾部的任务（work-stealing），大幅减少竞争（B、C 错：偷的是别人队尾，自己从队头取）。它适合可递归拆分的 CPU 任务；RecursiveTask<V> 有返回值、RecursiveAction 无返回值（D 错）。", "android": "和 Android 里大图分块处理可用分治思路，但务必丢到子线程/协程，别阻塞主线程导致 ANR。", "kaodian": "AI 后端能力 - 语言基础层 - ForkJoin 分治框架"}, {"no": 10, "type": "single", "body": "关于 Java 内存模型(JMM)的 happens-before，下列说法正确的是？", "code": "// 线程1\nx = 1;\nvolatileFlag = true;\n// 线程2\nif (volatileFlag) {\n  System.out.println(x);  // 能否看到 x=1 ?\n}", "options": [{"k": "A", "t": "happens-before 保证代码严格按书写顺序执行"}, {"k": "B", "t": "若 A happens-before B，则 A 的修改对 B 可见且 B 不会重排到 A 之前"}, {"k": "C", "t": "volatile 写与后续任意 volatile 读之间没有 happens-before 关系"}, {"k": "D", "t": "synchronized 解锁与后续加锁没有可见性保证"}], "answer": ["B"], "explain": "happens-before 是 JMM 的可见性与有序性偏序规则：若 A hb B，则 A 的结果对 B 可见，且 B 不会重排到 A 之前。volatile 写 hb 后续 volatile 读（C 错），解锁 hb 后续同一把锁的加锁（D 错）。程序次序规则只保证“单线程内 as-if-serial”，并不是“多核按源码顺序执行”（A 错）。", "android": "和 Android 里 Handler 跨线程靠队列顺序提供 happens-before，保证子线程写入、主线程可见；偶发数据不一致常是缺这层保证。", "kaodian": "AI 后端能力 - 语言基础层 - JMM happens-before"}, {"no": 11, "type": "single", "body": "HotSpot 中一个普通 Java 对象在堆里的内存布局依次是？", "code": "class Point { int x; int y; }   // new Point() 在堆中长什么样？", "options": [{"k": "A", "t": "对象头 → 实例数据 → 对齐填充"}, {"k": "B", "t": "实例数据 → 对象头 → 对齐填充"}, {"k": "C", "t": "对齐填充 → 对象头 → 实例数据"}, {"k": "D", "t": "类元数据 → 对象头 → 实例数据"}], "answer": ["A"], "explain": "普通对象 = 对象头（Mark Word 8 字节 + 类型指针 Klass 4 或 8 字节，压缩指针开启时 4 字节）+ 实例字段 + 对齐填充（补齐到 8 字节整数倍）。对象头里存哈希码、GC 分代年龄、锁状态等。", "android": "和 Android 里 ART 对象头同样含锁状态/类型指针，理解对象头有助于分析锁膨胀与对象内存占用。", "kaodian": "AI 后端能力 - 语言基础层 - 对象内存布局"}, {"no": 12, "type": "single", "body": "多线程共享同一个日期格式对象，下列哪个是线程安全的？", "code": "SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\");        // A\nDateTimeFormatter dtf = DateTimeFormatter.ofPattern(\"yyyy-MM-dd\");  // B", "options": [{"k": "A", "t": "SimpleDateFormat 与 DateTimeFormatter 都线程安全"}, {"k": "B", "t": "都不安全"}, {"k": "C", "t": "只有 SimpleDateFormat 安全"}, {"k": "D", "t": "只有 DateTimeFormatter 安全"}], "answer": ["D"], "explain": "SimpleDateFormat 内部持有可变的 Calendar，多线程共用会互相覆盖字段，导致格式错乱甚至 ArrayIndexOutOfBoundsException。DateTimeFormatter 是不可变对象，可安全共享；或者每次 new SimpleDateFormat、用 ThreadLocal 包裹它。", "android": "和 Android 里别把 SimpleDateFormat 声明成 static 共用，高并发会串数据；API 26+ 用 DateTimeFormatter，低版本用 ThreadLocal<SimpleDateFormat>。", "kaodian": "AI 后端能力 - 语言基础层 - DateTimeFormatter 线程安全"}, {"no": 13, "type": "single", "body": "User 实现 Comparable<User> 并重写 compareTo 按 age 升序，排序后首元素的 age 是？", "code": "class User implements Comparable<User> {\n  int age;\n  public int compareTo(User o){ return Integer.compare(this.age, o.age); }\n}\nList<User> list = Arrays.asList(new User(3), new User(1), new User(2));\nCollections.sort(list);\nSystem.out.println(list.get(0).age);", "options": [{"k": "A", "t": "1"}, {"k": "B", "t": "2"}, {"k": "C", "t": "3"}, {"k": "D", "t": "抛 ClassCastException"}], "answer": ["A"], "explain": "实现 Comparable 后 Collections.sort / List.sort 走“自然排序”，按 compareTo 升序排列；get(0) 取到最小 age=1。compareTo 返回负/0/正表示小于/等于/大于，应与 equals 保持一致。", "android": "和 Android 里 RecyclerView 列表稳定排序、Comparable 用于自然排序；注意 compareTo 与 equals 不一致会让排序与去重表现矛盾。", "kaodian": "AI 后端能力 - 语言基础层 - Comparable 接口"}, {"no": 14, "type": "single", "body": "关于 Web Worker，下列说法正确的是？", "code": "// 主线程\nconst w = new Worker('task.js');\nw.postMessage(data);\nw.onmessage = e => render(e.data);", "options": [{"k": "A", "t": "Worker 内可以直接操作 DOM"}, {"k": "B", "t": "Worker 与主页共享同一个 window 全局对象"}, {"k": "C", "t": "Worker 运行在独立线程，无法访问 window/document，通过消息与主线程通信"}, {"k": "D", "t": "Worker 必须与主线程写在同一个 JS 文件内"}], "answer": ["C"], "explain": "Worker 是浏览器提供的后台线程，没有 DOM、也没有 window/document，只能通过 postMessage / onmessage（结构化克隆）与主线程通信。适合把耗时计算、解析移出主线程，避免页面卡顿掉帧。", "android": "和 Android 里把重计算丢到子线程/协程，否则主线程阻塞会 ANR；Web Worker 就是前端的“子线程”。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - Web Workers"}, {"no": 15, "type": "single", "body": "要对“整条 URL”做编码，以及对“URL 中的某个参数值”做编码，应分别用？", "code": "const url = 'https://api.com/p?name=' + ???('a b&c');", "options": [{"k": "A", "t": "都用 encodeURI"}, {"k": "B", "t": "都用 encodeURIComponent"}, {"k": "C", "t": "整 URL 用 encodeURI，参数值用 encodeURIComponent"}, {"k": "D", "t": "整 URL 用 encodeURIComponent，参数值用 encodeURI"}], "answer": ["C"], "explain": "encodeURI 保留 URL 结构字符（: / ? # @ 等），用于编码整条 URL；encodeURIComponent 编码范围更广（含 & = ? /），用于编码参数值，防止值里的特殊字符破坏查询结构。若用 encodeURIComponent 编码整条 URL，会把 :// 也编掉。", "android": "和 Android 里 Uri.encode 与 Uri.encode(value, allow) 同理：拼参数时要分别处理整体与值。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - encodeURI 与 encodeURIComponent"}, {"no": 16, "type": "single", "body": "实现“元素进入视口才加载图片/触发动画”，比监听 scroll 反复测位置更优的方案是？", "code": "const io = new IntersectionObserver(entries => {\n  entries.forEach(e => { if (e.isIntersecting) load(e.target); });\n});\nio.observe(imgEl);", "options": [{"k": "A", "t": "用 setInterval 定时轮询元素位置"}, {"k": "B", "t": "用 IntersectionObserver 异步观察交叉状态"}, {"k": "C", "t": "用 getBoundingClientRect 在每帧 rAF 里检测"}, {"k": "D", "t": "用 MutationObserver 监听属性变化"}], "answer": ["B"], "explain": "IntersectionObserver 异步监听目标与视口（或指定祖先）的交叉比例，进入/离开时在回调里触发加载或动画，不阻塞主线程，比 scroll + rAF 频繁读布局更高效。图片懒加载也可用原生 loading=\"lazy\"。", "android": "和 Android 里 RecyclerView 的 onScroll 可见性检测做懒加载，IntersectionObserver 是前端的等效且更省电方案。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - IntersectionObserver"}, {"no": 17, "type": "single", "body": "关于浏览器 setTimeout 的延迟，下列说法正确的是？", "code": "setTimeout(() => console.log('hi'), 0);", "options": [{"k": "A", "t": "setTimeout(fn,0) 一定会立即执行"}, {"k": "B", "t": "嵌套超过 5 层的 setTimeout 最小延迟被钳制为 4ms"}, {"k": "C", "t": "后台标签页里定时器仍按原间隔运行"}, {"k": "D", "t": "定时器回调一定在主线程空闲时立刻执行"}], "answer": ["B"], "explain": "HTML 规范：setTimeout 有最小延迟（通常 4ms），0 也至少等 4ms；嵌套层级超过 5 的计时器同样被钳制到 4ms。后台标签页会被节流到约 1s 以省电。它只是把回调推入任务队列，执行时机取决于主线程空闲程度。", "android": "和 Android 里 Handler.postDelayed 也有系统最小精度（约几 ms 抖动），别用它做精确计时。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - 定时器最小延迟"}, {"no": 18, "type": "single", "body": "以下代码输出是？", "code": "const p = new URLSearchParams();\np.append('a', '1');\np.append('a', '2');\np.set('b', 'x');\nconsole.log(p.toString());", "options": [{"k": "A", "t": "a=1&a=2&b=x"}, {"k": "B", "t": "a=2&b=x"}, {"k": "C", "t": "a=1,2&b=x"}, {"k": "D", "t": "a=1&a=2"}], "answer": ["A"], "explain": "URLSearchParams.append 允许同一 key 出现多条；set 会先清空该 key 的旧值再设置（覆盖）；toString 生成标准查询串并对特殊字符自动编码。", "android": "和 Android 里拼 GET 参数用 Uri.Builder.appendQueryParameter（可重复）与 setQueryParameter（覆盖）的区别完全一致。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - URL 与 URLSearchParams"}, {"no": 19, "type": "single", "body": "关于测试“准出准则(Exit Criteria)”，下列说法正确的是？", "code": "// 一轮系统测试何时可以停止？", "options": [{"k": "A", "t": "只要所有用例都执行完就可以上线"}, {"k": "B", "t": "准出准则定义测试何时可以停止，如用例通过率、覆盖率、遗留缺陷等级达标"}, {"k": "C", "t": "准出准则由测试人员随意决定"}, {"k": "D", "t": "准出准则与准入准则是同一个概念"}], "answer": ["B"], "explain": "准入准则(Entry)是“开始测试”的门槛（版本稳定、冒烟通过）；准出准则(Exit)是“结束测试”的条件（用例通过率≥阈值、无遗留高严重缺陷、覆盖率达标等）。二者不同，准出是基于量化指标而非“跑完就行”。", "android": "和 Android 发版前的“提测标准/封版标准”就是准入与准出准则，确保质量门禁。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 测试准入与准出准则"}, {"no": 20, "type": "single", "body": "要对后端接口做分布式高并发压测，常用工具是？", "code": "// 模拟 1000 并发持续压测 /api/order", "options": [{"k": "A", "t": "JUnit"}, {"k": "B", "t": "Postman（单点手动调用）"}, {"k": "C", "t": "JMeter / Gatling"}, {"k": "D", "t": "Mockito"}], "answer": ["C"], "explain": "JUnit 是单元测试、Mockito 是 mock 框架、Postman 适合接口调试而非压测；JMeter、Gatling、Locust 才是压测工具，能分布式模拟高并发并出具 TPS/RT/错误率等指标。", "android": "和 Android 里用 Monkey / GT 做性能压测，后端对应物是 JMeter 这类压测平台。", "kaodian": "AI 质量保障 - 自动化测试与工具 - 性能压测工具"}]}, {"name": "二、多选题（7 题 · 28 分）", "cat": "multi", "questions": [{"no": 1, "type": "multi", "body": "Java 12+ 的 Collectors.teeing(...) 的作用是？（多选）", "code": "Map<String, Object> r = list.stream().collect(\n  teeing(\n    summingInt(User::getAge),     // 下游1\n    counting(),                    // 下游2\n    (sum, cnt) -> Map.of(\"sum\", sum, \"cnt\", cnt)  // 合并\n  )\n);", "options": [{"k": "A", "t": "把同一数据流同时交给两个收集器，再用合并函数汇总结果"}, {"k": "B", "t": "只能用于对数字求和"}, {"k": "C", "t": "典型场景：一趟遍历同时求 最大+最小 / 平均+计数"}, {"k": "D", "t": "会遍历流两遍，性能比两次.collect 还差"}], "answer": ["A", "C"], "explain": "teeing 是一个“分流合并”收集器：同一批元素并行喂给 downstream1 和 downstream2（如 summingInt + counting），再用 BiFunction 合并；底层只遍历一次（D 错）。它不限于求和（B 错），适合“一趟求多个聚合指标”的诉求。", "android": "和 Android 里一次遍历同时收集最大值与计数，避免写两遍循环。", "kaodian": "AI 后端能力 - 语言基础层 - Stream teeing 收集器"}, {"no": 2, "type": "multi", "body": "关于 java.util.Collections，下列说法正确的有？（多选）", "code": "List<String> base = new ArrayList<>(List.of(\"a\"));\nList<String> ro = Collections.unmodifiableList(base);\nbase.add(\"b\");          // ① 改原列表\nro.add(\"c\");            // ② 改只读视图", "options": [{"k": "A", "t": "unmodifiableList 返回的是只读“视图”，原列表仍可修改且会反映到视图"}, {"k": "B", "t": "synchronizedList 包装后，遍历仍需在外部手动同步"}, {"k": "C", "t": "Collections.emptyList() 返回的是可变空列表"}, {"k": "D", "t": "Collections.swap(list, i, j) 可交换列表中两个位置的元素"}], "answer": ["A", "B", "D"], "explain": "unmodifiable* 是只读视图：改原集合会反映出来，但调用视图的增删改会抛 UnsupportedOperationException（② 抛异常，① 正常）。synchronized* 只保证单个方法同步，迭代时仍需手动 synchronized 否则可能 ConcurrentModificationException。emptyList/singletonList 是不可变的（C 错）。swap(List, i, j) 用于交换元素。", "android": "和 Android 里返回不可变集合防外部修改，注意它只是视图不是深拷贝，原集合被改照样受影响。", "kaodian": "AI 后端能力 - 语言基础层 - Collections 工具类"}, {"no": 3, "type": "multi", "body": "关于 Java 模式匹配，下列说法正确的有？（多选）", "code": "if (obj instanceof String s) {\n  System.out.println(s.length());   // 绑定变量 s\n}", "options": [{"k": "A", "t": "instanceof 后可声明绑定变量，作用域限定在匹配成功的分支内"}, {"k": "B", "t": "无需再强制转换即可直接使用绑定变量"}, {"k": "C", "t": "switch 也支持按类型匹配并绑定变量（模式匹配）"}, {"k": "D", "t": "绑定变量在匹配失败的分支里也可以使用"}], "answer": ["A", "B", "C"], "explain": "Java 16+ 的 instanceof 模式匹配会直接声明绑定变量，省去显式强转，且变量作用域被限定在匹配为真的分支（D 错，false 分支不可见）。switch 模式匹配（JDK 21 正式）可按类型 case 并绑定，配合 sealed 还能做穷尽性检查。", "android": "和 Android 里高版本 Kotlin 的 when 智能转换 / 类型判断类似，能减少样板强转。", "kaodian": "AI 后端能力 - 语言基础层 - 模式匹配 instanceof"}, {"no": 4, "type": "multi", "body": "关于数据库连接池(HikariCP 等)，下列说法正确的有？（多选）", "code": "HikariConfig cfg = new HikariConfig();\ncfg.setMaximumPoolSize(200);\ncfg.setConnectionTimeout(3000);\ncfg.setMaxLifetime(1800000);", "options": [{"k": "A", "t": "maximumPoolSize 设得越大，系统并发吞吐一定越好"}, {"k": "B", "t": "连接泄漏（借出后未归还）会导致连接池耗尽、请求线程阻塞"}, {"k": "C", "t": "应设 maxLifetime 略小于数据库 wait_timeout，避免被 DB 单方面断开"}, {"k": "D", "t": "合理设置 connectionTimeout 可防止获取连接时线程无限等待"}], "answer": ["B", "C", "D"], "explain": "连接池并非越大越好：连接数受 DB 处理能力、上下文切换成本约束，通常 ≈ CPU*2 + 磁盘因子（A 错）。连接泄漏会耗尽池子进而阻塞业务线程（B 对）。MySQL 有 wait_timeout，池的 maxLifetime 要略小于它并配合空闲检测，否则拿到已被 DB 关闭的连接（C 对）。connectionTimeout 控制拿连接的最长等待，防线程卡死（D 对）。", "android": "和 Android 里 OkHttp 连接池/线程池上限同样“不是越大越好”，且要防连接泄漏。", "kaodian": "AI 后端能力 - 数据库与ORM层 - 连接池配置与调优"}, {"no": 5, "type": "multi", "body": "在 Spring Boot 中处理跨域(CORS)，下列说法正确的有？（多选）", "code": "@CrossOrigin(origins = \"https://a.com\")\n@RestController\npublic class UserController { ... }", "options": [{"k": "A", "t": "可用 @CrossOrigin 标注在 Controller 或具体方法上做局部配置"}, {"k": "B", "t": "可用 WebMvcConfigurer.addCorsMappings 做全局配置"}, {"k": "C", "t": "Access-Control-Allow-Origin 可设为 * 同时允许 credentials（带 cookie）"}, {"k": "D", "t": "带自定义头/非简单方法的复杂请求，浏览器会先发 OPTIONS 预检"}], "answer": ["A", "B", "D"], "explain": "@CrossOrigin 做局部跨域、WebMvcConfigurer 做全局跨域（A、B 对）。当允许凭证(credentials)时，Access-Control-Allow-Origin 不能是通配 *，必须是具体来源（C 错，否则浏览器拒绝）。非简单请求（如带自定义头、Content-Type 为 application/json、PUT/DELETE 等）会先发 OPTIONS 预检（D 对）。", "android": "和 Android 里原生网络请求不受浏览器同源策略限制；若是 WebView 内页面，跨域仍由服务端 CORS 控制。", "kaodian": "AI 后端能力 - 框架与容器层 - CORS 后端配置"}, {"no": 6, "type": "multi", "body": "关于虚拟 DOM 与 Diff 算法，下列说法正确的有？（多选）", "code": "<ul>\n  <li v-for=\"item in list\" :key=\"item.id\">{{ item.text }}</li>\n</ul>", "options": [{"k": "A", "t": "虚拟 DOM 用 JS 对象描述 UI 结构，减少直接操作真实 DOM 的次数"}, {"k": "B", "t": "Diff 同层比较，列表通过 key 识别复用，避免错位更新"}, {"k": "C", "t": "虚拟 DOM 一定比直接操作真实 DOM 更快"}, {"k": "D", "t": "没有 key 时框架会就地复用同位置节点，可能导致状态错位"}], "answer": ["A", "B", "D"], "explain": "虚拟 DOM 在内存中比对新旧树，算出最小变更再批量更新真实 DOM，减少重排（A 对）。Diff 采用同层比较 + key 复用（B 对）。但 vdom 不是“永远更快”：它有创建/比对开销，极端场景直接操作 DOM 反而更快（C 错）。无 key 时框架就地复用同位置节点，列表含输入框等会状态错乱（D 对）。", "android": "和 Android 里 RecyclerView 的 DiffUtil 同理——靠 key/position 比对，最小化刷新条目。", "kaodian": "AI 前端能力 - 框架与组件 - 虚拟 DOM 与 Diff"}, {"no": 7, "type": "multi", "body": "关于 WebSocket，下列说法正确的有？（多选）", "code": "const ws = new WebSocket('wss://api.com/ws');\nws.onopen = () => ws.send('hello');\nws.onmessage = e => console.log(e.data);", "options": [{"k": "A", "t": "基于 HTTP 握手后升级为全双工长连接"}, {"k": "B", "t": "服务端可主动向客户端推送，无需客户端轮询"}, {"k": "C", "t": "和 HTTP 一样只能请求-响应单向通信"}, {"k": "D", "t": "连接建立后协议切换为 ws / wss"}], "answer": ["A", "B", "D"], "explain": "WebSocket 通过 HTTP 101 Switching Protocols 完成协议升级，之后是独立的全双工 TCP 通道（A、D 对）；服务端能主动推送消息，适合聊天、实时行情、通知（B 对），彻底摆脱轮询。它不再是请求-响应模型（C 错）。", "android": "和 Android 里长连接（WebSocket / Netty）做服务端主动推送，比轮询更省流量、更实时。", "kaodian": "AI 前端能力 - 工程化与网络 - WebSocket 全双工"}]}, {"name": "三、判断题（6 题 · 12 分）", "cat": "judge", "questions": [{"no": 1, "type": "judge", "body": "Java 17 的 sealed class 可以限制“哪些类能继承它”，并通过 permits 显式声明允许的直接子类型。（判断）", "code": "public sealed class Shape permits Circle, Rect {}\nfinal class Circle extends Shape {}\n// 其他类无法再 extends Shape", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "sealed 类通过 permits 明确列出允许的直接子类，增强了类型层次的可控性与模式匹配的穷尽性检查；直接子类必须声明为 final、sealed 或 non-sealed 三者之一。", "android": "和 Android 里 Kotlin 的 sealed class 表达受限继承层次（如 UI 状态密封类），Java 17 的 sealed 是对等实现。", "kaodian": "AI 后端能力 - 语言基础层 - 密封类 sealed"}, {"no": 2, "type": "judge", "body": "Java 15+ 的文本块(\"\"\" ... \"\"\") 会自动去除所有缩进并忽略内部换行。（判断）", "code": "String sql = \"\"\"\n    SELECT id, name\n    FROM user\n    WHERE age > 18\n    \"\"\";", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "文本块只剥离所有行共同的最左空白（incidental indentation，由结束 \"\"\" 的位置决定基准），并保留内容相对的缩进与内部换行；不是“忽略所有缩进/换行”。需要额外压缩可用 .stripIndent() / .translateEscapes()。", "android": "和 Android 里 Kotlin 的 trimIndent / trimMargin 处理多行字符串，概念类似。", "kaodian": "AI 后端能力 - 语言基础层 - 文本块"}, {"no": 3, "type": "judge", "body": "设置 Content-Security-Policy(CSP) 响应头可以有效降低 XSS 风险，因为它能限制脚本与资源的加载来源。（判断）", "code": "Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-abc'", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "CSP 用白名单声明允许加载的脚本、样式、连接、图片等来源；配合 nonce/hash 还能限制内联脚本，是纵深防御 XSS 的重要手段。它不能替代输入转义，但能大幅收敛攻击面。", "android": "和 Android 里 WebView 设置白名单 / 禁用不必要的 JSInterface 来防注入，思路与 CSP 一致。", "kaodian": "AI 前端能力 - 工程化与网络 - CSP 安全策略"}, {"no": 4, "type": "judge", "body": "Service Worker 运行在主线程，可以直接操作页面 DOM 来实现离线缓存。（判断）", "code": "// sw.js（Service Worker 脚本）\nself.addEventListener('fetch', e => {\n  e.respondWith(caches.match(e.request));\n});", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "Service Worker 运行在独立于页面的 worker 上下文，没有 DOM 访问权限；它通过拦截 fetch 请求并用 Cache API 缓存资源来实现 PWA 离线，再通过 postMessage 与页面通信。直接操作 DOM 是不可能的。", "android": "和 Android 里拦截网络用 OkHttp Interceptor；Service Worker 是前端等效的“请求拦截代理”。", "kaodian": "AI 前端能力 - 工程化与网络 - Service Worker 与 PWA"}, {"no": 5, "type": "judge", "body": "npm 语义化版本 ^1.2.3 表示允许更新到 2.x.x 中最新版本（即主版本可跨大版本升级）。（判断）", "code": "\"deps\": { \"lodash\": \"^1.2.3\" }", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "^ 锁定最左非零版本：此处主版本 1，允许 1.2.3 ≤ v < 2.0.0（次/修订可升，主版本不变），不会升到 2.x。要允许跨主版本得用 >= 或不带上限的写法；~1.2.3 则只放补丁（1.2.x）。理解它才能避免“依赖偷偷升级带来 breaking change”。", "android": "和 Android 里 Gradle 依赖版本号（如 1.2.+）语义类似，需要留意 transitive 依赖的自动升级。", "kaodian": "AI 前端能力 - 工程化与网络 - 语义化版本与依赖"}, {"no": 6, "type": "judge", "body": "测试数据管理(TDM)的目标之一是保证测试用例数据的独立性、可重复与可重建，避免用例之间相互污染。（判断）", "code": "// 每个用例执行后清理自身数据\n@AfterEach void cleanup() { repo.deleteAll(); }", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "TDM 关注测试数据的准备、隔离与清理，使用例可重复执行、结果稳定且不互相依赖；常见手段包括事务回滚、容器化数据库、工厂方法造数、执行后清理。它与测试金字塔、数据驱动测试互补。", "android": "和 Android 里 Instrumented 测试用 @After 清库、用测试专用 DB，避免用例互相污染导致偶发失败。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 测试数据管理"}]}]}</script>
+<script>
+window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
+      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div>'
+            + '<div class="android"><span class="label">Android 类比：</span>'+q.android+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q.no==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  ans.querySelector('.ans').textContent='答案：'+(q.type==='fill'? q.answerText : q.answer.join('、'));
+  ans.classList.add('show');
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  if(!isAnswered(card)){ if(!confirm('本题还没作答，将按答错处理并展示答案。')) return; }
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
