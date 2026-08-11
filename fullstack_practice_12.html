@@ -132,14 +132,16 @@ function renderQuiz(){
   document.getElementById('quizSub').textContent = QUIZ.sub;
   document.getElementById('quizMeta').innerHTML = QUIZ.meta;
   let html='';
+  let gno=1; // 全局题号，保证 id/data-no/锚点唯一（JSON 内各 section 的 no 可能重复）
   QUIZ.sections.forEach(sec=>{
     html += '<div class="section"><h2>'+sec.name+'</h2>';
     sec.questions.forEach(q=>{
+      q._gno=gno; // 绑定全局题号，供 qByNo 等按编号查找
       const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
       const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
       const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
-      html += '<div class="card" id="card-'+q.no+'" data-no="'+q.no+'" data-type="'+q.type+'">';
-      html += '<div class="q-head"><span class="q-no">'+q.no+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="card" id="card-'+gno+'" data-no="'+gno+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+gno+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
       html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
       if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
       if(q.type==='single'||q.type==='multi'||q.type==='judge'){
@@ -151,6 +153,7 @@ function renderQuiz(){
         html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
       }
       html += '</div>';
+      gno++;
     });
     html += '</div>';
   });
@@ -163,7 +166,7 @@ function renderQuiz(){
 
 let submitted=false;
 function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
-function qByNo(no){ return allQ().find(q=>q.no==no); }
+function qByNo(no){ return allQ().find(q=>q._gno==no); }
 
 function bindOptions(){
   document.querySelectorAll('.opt').forEach(opt=>{
@@ -178,7 +181,7 @@ function bindOptions(){
   });
   document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
   document.querySelectorAll('.q-check').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ const card=document.querySelector('.card[data-no="'+btn.dataset.no+'"]'); gradeCard(card); });
+    btn.addEventListener('click', ()=>{ const card=btn.closest('.card'); if(card) gradeCard(card); });
   });
 }
 function getUserAnswer(card){
