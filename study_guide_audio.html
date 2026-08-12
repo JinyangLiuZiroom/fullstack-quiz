@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>全栈知识点 · 语音朗读版</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2329; --sub:#646a73; --line:#e6e8eb;
+    --brand:#2f6bff; --brand2:#1f4fd6; --ok:#07be6b; --warn:#ff7a45;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;font-size:16px;}
+  .wrap{max-width:760px;margin:0 auto;padding:14px 14px 130px;}
+  header.top{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#2f6bff,#5b8bff);
+    color:#fff;padding:16px 16px 14px;border-radius:0 0 18px 18px;box-shadow:0 6px 18px rgba(47,107,255,.25)}
+  header.top h1{margin:0;font-size:19px;font-weight:700}
+  header.top p{margin:4px 0 0;font-size:12.5px;opacity:.92}
+  .resume{display:none;margin:10px 0 0;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);
+    color:#fff;padding:9px 12px;border-radius:12px;font-size:13.5px;cursor:pointer;width:100%;text-align:left}
+  .resume b{color:#fff}
+  .group{margin-top:18px}
+  .group h2{font-size:14px;color:var(--sub);margin:0 0 8px;padding-left:4px;font-weight:600;letter-spacing:.3px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:9px;
+    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:11px}
+  .card:active{transform:scale(.99)}
+  .card.active{border-color:var(--brand);box-shadow:0 0 0 3px rgba(47,107,255,.12)}
+  .card .idx{flex:0 0 30px;height:30px;border-radius:9px;background:#eef3ff;color:var(--brand);
+    font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .card .meta{flex:1;min-width:0}
+  .card .tt{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .sb{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .card .play-ic{flex:0 0 26px;color:var(--brand);font-size:18px}
+
+  /* 当前内容面板 */
+  .reader{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;display:none}
+  .reader.show{display:block}
+  .reader .rhead{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--brand2)}
+  .reader .rsub{font-size:12px;color:var(--sub);margin:-4px 0 12px}
+  .reader .rtext{font-size:15.5px;line-height:1.85;color:#2a2f37;max-height:42vh;overflow:auto}
+  .reader .rtext .seg{display:block}
+  .reader .rtext .lab{color:var(--brand);font-weight:700;margin-right:4px}
+  .reader .rtext .sent{padding:1px 0;border-radius:6px}
+  .reader .rtext .sent.cur{background:#fff4e0;box-shadow:0 0 0 2px #ffd591 inset}
+
+  /* 底部播放条 */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:1px solid var(--line);
+    box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:10px 12px calc(10px + env(safe-area-inset-bottom));}
+  .bar .inner{max-width:760px;margin:0 auto}
+  .prog{height:4px;background:#eef0f3;border-radius:3px;overflow:hidden;margin-bottom:9px}
+  .prog > i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f6bff,#5b8bff);transition:width .25s}
+  .row1{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .titlecur{flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:9px 12px;
+    font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;min-width:44px;justify-content:center}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;flex:1}
+  .btn.round{border-radius:50%;width:46px;height:46px;min-width:46px;padding:0;font-size:18px}
+  .btn.icon{font-size:17px}
+  select.btn{padding:9px 8px;font-size:13px}
+  .toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sub)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#cfd4db;flex:0 0 auto}
+  .dot.live{background:var(--ok);box-shadow:0 0 0 3px rgba(7,190,107,.18)}
+  .small{font-size:11.5px;color:var(--sub)}
+  @media (max-width:480px){
+    .ctrl{gap:6px}
+    .btn{padding:8px 10px;font-size:13px}
+    .btn.round{width:42px;height:42px;min-width:42px}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>全栈知识点 · 语音朗读版</h1>
+  <p>通勤 / 工作间隙听考点 · 自动断点续听 · 防息屏</p>
+  <button class="resume" id="resumeBtn">▶ 继续上次的收听（第 <b id="resumeIdx">-</b> 个知识点）</button>
+</header>
+
+<div class="wrap" id="list"></div>
+
+<!-- 当前知识点朗读面板 -->
+<div class="reader" id="reader">
+  <div class="rhead" id="rhead"></div>
+  <div class="rsub" id="rsub"></div>
+  <div class="rtext" id="rtext"></div>
+</div>
+
+<!-- 底部播放条 -->
+<div class="bar">
+  <div class="inner">
+    <div class="prog"><i id="progBar"></i></div>
+    <div class="row1">
+      <div class="titlecur" id="curTitle">未选择知识点</div>
+      <span class="dot" id="liveDot"></span>
+      <span class="small" id="posInfo"></span>
+    </div>
+    <div class="ctrl">
+      <button class="btn round icon" id="prevPt" title="上一个知识点">⏮</button>
+      <button class="btn round primary" id="playBtn">▶ 播放</button>
+      <button class="btn round icon" id="nextPt" title="下一个知识点">⏭</button>
+      <button class="btn icon" id="prevSent" title="上一句">⟲</button>
+      <button class="btn icon" id="nextSent" title="下一句">⟳</button>
+      <select class="btn" id="rateSel" title="语速">
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1.0x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2.0x</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="contChk" checked/> 连续</label>
+      <select class="btn" id="voiceSel" title="发音人"><option value="">默认中文</option></select>
+    </div>
+  </div>
+</div>
+
+<script src="narration_data.js"></script>
+<script>
+(function(){
+  var DATA = window.NARRATION || [];
+  var META = window.NAR_META || {total:DATA.length, cats:[]};
+  var LS_KEY = "fullstack_audio_progress_v1";
+
+  // DOM
+  var listEl = document.getElementById("list");
+  var reader = document.getElementById("reader");
+  var rhead = document.getElementById("rhead");
+  var rsub = document.getElementById("rsub");
+  var rtext = document.getElementById("rtext");
+  var curTitle = document.getElementById("curTitle");
+  var progBar = document.getElementById("progBar");
+  var liveDot = document.getElementById("liveDot");
+  var posInfo = document.getElementById("posInfo");
+  var playBtn = document.getElementById("playBtn");
+  var prevPt = document.getElementById("prevPt");
+  var nextPt = document.getElementById("nextPt");
+  var prevSent = document.getElementById("prevSent");
+  var nextSent = document.getElementById("nextSent");
+  var rateSel = document.getElementById("rateSel");
+  var contChk = document.getElementById("contChk");
+  var voiceSel = document.getElementById("voiceSel");
+  var resumeBtn = document.getElementById("resumeBtn");
+  var resumeIdx = document.getElementById("resumeIdx");
+
+  // 状态
+  var curIdx = -1, curSent = 0, sentences = [], playing = false, curUtter = null;
+  var voices = [];
+
+  // 渲染播放列表
+  function renderList(){
+    var html = "";
+    META.cats.forEach(function(c){
+      var inCat = DATA.filter(function(d){return d.cat===c.cat;});
+      html += '<div class="group"><h2>'+esc(c.cat)+'　<span style="opacity:.7">'+esc(c.catEn||"")+'</span></h2>';
+      inCat.forEach(function(d){
+        var gi = DATA.indexOf(d);
+        html += '<div class="card" data-i="'+gi+'">'
+              + '<div class="idx">'+(gi+1)+'</div>'
+              + '<div class="meta"><div class="tt">'+esc(d.title)+'</div>'
+              + '<div class="sb">'+esc(d.item)+' · '+esc(d.sub)+'</div></div>'
+              + '<div class="play-ic">▶</div></div>';
+      });
+      html += '</div>';
+    });
+    listEl.innerHTML = html;
+    Array.prototype.forEach.call(listEl.querySelectorAll(".card"), function(el){
+      el.addEventListener("click", function(){ selectPoint(parseInt(el.getAttribute("data-i"),10), true); });
+    });
+  }
+
+  function esc(s){return (s||"").replace(/[&<>"]/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m];});}
+
+  // 拆分句子（含中文标点 + 长句按逗号切）
+  function splitSentences(text){
+    var raw = (text||"").split(/\n+/).map(function(s){return s.trim();}).filter(Boolean);
+    var out = [];
+    raw.forEach(function(para){
+      // 去掉段落里的标签前缀标记（已在前面加 【xxx】）
+      var parts = para.match(/[^。！？；]*[。！？；]?/g) || [para];
+      parts.forEach(function(p){
+        p = p.trim();
+        if(!p) return;
+        if(p.length > 90){
+          p.split(/[，,]/).forEach(function(s){ s=s.trim(); if(s) out.push(s+(/[，,]/.test(s)?'':'')); });
+        } else {
+          out.push(p);
+        }
+      });
+    });
+    return out;
+  }
+
+  // 渲染阅读面板（按句高亮）
+  function renderReader(d){
+    rhead.textContent = d.title;
+    rsub.textContent = d.item + " · " + d.sub;
+    sentences = splitSentences(d.text);
+    var html = "";
+    var paraBuf = [];
+    // 按段落（原文本以 \n 分段）渲染
+    var paras = d.text.split(/\n+/).filter(Boolean);
+    var si = 0;
+    paras.forEach(function(para){
+      var pText = para.trim();
+      if(!pText) return;
+      var segHtml = '<span class="seg">';
+      // 段落内再按句
+      var ps = splitSentences(pText);
+      ps.forEach(function(s){
+        segHtml += '<span class="sent" data-s="'+si+'">'+esc(s)+'</span>';
+        si++;
+      });
+      segHtml += '</span>';
+      html += segHtml;
+    });
+    rtext.innerHTML = html;
+    reader.classList.add("show");
+  }
+
+  function highlight(si){
+    Array.prototype.forEach.call(rtext.querySelectorAll(".sent"), function(el){
+      el.classList.toggle("cur", parseInt(el.getAttribute("data-s"),10)===si);
+    });
+    var cur = rtext.querySelector('.sent.cur');
+    if(cur) cur.scrollIntoView({block:"center", behavior:"smooth"});
+  }
+
+  function saveProgress(){
+    try{
+      localStorage.setItem(LS_KEY, JSON.stringify({idx:curIdx, sent:curSent, ts:Date.now()}));
+    }catch(e){}
+  }
+  function loadProgress(){
+    try{ return JSON.parse(localStorage.getItem(LS_KEY)||"null"); }catch(e){ return null; }
+  }
+
+  // 语音
+  function loadVoices(){
+    voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    voiceSel.innerHTML = '<option value="">默认中文</option>';
+    voices.forEach(function(v, i){
+      if(/zh|cmn|Chinese/i.test(v.lang) || /中文|普通话|Chinese/i.test(v.name)){
+        var o = document.createElement("option");
+        o.value = i; o.textContent = v.name + " (" + v.lang + ")";
+        voiceSel.appendChild(o);
+      }
+    });
+  }
+  if(window.speechSynthesis){
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function pickVoice(){
+    var vi = voiceSel.value;
+    if(vi!=="" && voices[vi]) return voices[vi];
+    // 默认选中文
+    for(var i=0;i<voices.length;i++){ if(/zh|cmn|Chinese/i.test(voices[i].lang)) return voices[i]; }
+    return null;
+  }
+
+  function speakFrom(i){
+    if(i>=sentences.length){ pointDone(); return; }
+    curSent = i;
+    var u = new SpeechSynthesisUtterance(sentences[i]);
+    var v = pickVoice(); if(v) u.voice = v;
+    u.lang = "zh-CN";
+    u.rate = parseFloat(rateSel.value)||1;
+    u.onend = function(){ if(!playing) return; var n=i+1; if(n<sentences.length){curSent=n; highlight(n); saveProgress(); speakFrom(n);} else {pointDone();} };
+    u.onerror = function(){ if(!playing) return; var n=i+1; if(n<sentences.length) speakFrom(n); else pointDone(); };
+    curUtter = u;
+    highlight(i);
+    saveProgress();
+    speechSynthesis.speak(u);
+  }
+
+  function pointDone(){
+    if(contChk.checked && curIdx < DATA.length-1){
+      selectPoint(curIdx+1, true);
+    } else {
+      stopPlay(true);
+      setLive(false);
+      posInfo.textContent = "本知识点已读完";
+    }
+  }
+
+  function selectPoint(i, autoplay){
+    if(i<0||i>=DATA.length) return;
+    stopPlay(false);
+    curIdx = i; curSent = 0;
+    var d = DATA[i];
+    curTitle.textContent = (i+1)+". "+d.title;
+    renderReader(d);
+    highlight(0);
+    updateProg();
+    markActiveCard();
+    if(autoplay){ startPlay(); }
+  }
+
+  function markActiveCard(){
+    Array.prototype.forEach.call(listEl.querySelectorAll(".card"), function(el){
+      el.classList.toggle("active", parseInt(el.getAttribute("data-i"),10)===curIdx);
+    });
+  }
+
+  function startPlay(){
+    if(curIdx<0){ if(DATA.length) selectPoint(0,false); else return; }
+    if(window.speechSynthesis){ speechSynthesis.cancel(); }
+    playing = true;
+    setLive(true);
+    playBtn.textContent = "⏸ 暂停";
+    requestWake();
+    speakFrom(curSent);
+  }
+  function pausePlay(){
+    playing = false;
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    setLive(false);
+    playBtn.textContent = "▶ 播放";
+    releaseWake();
+  }
+  function stopPlay(resetBtn){
+    playing = false;
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    setLive(false);
+    if(resetBtn!==false) playBtn.textContent = "▶ 播放";
+    releaseWake();
+  }
+  function togglePlay(){
+    if(playing){ pausePlay(); }
+    else { if(curIdx<0) selectPoint(0,true); else startPlay(); }
+  }
+  function setLive(on){ liveDot.classList.toggle("live", !!on); }
+
+  function updateProg(){
+    if(curIdx<0){ progBar.style.width="0%"; posInfo.textContent=""; return; }
+    var ptProg = sentences.length? (curSent+1)/sentences.length : 1;
+    var overall = (curIdx + ptProg) / DATA.length * 100;
+    progBar.style.width = overall.toFixed(1)+"%";
+    posInfo.textContent = "第 "+(curIdx+1)+"/"+DATA.length+" · 句 "+(curSent+1)+"/"+(sentences.length||1);
+  }
+
+  // 唤醒锁
+  var wake = null;
+  function requestWake(){
+    try{ if("wakeLock" in navigator){ navigator.wakeLock.request("screen").then(function(w){wake=w;}).catch(function(){}); } }catch(e){}
+  }
+  function releaseWake(){ try{ if(wake){ wake.release(); wake=null; } }catch(e){} }
+  document.addEventListener("visibilitychange", function(){
+    if(document.visibilityState==="visible" && playing){ requestWake(); }
+  });
+
+  // 事件
+  playBtn.addEventListener("click", togglePlay);
+  prevPt.addEventListener("click", function(){ if(curIdx>0) selectPoint(curIdx-1, playing); });
+  nextPt.addEventListener("click", function(){ if(curIdx<DATA.length-1) selectPoint(curIdx+1, playing); });
+  prevSent.addEventListener("click", function(){
+    if(curIdx<0) return;
+    if(curSent>0){ curSent--; highlight(curSent); updateProg(); if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} }
+    else if(curIdx>0){ selectPoint(curIdx-1, playing); curSent = sentences.length-1; highlight(curSent); }
+  });
+  nextSent.addEventListener("click", function(){
+    if(curIdx<0) return;
+    if(curSent<sentences.length-1){ curSent++; highlight(curSent); updateProg(); if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} }
+    else if(curIdx<DATA.length-1){ selectPoint(curIdx+1, playing); }
+  });
+  rateSel.addEventListener("change", function(){ if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} });
+  voiceSel.addEventListener("change", function(){ if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} });
+
+  // 断点续听
+  var saved = loadProgress();
+  if(saved && saved.idx>=0 && saved.idx<DATA.length){
+    resumeIdx.textContent = (saved.idx+1);
+    resumeBtn.style.display = "block";
+    resumeBtn.addEventListener("click", function(){
+      resumeBtn.style.display="none";
+      selectPoint(saved.idx, true);
+      curSent = saved.sent||0;
+      if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent); }
+    });
+  }
+
+  // 初始化：滚动跟随播放时更新进度条
+  setInterval(function(){ if(playing) updateProg(); }, 500);
+
+  renderList();
+  curTitle.textContent = "共 "+DATA.length+" 个知识点，点上方任意一条开始听";
+})();
+</script>
+</body>
+</html>
