@@ -100,7 +100,7 @@ async function render(){
         + (done?' <span class="badge done">\u2714 \u5df2\u5b8c\u6210</span>':'')
         + (done&&wrong.length?' <span class="badge wrong">\u9519 '+wrong.length+' \u9898</span>':'')
         +'</div>';
-    html+='<div class="d">'+(done? ('\u5f97\u5206 '+score+'/'+total+'\u3000\u00b7\u3000\u6b63\u786e\u7387 '+Math.round(score/total*100)+'%') : '\u5355\u9009 / \u591a\u9009 / \u5224\u65ad \u00b7 \u542b\u7b54\u6848+\u8bb2\u89e3+Android \u7c7b\u6bd4')+'</div></div>';
+    html+='<div class="d">'+(done? ('\u5f97\u5206 '+score+'/'+total+'\u3000\u00b7\u3000\u6b63\u786e\u7387 '+Math.round(score/total*100)+'%') : '\u5355\u9009 / \u591a\u9009 / \u5224\u65ad \u00b7 \u542b\u7b54\u6848+\u8bb2\u89e3')+'</div></div>';
     html+='<a class="open" href="'+q.file+'">'+(done?'\u67e5\u770b/\u590d\u4e60 \u2192':'\u5f00\u59cb\u7b54\u9898 \u2192')+'</a>';
     if(done) html+='<button class="redo" onclick="redo(\''+q.id+'\')">\u91cd\u505a</button>';
     html+='</div>';
