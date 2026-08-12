@@ -66,6 +66,8 @@
   .dot{width:8px;height:8px;border-radius:50%;background:#cfd4db;flex:0 0 auto}
   .dot.live{background:var(--ok);box-shadow:0 0 0 3px rgba(7,190,107,.18)}
   .small{font-size:11.5px;color:var(--sub)}
+  .status{font-size:12.5px;color:var(--sub);margin-top:9px;line-height:1.45;min-height:0}
+  .status.warn{color:var(--warn);font-weight:600}
   @media (max-width:480px){
     .ctrl{gap:6px}
     .btn{padding:8px 10px;font-size:13px}
@@ -113,7 +115,9 @@
       </select>
       <label class="toggle"><input type="checkbox" id="contChk" checked/> 连续</label>
       <select class="btn" id="voiceSel" title="发音人"><option value="">默认中文</option></select>
+      <button class="btn icon" id="testBtn" title="测试朗读">🔊 测试</button>
     </div>
+    <div class="status" id="statusLine"></div>
   </div>
 </div>
 
@@ -148,6 +152,8 @@
   // 状态
   var curIdx = -1, curSent = 0, sentences = [], playing = false, curUtter = null;
   var voices = [];
+  var synth = window.speechSynthesis || null;
+  var warmTimer = null;
 
   // 渲染播放列表
   function renderList(){
@@ -237,9 +243,27 @@
     try{ return JSON.parse(localStorage.getItem(LS_KEY)||"null"); }catch(e){ return null; }
   }
 
+  // 状态提示
+  function status(msg, warn){
+    var el = document.getElementById("statusLine");
+    if(!el) return;
+    el.textContent = msg || "";
+    el.className = "status" + (warn ? " warn" : "");
+  }
+  function hasZh(){ return voices.some(function(v){return /zh|cmn|Chinese/i.test(v.lang);}); }
+  function updateVoiceHint(){
+    if(!synth){ return; }
+    if(voices.length===0){ status("⚠ 正在加载语音列表…若长时间为空，说明本机未安装语音引擎。", true); return; }
+    if(!hasZh()){
+      status("⚠ 未检测到中文语音！请在手机「设置 → 系统 → 语言与输入法 → 文字转语音输出(TTS)」安装中文语音包（推荐 Google 文字转语音引擎 + 中文），装好后刷新本页。", true);
+    } else {
+      status("");
+    }
+  }
+
   // 语音
   function loadVoices(){
-    voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    voices = synth ? synth.getVoices() : [];
     voiceSel.innerHTML = '<option value="">默认中文</option>';
     voices.forEach(function(v, i){
       if(/zh|cmn|Chinese/i.test(v.lang) || /中文|普通话|Chinese/i.test(v.name)){
@@ -248,33 +272,46 @@
         voiceSel.appendChild(o);
       }
     });
+    updateVoiceHint();
   }
-  if(window.speechSynthesis){
+  if(synth){
     loadVoices();
-    speechSynthesis.onvoiceschanged = loadVoices;
+    synth.onvoiceschanged = loadVoices;
   }
 
   function pickVoice(){
     var vi = voiceSel.value;
     if(vi!=="" && voices[vi]) return voices[vi];
-    // 默认选中文
     for(var i=0;i<voices.length;i++){ if(/zh|cmn|Chinese/i.test(voices[i].lang)) return voices[i]; }
-    return null;
+    return voices[0] || null; // 兜底：用任意可用语音，至少出声
   }
 
-  function speakFrom(i){
+  function speakFrom(i, retry){
+    retry = retry || 0;
     if(i>=sentences.length){ pointDone(); return; }
+    if(!synth){ status("⚠ 浏览器不支持语音合成，无法播放。", true); return; }
     curSent = i;
     var u = new SpeechSynthesisUtterance(sentences[i]);
     var v = pickVoice(); if(v) u.voice = v;
     u.lang = "zh-CN";
     u.rate = parseFloat(rateSel.value)||1;
-    u.onend = function(){ if(!playing) return; var n=i+1; if(n<sentences.length){curSent=n; highlight(n); saveProgress(); speakFrom(n);} else {pointDone();} };
-    u.onerror = function(){ if(!playing) return; var n=i+1; if(n<sentences.length) speakFrom(n); else pointDone(); };
+    u.onstart = function(){ status("正在朗读：" + sentences[i]); };
+    u.onend = function(){ if(!playing) return; var n=i+1; if(n<sentences.length){curSent=n; highlight(n); saveProgress(); speakFrom(n,0);} else {pointDone();} };
+    u.onerror = function(e){ if(!playing) return; status("朗读中断：" + ((e&&e.error)||"错误"), true); var n=i+1; if(n<sentences.length) speakFrom(n,0); else pointDone(); };
     curUtter = u;
     highlight(i);
     saveProgress();
-    speechSynthesis.speak(u);
+    try{ synth.speak(u); }catch(e){ status("朗读出错：" + e.message, true); }
+    // Android 兜底：1s 内未开始则 resume / 重播（最多重试 2 次）
+    clearTimeout(warmTimer);
+    if(retry < 2){
+      warmTimer = setTimeout(function(){
+        if(playing && synth && !synth.speaking && !synth.paused){
+          try{ synth.resume(); }catch(e){}
+          if(!synth.speaking){ speakFrom(i, retry+1); }
+        }
+      }, 1000);
+    }
   }
 
   function pointDone(){
@@ -307,24 +344,26 @@
   }
 
   function startPlay(){
+    if(!synth){ status("⚠ 浏览器不支持语音合成，无法播放。", true); return; }
     if(curIdx<0){ if(DATA.length) selectPoint(0,false); else return; }
-    if(window.speechSynthesis){ speechSynthesis.cancel(); }
+    synth.cancel();
     playing = true;
     setLive(true);
     playBtn.textContent = "⏸ 暂停";
     requestWake();
-    speakFrom(curSent);
+    status("正在准备朗读…");
+    speakFrom(curSent, 0);
   }
   function pausePlay(){
     playing = false;
-    if(window.speechSynthesis) speechSynthesis.cancel();
+    if(synth) synth.cancel();
     setLive(false);
     playBtn.textContent = "▶ 播放";
     releaseWake();
   }
   function stopPlay(resetBtn){
     playing = false;
-    if(window.speechSynthesis) speechSynthesis.cancel();
+    if(synth) synth.cancel();
     setLive(false);
     if(resetBtn!==false) playBtn.textContent = "▶ 播放";
     releaseWake();
@@ -359,16 +398,30 @@
   nextPt.addEventListener("click", function(){ if(curIdx<DATA.length-1) selectPoint(curIdx+1, playing); });
   prevSent.addEventListener("click", function(){
     if(curIdx<0) return;
-    if(curSent>0){ curSent--; highlight(curSent); updateProg(); if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} }
+    if(curSent>0){ curSent--; highlight(curSent); updateProg(); if(playing){ if(synth) synth.cancel(); speakFrom(curSent);} }
     else if(curIdx>0){ selectPoint(curIdx-1, playing); curSent = sentences.length-1; highlight(curSent); }
   });
   nextSent.addEventListener("click", function(){
     if(curIdx<0) return;
-    if(curSent<sentences.length-1){ curSent++; highlight(curSent); updateProg(); if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} }
+    if(curSent<sentences.length-1){ curSent++; highlight(curSent); updateProg(); if(playing){ if(synth) synth.cancel(); speakFrom(curSent);} }
     else if(curIdx<DATA.length-1){ selectPoint(curIdx+1, playing); }
   });
-  rateSel.addEventListener("change", function(){ if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} });
-  voiceSel.addEventListener("change", function(){ if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent);} });
+  rateSel.addEventListener("change", function(){ if(playing){ if(synth) synth.cancel(); speakFrom(curSent);} });
+  voiceSel.addEventListener("change", function(){ if(playing){ if(synth) synth.cancel(); speakFrom(curSent);} });
+
+  function testSpeak(){
+    if(!synth){ status("⚠ 浏览器不支持语音合成。", true); return; }
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance("你好，这是一条语音测试。如果听到这句中文，说明设备语音正常。");
+    var v = pickVoice(); if(v) u.voice = v;
+    u.lang = "zh-CN"; u.rate = 1;
+    u.onstart = function(){ status("测试朗读中… 若听到中文说明语音正常"); };
+    u.onend = function(){ status("测试结束。若没听到声音，请检查手机媒体音量、静音键，以及系统文字转语音设置。"); };
+    u.onerror = function(e){ status("测试失败：" + ((e&&e.error)||"未知") + "，请检查系统文字转语音设置。", true); };
+    try{ synth.speak(u); }catch(e){ status("测试出错：" + e.message, true); }
+  }
+  var testBtn = document.getElementById("testBtn");
+  if(testBtn) testBtn.addEventListener("click", testSpeak);
 
   // 断点续听
   var saved = loadProgress();
@@ -379,13 +432,15 @@
       resumeBtn.style.display="none";
       selectPoint(saved.idx, true);
       curSent = saved.sent||0;
-      if(playing){ if(window.speechSynthesis) speechSynthesis.cancel(); speakFrom(curSent); }
+      if(playing){ if(synth) synth.cancel(); speakFrom(curSent); }
     });
   }
 
   // 初始化：滚动跟随播放时更新进度条
   setInterval(function(){ if(playing) updateProg(); }, 500);
 
+  if(!synth){ status("⚠ 当前浏览器不支持语音合成（Web Speech API）。请改用最新版 Chrome / Edge，或用手机 Chrome 打开本页。", true); }
+  updateVoiceHint();
   renderList();
   curTitle.textContent = "共 "+DATA.length+" 个知识点，点上方任意一条开始听";
 })();
