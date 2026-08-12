@@ -34,17 +34,6 @@
   .card .sb{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
   .card .play-ic{flex:0 0 26px;color:var(--brand);font-size:18px}
 
-  .reader{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:14px 16px;display:none}
-  .reader.show{display:block}
-  .reader .rhead{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--brand2)}
-  .reader .rsub{font-size:12px;color:var(--sub);margin:-4px 0 12px}
-  .reader .rtext{font-size:15.5px;line-height:1.85;color:#2a2f37;max-height:42vh;overflow:auto}
-  .reader .rtext .seg{display:block}
-  .reader .rtext .lab{color:var(--brand);font-weight:700;margin-right:4px}
-  .reader .rtext .sent{padding:1px 0;border-radius:6px}
-  .reader .rtext .sent.cur{background:#fff4e0;box-shadow:0 0 0 2px #ffd591 inset}
-
   .bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:1px solid var(--line);
     box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:10px 12px calc(10px + env(safe-area-inset-bottom));}
   .bar .inner{max-width:760px;margin:0 auto}
@@ -98,12 +87,6 @@
 
 <div class="wrap" id="list"></div>
 
-<div class="reader" id="reader">
-  <div class="rhead" id="rhead"></div>
-  <div class="rsub" id="rsub"></div>
-  <div class="rtext" id="rtext"></div>
-</div>
-
 <div class="bar">
   <div class="inner">
     <div class="prog"><i id="progBar"></i></div>
@@ -151,10 +134,6 @@
   var LS_KEY = "fullstack_audio_progress_v2";
 
   var listEl = document.getElementById("list");
-  var reader = document.getElementById("reader");
-  var rhead = document.getElementById("rhead");
-  var rsub = document.getElementById("rsub");
-  var rtext = document.getElementById("rtext");
   var curTitle = document.getElementById("curTitle");
   var progBar = document.getElementById("progBar");
   var liveDot = document.getElementById("liveDot");
@@ -220,29 +199,6 @@
     return out;
   }
 
-  function renderReader(d){
-    rhead.textContent = d.title;
-    rsub.textContent = d.item + " · " + d.sub;
-    sentences = splitSentences(d.text);
-    var html = "";
-    var paras = d.text.split(/\n+/).filter(Boolean);
-    var si = 0;
-    paras.forEach(function(para){
-      var pText = para.trim();
-      if(!pText) return;
-      var segHtml = '<span class="seg">';
-      var ps = splitSentences(pText);
-      ps.forEach(function(s){
-        segHtml += '<span class="sent" data-s="'+si+'">'+esc(s)+'</span>';
-        si++;
-      });
-      segHtml += '</span>';
-      html += segHtml;
-    });
-    rtext.innerHTML = html;
-    reader.classList.add("show");
-  }
-
   function renderTextView(d){
     tvTitle.textContent = d.title;
     var html = "";
@@ -263,15 +219,14 @@
   }
 
   function highlight(si){
-    [rtext, tvText].forEach(function(container){
-      if(!container) return;
-      Array.prototype.forEach.call(container.querySelectorAll(".sent"), function(el){
-        el.classList.toggle("cur", parseInt(el.getAttribute("data-s"),10)===si);
-      });
+    if(!tvText) return;
+    Array.prototype.forEach.call(tvText.querySelectorAll(".sent"), function(el){
+      el.classList.toggle("cur", parseInt(el.getAttribute("data-s"),10)===si);
     });
-    var scope = textView.classList.contains("show") ? tvText : rtext;
-    var cur = scope.querySelector('.sent.cur');
-    if(cur) cur.scrollIntoView({block:"center", behavior:"smooth"});
+    if(textView.classList.contains("show")){
+      var cur = tvText.querySelector('.sent.cur');
+      if(cur) cur.scrollIntoView({block:"center", behavior:"smooth"});
+    }
   }
 
   function saveProgress(){
@@ -319,7 +274,7 @@
     curIdx = i; curSent = 0;
     var d = DATA[i];
     curTitle.textContent = (i+1)+". "+d.title;
-    renderReader(d);
+    sentences = splitSentences(d.text);
     if(textView.classList.contains("show")) renderTextView(d);
     updateProg();
     markActiveCard();
