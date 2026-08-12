@@ -71,6 +71,22 @@
     .btn{padding:8px 10px;font-size:13px}
     .btn.round{width:42px;height:42px;min-width:42px}
   }
+
+  /* 全屏独立阅读页（边听边看） */
+  .textview{position:fixed;inset:0;z-index:40;background:#fff;display:none;flex-direction:column}
+  .textview.show{display:flex}
+  .textview .tvbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:12px 14px calc(12px + env(safe-area-inset-top));
+    background:linear-gradient(135deg,#2f6bff,#5b8bff);color:#fff}
+  .textview .tvclose{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff;
+    border-radius:10px;padding:7px 11px;font-size:13px;cursor:pointer;font-weight:600;white-space:nowrap}
+  .textview .tvtitle{flex:1;min-width:0;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .textview .tvhint{flex:0 0 auto;font-size:11px;opacity:.85;max-width:96px;text-align:right}
+  .textview .tvtext{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;
+    padding:18px 18px calc(20px + env(safe-area-inset-bottom));font-size:17px;line-height:1.95;color:#2a2f37}
+  .textview .tvtext .seg{display:block;margin-bottom:4px}
+  .textview .tvtext .sent{padding:2px 4px;border-radius:6px;display:inline}
+  .textview .tvtext .sent.cur{background:#fff4e0;box-shadow:0 0 0 2px #ffd591 inset}
 </style>
 </head>
 <body>
@@ -102,6 +118,7 @@
       <button class="btn round icon" id="nextPt" title="下一个知识点">⏭</button>
       <button class="btn icon" id="prevSent" title="上一段">⟲</button>
       <button class="btn icon" id="nextSent" title="下一段">⟳</button>
+      <button class="btn icon" id="tvBtn" title="查看/隐藏文字">📄</button>
       <select class="btn" id="rateSel" title="语速">
         <option value="0.75">0.75x</option>
         <option value="1" selected>1.0x</option>
@@ -117,6 +134,15 @@
 </div>
 
 <audio id="au" preload="none"></audio>
+
+<div class="textview" id="textView">
+  <div class="tvbar">
+    <button class="tvclose" id="tvClose">✕ 收起</button>
+    <div class="tvtitle" id="tvTitle"></div>
+    <div class="tvhint">文字随播放高亮 · 可滚动</div>
+  </div>
+  <div class="tvtext" id="tvText"></div>
+</div>
 <script src="narration_data.js"></script>
 <script>
 (function(){
@@ -144,6 +170,11 @@
   var resumeIdx = document.getElementById("resumeIdx");
   var dlBtn = document.getElementById("dlBtn");
   var au = document.getElementById("au");
+  var textView = document.getElementById("textView");
+  var tvText = document.getElementById("tvText");
+  var tvTitle = document.getElementById("tvTitle");
+  var tvClose = document.getElementById("tvClose");
+  var tvBtn = document.getElementById("tvBtn");
 
   var curIdx = -1, playing = false, sentences = [], curSent = 0;
   var wake = null;
@@ -212,11 +243,34 @@
     reader.classList.add("show");
   }
 
-  function highlight(si){
-    Array.prototype.forEach.call(rtext.querySelectorAll(".sent"), function(el){
-      el.classList.toggle("cur", parseInt(el.getAttribute("data-s"),10)===si);
+  function renderTextView(d){
+    tvTitle.textContent = d.title;
+    var html = "";
+    var paras = d.text.split(/\n+/).filter(Boolean);
+    var si = 0;
+    paras.forEach(function(para){
+      var pText = para.trim();
+      if(!pText) return;
+      var segHtml = '<span class="seg">';
+      splitSentences(pText).forEach(function(s){
+        segHtml += '<span class="sent" data-s="'+si+'">'+esc(s)+'</span>';
+        si++;
+      });
+      segHtml += '</span>';
+      html += segHtml;
     });
-    var cur = rtext.querySelector('.sent.cur');
+    tvText.innerHTML = html;
+  }
+
+  function highlight(si){
+    [rtext, tvText].forEach(function(container){
+      if(!container) return;
+      Array.prototype.forEach.call(container.querySelectorAll(".sent"), function(el){
+        el.classList.toggle("cur", parseInt(el.getAttribute("data-s"),10)===si);
+      });
+    });
+    var scope = textView.classList.contains("show") ? tvText : rtext;
+    var cur = scope.querySelector('.sent.cur');
     if(cur) cur.scrollIntoView({block:"center", behavior:"smooth"});
   }
 
@@ -266,6 +320,7 @@
     var d = DATA[i];
     curTitle.textContent = (i+1)+". "+d.title;
     renderReader(d);
+    if(textView.classList.contains("show")) renderTextView(d);
     updateProg();
     markActiveCard();
     dlBtn.href = d.audio || "#";
@@ -339,6 +394,23 @@
   prevSent.addEventListener("click", function(){ seekSent(-1); });
   nextSent.addEventListener("click", function(){ seekSent(1); });
   rateSel.addEventListener("change", function(){ au.playbackRate = parseFloat(rateSel.value)||1; });
+
+  // 全屏文字阅读页
+  function openTextView(){
+    if(curIdx<0){ selectPoint(0, false); }
+    if(curIdx<0) return;
+    renderTextView(DATA[curIdx]);
+    textView.classList.add("show");
+    var cur = tvText.querySelector('.sent.cur');
+    if(cur) cur.scrollIntoView({block:"center"});
+    else tvText.scrollTop = 0;
+  }
+  function closeTextView(){ textView.classList.remove("show"); }
+  tvBtn.addEventListener("click", function(){
+    if(textView.classList.contains("show")) closeTextView();
+    else openTextView();
+  });
+  tvClose.addEventListener("click", closeTextView);
 
   // 断点续听
   var saved = loadProgress();
