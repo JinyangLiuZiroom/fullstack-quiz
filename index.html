@@ -27,7 +27,7 @@
   .card .badge { font-size:12px; font-weight:700; padding:2px 9px; border-radius:5px; }
   .card .badge.done { background:#e9f9ee; color:#1a9e4b; }
   .card .badge.wrong { background:#fff1f0; color:#ff4d4f; }
-  .open { background:#1664ff; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-size:14px; font-weight:600; white-space:nowrap; }
+  .open { display:inline-block; background:#1664ff; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-size:14px; font-weight:600; white-space:nowrap; }
   .open:hover { background:#0e4fd8; }
   .redo { background:#f2f3f5; color:#41464b; border:none; padding:9px 14px; border-radius:8px; font-size:13px; cursor:pointer; font-weight:600; }
   .redo:hover { background:#e5e6eb; }
@@ -59,10 +59,10 @@
 <div class="wrap">
   <h1>全栈转型 · 刷题门户</h1>
   <div class="sub">Android → 全栈（前端 H5 + 后端 Java）· 每日十点自动出题 · 登录后答题记录按用户存入后台数据库</div>
-  <div style="margin:-2px 0 16px">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:0 0 16px">
     <a class="open" href="study_guide.html" style="background:#0aa678">📚 全栈认证 · 在线学习教材</a>
     <a class="open" href="study_guide_audio.html" style="background:#2b7de9">🎧 知识点语音朗读版（通勤可听）</a>
-    <span class="sub" style="margin:0">覆盖后端/前端/测试/OPS/AI 工程全套考点，每点含讲解·代码·易考形式</span>
+    <span class="sub" style="margin:0;flex-basis:100%">覆盖后端/前端/测试/OPS/AI 工程全套考点，每点含讲解·代码·易考形式</span>
   </div>
   <div class="topbar" id="topbar"></div>
   <div class="stat" id="stat"></div>
