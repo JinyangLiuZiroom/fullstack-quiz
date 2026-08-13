@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .kaodian { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #f0f2f5; color: #646a73; max-width: 64%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script type="application/json" id="quizData">{"id": "vol18", "title": "全栈转型模拟自测卷", "sub": "可答题 · 逐题判分 · 自动记录错题", "meta": "本卷按「自如真卷 + 全栈认证大纲 + AI时代全栈工程实战能力认证大纲」出题：后端≈52%（缓存/Redis/MQ/MySQL/MyBatis-Plus/Spring/微服务）、前端≈24%、测试≈24%。每题给代码/配置/日志片段，问执行结果 / 补全缺失代码 / 判断框架用法或架构规范正误。", "sections": [{"name": "一、单选题（20 题 · 60 分）", "cat": "single", "questions": [{"no": 1, "type": "single", "body": "某 Redis 中订单标签用 Hash 存储，字段上百万。下列遍历方式哪项是安全且不会阻塞 Redis 的？", "code": "Map<Object,Object> all = redisTemplate.opsForHash().entries(\"order:tags:123\");\nCursor<Map.Entry<Object,Object>> c = redisTemplate.opsForHash()\n    .scan(\"order:tags:123\", ScanOptions.scanOptions().count(100).build());", "options": [{"k": "A", "t": "用 HGETALL 一次性取出全部字段（简单直接）"}, {"k": "B", "t": "用 HSCAN 分批游标遍历（count 仅为提示值，非精确返回数）"}, {"k": "C", "t": "用 HLEN 先统计再 HMGET 逐个取"}, {"k": "D", "t": "用 KEYS * 先列出 key 再 HGET"}], "answer": ["B"], "explain": "HGETALL 会一次性返回全部字段，数据量大时阻塞单线程的 Redis；KEYS * 更是生产禁用（全量遍历阻塞）。HSCAN 是渐进式游标遍历，每次只返回少量元素，count 仅提示、不代表精确数量，不会阻塞服务端，是遍历大 Hash/Set 的正确姿势。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Redis 大 key 与渐进遍历"}, {"no": 2, "type": "single", "body": "希望在 Spring 容器启动完成后执行一次数据预热（如加载热点配置到本地缓存），下列最合适的是？", "code": "@Component\npublic class WarmUp implements CommandLineRunner {\n  public void run(String... args) { loadHotConfig(); }\n}", "options": [{"k": "A", "t": "在 Bean 的 @PostConstruct 里执行即可"}, {"k": "B", "t": "实现 CommandLineRunner/ApplicationRunner，其 run 在容器完全刷新后回调一次"}, {"k": "C", "t": "用 @Scheduled(fixedDelay = 0) 反复触发"}, {"k": "D", "t": "在 main 方法里手动调用预热方法"}], "answer": ["B"], "explain": "CommandLineRunner/ApplicationRunner 的 run 在 SpringApplication.run() 结束、容器完全就绪后回调一次，适合数据预热、缓存加载。@PostConstruct 在 Bean 自身初始化阶段执行，此时其它 Bean 可能尚未就绪，不适合依赖全局状态；C 语义错误；D 脱离容器生命周期。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Spring 启动生命周期"}, {"no": 3, "type": "single", "body": "使用 MyBatis-Plus 查询时，希望只返回部分字段并映射到结果，下列写法正确的是？", "code": "LambdaQueryWrapper<Order> w = Wrappers.lambdaQuery(Order.class)\n    .select(Order::getId, Order::getAmount)\n    .eq(Order::getStatus, \"PAID\");\nList<Order> list = orderMapper.selectList(w);", "options": [{"k": "A", "t": "select 传方法引用只支持单个字段，多字段需链式多次 select"}, {"k": "B", "t": "返回实体中未查询字段为 null，可在此基础上转 DTO，生成的 SQL 仅含指定列"}, {"k": "C", "t": "LambdaQueryWrapper.select 不支持方法引用，必须写字符串列名"}, {"k": "D", "t": "该写法会自动 JOIN 关联表"}], "answer": ["B"], "explain": "LambdaQueryWrapper.select(SFunction...) 支持多个方法引用指定查询列，生成 SQL 仅 SELECT id, amount。未查询字段映射回实体为 null（不触发额外查询），可直接基于此构造 DTO。A/C 错（支持多列方法引用）；D 错（不自动 JOIN）。", "kaodian": "AI 后端能力 - 数据存储与 ORM 层 - MyBatis-Plus 查询构造器"}, {"no": 4, "type": "single", "body": "Topic 交换机绑定队列时 binding key 为 order.*，下列生产者发送的路由键哪些能路由到该队列？", "code": "channel.basicPublish(\"topicEx\", \"order.create\", null, msg);      // ①\nchannel.basicPublish(\"topicEx\", \"order.create.send\", null, msg); // ②\nchannel.basicPublish(\"topicEx\", \"order\", null, msg);             // ③", "options": [{"k": "A", "t": "仅 ①"}, {"k": "B", "t": "① 和 ②"}, {"k": "C", "t": "① 和 ③"}, {"k": "D", "t": "都不行，必须用 # 才能匹配"}], "answer": ["A"], "explain": "Topic 中 * 匹配一个单词（以 . 分隔的一段），# 匹配零个或多个单词。order.* 只能匹配恰好两段且第一段为 order 的路由键（如 order.create），不能匹配 order.create.send（三段）也不能匹配 order（仅一段）。故选 A。", "kaodian": "AI 后端能力 - 高并发与中间件层 - RabbitMQ 路由键匹配"}, {"no": 5, "type": "single", "body": "某 Kafka 消费者一次 poll 拉取 500 条消息后逐条处理，单条耗时 200ms，总耗时超过 max.poll.interval.ms（默认 5 分钟）且 enable.auto.commit=true。最可能发生？", "code": "props.put(\"enable.auto.commit\", \"true\");\n// poll 后逐条处理 500 条，每条 200ms", "options": [{"k": "A", "t": "消费者被踢出组触发 rebalance，处理中的消息在重新拉取时被重复消费"}, {"k": "B", "t": "消息自动被跳过不再处理"}, {"k": "C", "t": "仅最后一批消息丢失，前序已提交"}, {"k": "D", "t": "不影响，Kafka 保证精确一次"}], "answer": ["A"], "explain": "当 poll 间隔超过 max.poll.interval.ms，Broker 认为消费者已死，将其移出消费组并触发 rebalance，分区分配给其它实例。由于 auto.commit 周期性提交，处理中消息 offset 未提交，rebalance 后新 owner 从已提交位点重拉，导致重复消费。应提高 interval、减小单批大小或异步手动提交。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Kafka 重复消费与再均衡"}, {"no": 6, "type": "single", "body": "InnoDB 下隔离级别 RR，表 orders(id PK, user_id, ...) 在 user_id 上有普通索引。执行 UPDATE orders SET status='X' WHERE user_id=10; 关于加锁，正确的是？", "code": "BEGIN;\nUPDATE orders SET status='X' WHERE user_id = 10;\n-- RR 隔离级别，user_id 为普通二级索引", "options": [{"k": "A", "t": "对满足条件的二级索引项加 Next-Key Lock，并锁对应聚簇索引记录（行锁），不会锁无关 user_id"}, {"k": "B", "t": "锁全表"}, {"k": "C", "t": "仅锁聚簇索引，普通索引不加锁"}, {"k": "D", "t": "加表级锁"}], "answer": ["A"], "explain": "RR 下普通二级索引上的等值更新会：对满足条件的二级索引项加 Next-Key Lock（左开右闭区间锁，防幻读），并锁对应的聚簇索引记录（行锁）。不会锁无关 user_id 数据，也不会升级为表锁。这是 RR 防幻读的核心机制。", "kaodian": "AI 后端能力 - 数据存储与 ORM 层 - InnoDB 索引与加锁规则"}, {"no": 7, "type": "single", "body": "希望把 Nacos 配置绑定到 Bean 并支持动态刷新，下列配置正确的是？", "code": "@Configuration\npublic class AppConfig {\n  @Bean\n  @RefreshScope\n  @ConfigurationProperties(prefix = \"app.pay\")\n  public PayConfig payConfig() { return new PayConfig(); }\n}", "options": [{"k": "A", "t": "@ConfigurationProperties 只能标注在类上，不能标注在 @Bean 方法"}, {"k": "B", "t": "此配置下 Nacos 修改 app.pay.* 后，该 Bean 下次被注入时重建并应用新值"}, {"k": "C", "t": "必须同时在类上写 @Component 才能绑定"}, {"k": "D", "t": "@RefreshScope 会导致每次请求都新建 Bean，性能不可用"}], "answer": ["B"], "explain": "@ConfigurationProperties 可标注在 @Bean 方法上完成绑定；配合 @RefreshScope，配置中心刷新时该 Bean 在下一次被注入时重建并应用新值（旧实例在下次访问时更换）。A/C 错（@Bean 方法上也可标注）；D 错（仅刷新时重建一次，非每次请求）。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Nacos 配置绑定与动态刷新"}, {"no": 8, "type": "single", "body": "下列代码中违反三层架构分层规范的是？", "code": "@RestController\n@RequestMapping(\"/users\")\npublic class UserController {\n  @Autowired private UserMapper userMapper; // 直接注入 Mapper\n  @GetMapping(\"/{id}\")\n  public UserDTO get(@PathVariable Long id) {\n    User u = userMapper.selectById(id); // 业务逻辑写在 Controller\n    return convert(u);\n  }\n}", "options": [{"k": "A", "t": "Controller 直接依赖 Mapper 并在其中写业务转换，跳过了 Service 层"}, {"k": "B", "t": "使用 @Autowired 字段注入不推荐，应改用构造器注入"}, {"k": "C", "t": "@RequestMapping 缺少 consumes/produces"}, {"k": "D", "t": "返回 DTO 不符合规范"}], "answer": ["A"], "explain": "规范三层架构：Controller(接收请求/参数校验) → Service(业务逻辑) → Mapper/DAO(数据访问)。示例把数据访问与业务转换直接放在 Controller，绕过 Service，导致逻辑无法复用、事务难统一、单测困难。B 是风格建议非规范违规；C/D 不构成分层违规。", "kaodian": "AI 后端能力 - 架构与工程规范层 - 三层架构分层规范"}, {"no": 9, "type": "single", "body": "某 @Async 方法返回 void，内部异常调用方无法感知。下列改法能正确传递异常的是？", "code": "@Async\npublic CompletableFuture<String> doAsync() {\n  try { return CompletableFuture.completedFuture(biz()); }\n  catch (Exception e) { return CompletableFuture.failedFuture(e); }\n}", "options": [{"k": "A", "t": "void 方法抛异常会被异步线程直接抛到主线程"}, {"k": "B", "t": "返回 CompletableFuture 并在异常时 completedFuture(null) 即可"}, {"k": "C", "t": "返回 CompletableFuture，异常用 failedFuture 包装，调用方通过 get()/exceptionally 捕获"}, {"k": "D", "t": "@Async 方法无法返回任何值，必须改同步"}], "answer": ["C"], "explain": "@Async void 方法的异常会被 AsyncUncaughtExceptionHandler 静默吞掉（默认仅日志）。要传递结果/异常，应返回 Future/CompletableFuture：正常用 completedFuture(result)，异常用 failedFuture(e)，调用方通过 get()/join()/exceptionally 捕获。B 用 null 会丢失异常信息。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Spring @Async 返回值与异常"}, {"no": 10, "type": "single", "body": "希望本地、测试、生产使用不同数据源配置，下列 Spring 机制最合适的是？", "code": "@Configuration\n@Profile(\"dev\")\npublic class DevDataSourceConfig { /* 本地 H2 */ }\n\n// 启动时通过 --spring.profiles.active=dev 激活", "options": [{"k": "A", "t": "用 @Profile 标注不同环境的 @Configuration，启动时由 spring.profiles.active 激活"}, {"k": "B", "t": "只能用 application.yml 一份配置，无法分环境"}, {"k": "C", "t": "@Profile 只能标注在类上，不能控制 Bean 是否加载"}, {"k": "D", "t": "必须借助 Nacos 配置中心才能分环境"}], "answer": ["A"], "explain": "@Profile 按环境激活对应 @Configuration/@Component/@Bean，未激活环境的配置不会被加载，是 Spring 原生多环境方案；激活由 spring.profiles.active 指定（可多个）。B/C 错；D 错（@Profile 不依赖配置中心）。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Spring 环境配置 @Profile"}, {"no": 11, "type": "single", "body": "下列代码中方法上的 @Transactional 会生效吗？", "code": "@Component\npublic class StockService {\n  @Transactional\n  private void deduct(Long skuId, int n) { // private\n    stockMapper.decrease(skuId, n);\n  }\n}", "options": [{"k": "A", "t": "生效，private 方法也能被代理织入事务"}, {"k": "B", "t": "不生效，Spring AOP 基于代理/CGLIB，只能拦截 public 方法，private 上的注解被忽略"}, {"k": "C", "t": "编译报错"}, {"k": "D", "t": "仅在类内 this 调用时生效"}], "answer": ["B"], "explain": "Spring 事务通过 AOP 代理实现，代理只能拦截 public 方法（CGLIB 也只覆写 public）。private/protected/final 方法上的 @Transactional 会被完全忽略，事务不开启。与『自调用绕过代理』是不同根因：前者是方法不可代理，后者是代理未被调用。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Spring 事务生效条件"}, {"no": 12, "type": "single", "body": "关于 Vue3 的 watch 与 watchEffect，下列描述正确的是？", "code": "watchEffect(() => { console.log(state.count); }); // 立即执行\nwatch(() => state.count, (n, o) => { /* 变化时 */ }); // 惰性", "options": [{"k": "A", "t": "watch 默认立即执行一次，watchEffect 需手动触发"}, {"k": "B", "t": "watchEffect 立即执行并自动追踪依赖，依赖变化即重跑；watch 默认惰性，仅源变化时执行"}, {"k": "C", "t": "watch 不能监听多个源，watchEffect 可以"}, {"k": "D", "t": "两者都必须显式指定监听源，否则报错"}], "answer": ["B"], "explain": "watchEffect 立即执行一次并自动收集回调中使用的响应式依赖，依赖变化即重跑；watch 默认惰性（immediate:false），需显式指定源，源变化才执行，可监听单个或多个源。A 反了；C watch 可传数组监听多源；D watchEffect 不需指定源（自动收集）。", "kaodian": "AI 前端能力 - 框架与组件层 - Vue3 响应式侦听"}, {"no": 13, "type": "single", "body": "容器 display:flex; flex-wrap:wrap; 高 300px，内有 3 个 width:80px 的弹性项，align-content 会如何作用？", "code": ".container { display:flex; flex-wrap:wrap; height:300px; align-content:center; }\n.item { width:80px; height:40px; }", "options": [{"k": "A", "t": "控制交叉轴上单行内每个 item 的对齐（类似 align-items）"}, {"k": "B", "t": "仅在存在多行时生效，把多行整体在交叉轴居中；单行时由 align-items 处理"}, {"k": "C", "t": "align-content 对 flex 无效，仅 grid 支持"}, {"k": "D", "t": "让每个 item 在交叉轴拉伸填满"}], "answer": ["B"], "explain": "align-content 决定『多行』在交叉轴上的分布，仅在 flex-wrap:wrap 产生多行时才有效；单行时由 align-items 决定 item 对齐。本例 3 个 item 在一行（未换行），align-content 不生效。多行时才把整组行居中。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - CSS Flex 布局"}, {"no": 14, "type": "single", "body": "希望卡片在不同容器宽度下采用不同布局，应使用下列哪项 CSS 特性？", "code": ".wrap { container-type: inline-size; }\n@container (max-width: 400px) { .card { flex-direction: column; } }", "options": [{"k": "A", "t": "@media 媒体查询（基于视口）"}, {"k": "B", "t": "容器查询 @container（基于父容器尺寸）"}, {"k": "C", "t": ":has() 父选择器"}, {"k": "D", "t": "container-type 仅用于字体缩放"}], "answer": ["B"], "explain": "容器查询(@container)让子元素样式依据父容器(container-type 声明)的尺寸变化，而非视口，适合组件级响应式。@media 基于视口/设备，无法实现『同一组件在不同父容器中不同布局』。C 是父选择器非尺寸响应；D container-type 用于建立容器上下文，不只是字体。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - CSS 容器查询"}, {"no": 15, "type": "single", "body": "需要并发请求多个接口，且即使部分失败也要拿到其余结果，应使用？", "code": "const r = await Promise.allSettled([reqA(), reqB(), reqC()]);\n// r[i].status === 'fulfilled' ? r[i].value : r[i].reason", "options": [{"k": "A", "t": "Promise.all（任一 reject 则整体 reject）"}, {"k": "B", "t": "Promise.allSettled（全部 settled 后返回每项的成功/失败状态）"}, {"k": "C", "t": "Promise.race（取最快一个的结果）"}, {"k": "D", "t": "Promise.any（取第一个成功的结果）"}], "answer": ["B"], "explain": "Promise.allSettled 等待所有 promise 完成（无论成败），返回 [{status:'fulfilled',value}|{status:'rejected',reason}] 数组，适合『要全部结果、不因个别失败中断』的场景。all 任一失败即整体 rejection；race 取首个；any 取首个成功。", "kaodian": "AI 前端能力 - 前端基础与渲染引擎 - Promise 并发控制"}, {"no": 16, "type": "single", "body": "Vite 开发服务器配置如下，前端请求 /api/users 实际被代理到？", "code": "server: {\n  proxy: {\n    '/api': { target: 'http://localhost:8080', changeOrigin: true,\n      rewrite: path => path.replace(/^\\/api/, '') }\n  }\n}", "options": [{"k": "A", "t": "http://localhost:8080/api/users"}, {"k": "B", "t": "http://localhost:8080/users"}, {"k": "C", "t": "http://localhost:8080/api"}, {"k": "D", "t": "代理失败，rewrite 返回空"}], "answer": ["B"], "explain": "rewrite 在转发前对路径改写，把匹配前缀 /api 替换为空，故 /api/users → /users，最终请求 http://localhost:8080/users。changeOrigin 让 Host 头指向 target。若漏写 rewrite，后端会收到带 /api 的路径，常导致 404。", "kaodian": "AI 前端能力 - 工程化与网络层 - Vite 代理与开发联调"}, {"no": 17, "type": "single", "body": "做接口自动化测试时，下列做法正确的是？", "code": "// 登录前置：获取 token 存入测试上下文\nconst token = await login();\napi.defaults.headers.common['Authorization'] = `Bearer ${token}`;", "options": [{"k": "A", "t": "把登录获取的 token 统一存于测试上下文，后续请求自动携带，避免每个用例重复登录"}, {"k": "B", "t": "每个用例完全独立，不共享任何状态包括 token"}, {"k": "C", "t": "token 写死在代码里永不更新"}, {"k": "D", "t": "接口都该匿名可访问，无需鉴权"}], "answer": ["A"], "explain": "接口测试最佳实践：通过统一鉴权前置（登录 fixture）获取 token 并注入后续请求头，既保证能访问受保护接口，又避免重复登录拖慢套件。B 过于极端（可共享登录态）；C 写死 token 易过期失效；D 忽视鉴权现实。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 接口测试与鉴权"}, {"no": 18, "type": "single", "body": "用 AI 辅助对测试用例按『正向/反向/边界/异常』做分类打标，主要价值是？", "code": "// AI 对用例集自动打标\n['login_success', 'login_empty_pwd', 'login_pwd_boundary']\n  .map(c => ai.classify(c)) // -> {type:'正向'|'异常'|'边界'}", "options": [{"k": "A", "t": "提升用例组织与回归筛选效率，让人聚焦重点场景"}, {"k": "B", "t": "代替人工执行测试"}, {"k": "C", "t": "自动生成生产环境数据"}, {"k": "D", "t": "消除所有漏测"}], "answer": ["A"], "explain": "AI 辅助测试数据/用例分类，核心价值在于对海量用例与数据自动归类（功能/异常/边界/性能），辅助测试人员快速定位薄弱点与回归优先级，提升效率。它不替代执行（B）、不直接产线造数（C）、也不能保证零漏测（D）。", "kaodian": "AI 质量保障 - AI 辅助测试 - AI 辅助测试数据分类"}, {"no": 19, "type": "single", "body": "用 Playwright 编写登录测试，下列元素定位方式最稳健的是？", "code": "await page.getByRole('button', { name: '登录' }).click();", "options": [{"k": "A", "t": "page.locator('.btn-login') 按 CSS 类定位"}, {"k": "B", "t": "page.getByRole('button', { name: '登录' }) 按角色与可见文本"}, {"k": "C", "t": "page.locator('#loginBtn') 按 id 定位"}, {"k": "D", "t": "page.locator('div > div > button:nth-child(3)') 按层级路径"}], "answer": ["B"], "explain": "Playwright 推荐语义化定位器：getByRole/getByText/getByLabel 等，贴合可访问性树，对样式/结构重构更鲁棒，且自动等待元素可交互。脆弱的 CSS 层级/下标选择器（D）或易变的 class（A）一旦 DOM 调整就失效；id（C）较稳但不如语义化表达意图。", "kaodian": "AI 质量保障 - 自动化测试与工具 - Playwright 元素定位"}, {"no": 20, "type": "single", "body": "在 CI 流水线中集成单元测试（如 vitest/jest），其主要作用是？", "code": "scripts: { test: 'vitest run', 'test:cov': 'vitest run --coverage' }", "options": [{"k": "A", "t": "在合并前自动运行，快速反馈逻辑回归与契约破坏"}, {"k": "B", "t": "替代人工 code review"}, {"k": "C", "t": "仅用于生成覆盖率报告、不阻断流程"}, {"k": "D", "t": "部署到生产环境后才运行"}], "answer": ["A"], "explain": "CI 中跑单测是质量左移核心：每次提交/PR 自动执行，快速发现逻辑错误、回归、破坏的契约，并常配合覆盖率门禁。它不替代 review（B）、应作为合并门禁（C 错）、须在合并前而非生产后（D 错）。", "kaodian": "AI 质量保障 - 工程化与持续集成 - CI/CD 单元测试门禁"}]}, {"name": "二、多选题（7 题 · 28 分）", "cat": "multi", "questions": [{"no": 1, "type": "multi", "body": "下列能让 MyBatis-Plus 分页生效的必要条件，正确的有？（多选、少选、错选均不得分）", "code": "@Configuration\npublic class MybatisPlusConfig {\n  @Bean\n  public MybatisPlusInterceptor mybatisPlusInterceptor() {\n    MybatisPlusInterceptor i = new MybatisPlusInterceptor();\n    i.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));\n    return i;\n  }\n}\nPage<Order> page = new Page<>(1, 10);\norderMapper.selectPage(page, wrapper);", "options": [{"k": "A", "t": "必须注册 MybatisPlusInterceptor 并添加 PaginationInnerInterceptor 这个 InnerInterceptor"}, {"k": "B", "t": "调用分页时必须传入 Page 对象作为首参，MP 才改写 SQL 并回填 total"}, {"k": "C", "t": "分页会自动对联表/自定义 SQL 的 count 语句生效，无需额外处理"}, {"k": "D", "t": "分页插件拦截 Executor 的 query 方法，在 SQL 后追加 LIMIT 并执行 count 回填"}], "answer": ["A", "B", "D"], "explain": "分页生效三要素：① 配置类注册 MybatisPlusInterceptor + PaginationInnerInterceptor（A 对）；② 方法首参传 Page 对象，MP 据此改写（B 对）；③ 插件拦截 Executor.query，注入 LIMIT 并执行 count 回填 total（D 对）。C 错：自定义 SQL/联表分页需自己写 count 或用 @InterceptorIgnore，插件不会自动推断复杂 SQL 的 count。", "kaodian": "AI 后端能力 - 数据存储与 ORM 层 - MyBatis-Plus 分页插件"}, {"no": 2, "type": "multi", "body": "下列场景中，消息会进入死信队列（DLQ）的有？（多选、少选、错选均不得分）", "code": "// 队列属性：x-dead-letter-exchange 已配置\nchannel.basicNack(deliveryTag, false, false); // requeue=false", "options": [{"k": "A", "t": "消费者用 basicReject/Nack 且 requeue=false 拒绝消息"}, {"k": "B", "t": "消息在队列中存活时间超过设置的 TTL"}, {"k": "C", "t": "队列达到最大长度（x-max-length）后最早进入的消息被挤出"}, {"k": "D", "t": "生产者发送时指定了错误的 RoutingKey 导致无人消费"}], "answer": ["A", "B", "C"], "explain": "死信(Dead Letter)触发条件：① 消息被拒绝(reject/nack)且 requeue=false（A）；② 消息 TTL 到期未被消费（B）；③ 队列满(x-max-length)新消息入队挤出的旧消息（C）。D 错：路由失败（无匹配队列）的消息默认被丢弃或返回(mandatory/ReturnCallback)，不会进死信队列——死信队列是队列级属性，不是路由失败的兜底。", "kaodian": "AI 后端能力 - 高并发与中间件层 - RabbitMQ 死信队列触发条件"}, {"no": 3, "type": "multi", "body": "关于 Spring Bean 作用域，下列描述正确的有？（多选、少选、错选均不得分）", "code": "@Service\n@Scope(\"prototype\") // 或 @Component 默认 singleton\npublic class TaskService { /* ... */ }\n\n@Component\npublic class Holder {\n  @Autowired private TaskService task; // singleton 注入 prototype，始终同一实例\n}", "options": [{"k": "A", "t": "singleton（默认）：容器中只有一个实例，多线程共享，需注意线程安全"}, {"k": "B", "t": "prototype：每次 getBean 或注入都新建一个实例"}, {"k": "C", "t": "request/session：Web 环境下每个 HTTP 请求/会话一个实例"}, {"k": "D", "t": "singleton Bean 中注入 prototype Bean，默认每次拿到的都是同一 prototype 实例（注入点只解析一次）"}], "answer": ["A", "B", "C", "D"], "explain": "四项均正确。singleton 是默认作用域，全容器共享，有状态 Bean 要小心并发（A）；prototype 每次获取新建（B）；request/session 仅在 Web 容器有意义，按请求/会话隔离（C）；D 是经典坑：singleton 依赖在初始化时一次性注入 prototype，之后始终持有同一引用，需每次新实例要用 @Lookup 或 ObjectProvider。", "kaodian": "AI 后端能力 - 框架与中间件集成层 - Spring Bean 作用域"}, {"no": 4, "type": "multi", "body": "关于事务隔离级别，下列对应关系正确的有？（多选、少选、错选均不得分）", "code": "@Transactional(isolation = Isolation.READ_COMMITTED)\npublic void settle() { /* 防脏读 */ }\n\n// MySQL InnoDB 默认 REPEATABLE_READ", "options": [{"k": "A", "t": "READ UNCOMMITTED：可能读到未提交数据（脏读）"}, {"k": "B", "t": "READ COMMITTED：解决脏读，但仍可能有不可重复读"}, {"k": "C", "t": "REPEATABLE READ（MySQL 默认）：解决脏读与不可重复读，InnoDB 还靠 MVCC+Next-Key 防幻读"}, {"k": "D", "t": "SERIALIZABLE：最高隔离，串行执行，避免全部并发问题但性能最低"}], "answer": ["A", "B", "C", "D"], "explain": "隔离级别逐级增强：RU 允许脏读；RC 防脏读但不可重复读/幻读仍可能发生；RR（MySQL InnoDB 默认）通过 MVCC 快照读 + Next-Key Lock 解决脏读、不可重复读、幻读；SERIALIZABLE 以串行化代价杜绝一切并发异常。四项描述均正确。", "kaodian": "AI 后端能力 - 数据存储与 ORM 层 - 事务隔离级别"}, {"no": 5, "type": "multi", "body": "下列会导致 Vue3 响应式『失效』（视图不更新）的有？（多选、少选、错选均不得分）", "code": "const state = reactive({ name: 'a' });\nconst n = reactive(0);\nconst { name } = state;", "options": [{"k": "A", "t": "用 reactive(0) 包裹基本类型数字，修改它不会触发更新（应使用 ref）"}, {"k": "B", "t": "对 reactive 对象解构 const { name } = state 后只修改 name，视图不更新（应 toRefs）"}, {"k": "C", "t": "给 reactive 对象新增属性 obj.newKey = x（Vue3 Proxy 能拦截，视图会更新）"}, {"k": "D", "t": "用 ref 包裹对象，模板里直接写 {{ user.name }}（ref 自动解包，正常响应）"}], "answer": ["A", "B"], "explain": "Vue3 响应式失效常见陷阱：A reactive 仅对对象/数组生效，传基本类型直接返回原值、不响应式，基本类型须用 ref；B 解构会脱离响应式代理、后续修改不触发更新，应用 toRefs 保持引用。C 错（Vue3 Proxy 支持新增属性响应，区别于 Vue2）；D 错（ref 在模板自动解包，正常响应）。C/D 是『不会失效』的正确写法。", "kaodian": "AI 前端能力 - 框架与组件层 - Vue3 响应式原理与陷阱"}, {"no": 6, "type": "multi", "body": "联调时发现某接口返回 500，使用浏览器 DevTools 应查看哪些面板定位问题？（多选、少选、错选均不得分）", "code": null, "options": [{"k": "A", "t": "Network 面板：看该请求的 Headers、Preview/Response、Status"}, {"k": "B", "t": "Console 面板：看前端是否有未捕获异常或关联报错"}, {"k": "C", "t": "Sources 面板：在页面 JS 中打断点，单步调试请求发起与回调"}, {"k": "D", "t": "Application 面板：直接修改服务端数据库以修复 500"}], "answer": ["A", "B", "C"], "explain": "定位接口 500 的标准 DevTools 路径：Network 看请求 URL/参数/响应体/状态码与耗时（A）；Console 看前端是否抛错或打印了响应（B）；Sources 在业务代码打断点，确认入参与回调逻辑（C）。D 错：Application 面板管理本地存储/Cookie/Service Worker，无法修改服务端数据，修复 500 需看后端日志。", "kaodian": "AI 前端能力 - 工程化与网络层 - 浏览器 DevTools 调试"}, {"no": 7, "type": "multi", "body": "合理的回归测试策略应包含哪些维度？（多选、少选、错选均不得分）", "code": null, "options": [{"k": "A", "t": "基于风险：优先覆盖核心交易、资金、权限等高风险链路"}, {"k": "B", "t": "基于变更影响分析：重跑被改模块及其上下游依赖用例"}, {"k": "C", "t": "基于历史：优先重跑历史高频失败/易回归用例"}, {"k": "D", "t": "每次发版全量重跑所有用例，不做任何筛选"}], "answer": ["A", "B", "C"], "explain": "回归测试应在成本与覆盖间平衡：基于风险（A）保住核心链路；基于变更影响（B）精准命中受影响范围；基于历史失败（C）覆盖易回归点。D 全量重跑虽最稳但成本高、反馈慢，工程上通常作为里程碑/发布前而非每次提交的策略，不能算『合理筛选策略』本身。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 回归测试策略"}]}, {"name": "三、判断题（6 题 · 12 分）", "cat": "judge", "questions": [{"no": 1, "type": "judge", "body": "在 Kafka 中，增加主题的分区数能提升消费并行度；但若分区数大于消费者组中消费者实例数，多余的消费者会处于空闲状态。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "消费并行度上限 = min(分区数, 消费者实例数)。增加分区可提升并行度，但当分区数 > 消费者数时，多余消费者分配不到分区而空闲。因此分区数应结合消费者规模规划，并非越多越好（过多分区也增加 rebalance 与文件句柄开销）。", "kaodian": "AI 后端能力 - 高并发与中间件层 - Kafka 分区与并行度"}, {"no": 2, "type": "judge", "body": "如果一条查询的所有 SELECT 列和 WHERE 条件列都能被某个二级索引覆盖，则 InnoDB 无需回表查询聚簇索引，这种索引称为『覆盖索引』，可显著提升性能。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "覆盖索引指索引本身包含查询所需全部列，引擎在二级索引上即可完成查询，避免回表访问聚簇索引，减少随机 IO。这是高频优化手段（如联合索引 (a,b) 覆盖 where a=? select b）。ORDER BY 也可利用覆盖索引避免 filesort。", "kaodian": "AI 后端能力 - 数据存储与 ORM 层 - 索引覆盖与查询优化"}, {"no": 3, "type": "judge", "body": "浏览器的同源策略限制跨域请求，但服务端本身没有『同源』概念；CORS 实际是浏览器根据服务端的 Access-Control-Allow-* 响应头决定是否放行响应。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "同源策略是浏览器的安全机制，服务端可接收任意来源请求。CORS 由服务端通过响应头（Access-Control-Allow-Origin 等）声明允许的来源，浏览器据此决定是否把响应交给前端脚本。因此跨域能否成功，取决于服务端是否返回正确的 CORS 头。", "kaodian": "AI 前端能力 - 工程化与网络层 - 跨域原理"}, {"no": 4, "type": "judge", "body": "Playwright 测试用例应当相互独立、不依赖彼此的执行顺序，否则在并行执行或单独重跑某条时会不稳定。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "自动化用例独立性是可维护性的根基：相互依赖会导致『一改全崩』、并行执行结果不确定、单条重跑困难。应通过前置 fixture 各自准备数据/状态，避免用例间共享可变状态或隐式顺序。", "kaodian": "AI 质量保障 - 自动化测试与工具 - 自动化用例独立性"}, {"no": 5, "type": "judge", "body": "性能测试中，并发用户数越高，系统吞吐量（TPS）就必然越大。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "TPS 随并发上升会在某拐点后趋于平缓甚至下降：超过系统处理能力后，线程竞争、锁争用、资源耗尽导致响应变慢、错误率上升，TPS 反而降低。因此并发并非越高越好，应找到系统容量拐点（拐点测试）。", "kaodian": "AI 质量保障 - 性能与质量度量 - 吞吐量与并发关系"}, {"no": 6, "type": "judge", "body": "接口自动化测试中，HTTP 429（Too Many Requests）表示服务端限流，测试应将其识别为预期内的限流行为，而非普通服务器错误。", "code": null, "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "429 是规范化的限流状态码，与 5xx 服务器错误性质不同。压测/限流相关用例应显式断言 429 以验证限流生效，而非误报为服务异常。区分 429 与 5xx 是接口健壮性测试的基本功。", "kaodian": "AI 质量保障 - 软件测试理论与质量体系 - 接口测试与状态码"}]}]}</script>
+<script>
+window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  let gno=1; // 全局题号，保证 id/data-no/锚点唯一（JSON 内各 section 的 no 可能重复）
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    sec.questions.forEach(q=>{
+      q._gno=gno; // 绑定全局题号，供 qByNo 等按编号查找
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
+      html += '<div class="card" id="card-'+gno+'" data-no="'+gno+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+gno+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
+      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+      gno++;
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q._gno==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=btn.closest('.card'); if(card) gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  if(ans){
+    let ansText='';
+    if(q.type==='fill'){ ansText = (q.answerText!==undefined)? q.answerText : (Array.isArray(q.answer)? q.answer.join('、') : ''); }
+    else { const arr = Array.isArray(q.answer)? q.answer : (q.answer!=null? String(q.answer).split('') : []); ansText = arr.join('、'); }
+    const ansEl=ans.querySelector('.ans');
+    if(ansEl) ansEl.textContent='答案：'+ansText;
+    ans.classList.add('show');
+  }
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  // 未作答也直接展示答案（不再用 confirm 阻断：部分浏览器/WebView 会静默拒绝 confirm，导致答案永远不显示）
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
