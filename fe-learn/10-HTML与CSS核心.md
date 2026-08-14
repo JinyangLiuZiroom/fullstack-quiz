@@ -8,8 +8,8 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- 能写 HTML 结构：`<div>`/`<span>`/`<ul>`/`<table>`/`<img>`/`<a>` 📖 [前置：HTML 基础](../../prereq/index.html#html-basics.md)
-- 会写基础 CSS：选择器、颜色、字体、`width`/`height`、`padding`/`margin` 📖 [前置：CSS 基础](../../prereq/index.html#css-basics.md)
+- 能写 HTML 结构：`<div>`/`<span>`/`<ul>`/`<table>`/`<img>`/`<a>` 📖 [前置：HTML 基础](../prereq/index.html#html-basics.md)
+- 会写基础 CSS：选择器、颜色、字体、`width`/`height`、`padding`/`margin` 📖 [前置：CSS 基础](../prereq/index.html#css-basics.md)
 - 已学模块二（Flex 一维布局）——本篇在 Flex 之上讲二维布局 📖 [模块二：Flex弹性布局](index.html#02-Flex弹性布局.md)
 - 知道「块级元素占一行、行内元素并排」的直觉
 

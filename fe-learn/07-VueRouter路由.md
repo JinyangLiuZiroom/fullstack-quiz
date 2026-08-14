@@ -9,8 +9,8 @@
 ## 1. 前置知识（先确认你会这些）
 
 - 已掌握模块一：`ref`/`reactive`/`computed`、`<script setup>`、组件通信 📖 [模块一：Vue3响应式](index.html#01-Vue3响应式与组合式API.md)
-- 会用 Vite 创建并运行项目（`npm create vite`、`npm run dev`） 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
-- 理解「单页应用（SPA）」：整个站点只有一个 `index.html`，页面切换靠 JS 动态换内容，不真刷新浏览器 📖 [前置：单页应用 SPA](../../prereq/index.html#spa-basics.md)
+- 会用 Vite 创建并运行项目（`npm create vite`、`npm run dev`） 📖 [前置：命令行与 npm](../prereq/index.html#cli-npm.md)
+- 理解「单页应用（SPA）」：整个站点只有一个 `index.html`，页面切换靠 JS 动态换内容，不真刷新浏览器 📖 [前置：单页应用 SPA](../prereq/index.html#spa-basics.md)
 - 知道 URL 长什么样：`path`、`query`（? 后面）、`hash`（# 后面）
 
 如果 SPA 没概念，先记住一句话：**前端路由就是「URL 变了，但页面不整页刷新，只换中间那块内容」**。

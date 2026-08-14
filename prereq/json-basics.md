@@ -21,4 +21,4 @@ const back = JSON.parse(str);        // 还原成对象
 - JSON 的 key 必须双引号；JS 对象字面量可以不用引号，但那是两回事。
 - `undefined`、函数不能进 JSON，会被丢掉。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

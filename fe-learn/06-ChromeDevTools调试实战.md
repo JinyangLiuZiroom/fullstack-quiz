@@ -9,7 +9,7 @@
 ## 1. 前置知识
 
 - 会用 Chrome 浏览器
-- 打开开发者工具：F12 或 `Ctrl+Shift+I`（Mac `Cmd+Opt+I） 📖 [前置：DevTools](../../prereq/index.html#devtools-basics.md)
+- 打开开发者工具：F12 或 `Ctrl+Shift+I`（Mac `Cmd+Opt+I） 📖 [前置：DevTools](../prereq/index.html#devtools-basics.md)
 - 知道「前端请求会发到后端、后端返回数据」这件事（见模块三） 📖 [模块三：Axios与HTTP请求实战](index.html#03-Axios与HTTP请求实战.md)
 
 ---

@@ -23,4 +23,4 @@ FROM user u JOIN orders o ON u.id = o.user_id;
 - `DELETE` 不带 `WHERE` 会删全表（危险）；先 `SELECT` 确认再删。
 - `NULL` 不参与 `=` 比较，要用 `IS NULL` / `IS NOT NULL`。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

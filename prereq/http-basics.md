@@ -27,4 +27,4 @@ Content-Type: application/json
 - GET 带参数走 URL（?a=1），POST 带参数走 Body；GET 不应改数据，POST 才改。
 - `401` 是「没登录/凭证失效」，`403` 是「登录了但没权限」，不一样。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

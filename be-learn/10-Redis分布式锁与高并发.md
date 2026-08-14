@@ -9,7 +9,7 @@
 ## 1. 前置知识
 
 - 模块九 Redis 基础（set/expire） 📖 [模块九：Redis缓存](index.html#09-Redis缓存.md)
-- 知道 `synchronized`/`ReentrantLock` 只在**同一个 JVM** 内有效 📖 [前置：线程与并发](../../prereq/index.html#concurrency-basics.md)
+- 知道 `synchronized`/`ReentrantLock` 只在**同一个 JVM** 内有效 📖 [前置：线程与并发](../prereq/index.html#concurrency-basics.md)
 - 模块八 并发扣减思路 📖 [模块八：MySQL事务与锁](index.html#08-MySQL事务与锁.md)
 
 ---

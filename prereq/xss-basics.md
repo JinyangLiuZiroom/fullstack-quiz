@@ -20,4 +20,4 @@
 - XSS 不只对 `<script>` 有效，`onerror=`、`href="javascript:"` 也能执行。
 - 防御主线：不信任任何用户输入，输出时转义；敏感 cookie 加 `HttpOnly`。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

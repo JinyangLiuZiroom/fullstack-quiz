@@ -22,4 +22,4 @@ lock.lock(); try { count++; } finally { lock.unlock(); }
 - 单 JVM 锁（`synchronized`）跨不了多台机器；分布式要分布式锁（Redis/ZK）。
 - `synchronized` 方法锁的是 `this`，静态方法锁的是类对象，别搞混作用范围。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

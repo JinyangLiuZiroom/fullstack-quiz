@@ -8,8 +8,8 @@
 
 ## 1. 前置知识
 
-- SQL 基础（SELECT/WHERE/JOIN） 📖 [前置：SQL 基础](../../prereq/index.html#sql-basics.md)
-- 知道 B+ 树是一种「有序、矮胖、适合范围查找」的索引结构（不用深究实现，记住「有序」即可） 📖 [前置：B+ 树与索引](../../prereq/index.html#index-btree.md)
+- SQL 基础（SELECT/WHERE/JOIN） 📖 [前置：SQL 基础](../prereq/index.html#sql-basics.md)
+- 知道 B+ 树是一种「有序、矮胖、适合范围查找」的索引结构（不用深究实现，记住「有序」即可） 📖 [前置：B+ 树与索引](../prereq/index.html#index-btree.md)
 - 模块六（会用 MP 写查询） 📖 [模块六：MyBatisPlus持久层](index.html#06-MyBatisPlus持久层.md)
 
 ---

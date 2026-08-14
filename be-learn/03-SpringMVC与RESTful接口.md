@@ -9,8 +9,8 @@
 ## 1. 前置知识
 
 - 模块一、二（Spring Boot + IoC） 📖 [模块一：SpringBoot基础与自动配置](index.html#01-SpringBoot基础与自动配置.md)
-- HTTP 方法 GET/POST/PUT/DELETE、状态码 200/400/401/404/500 📖 [前置：HTTP 基础](../../prereq/index.html#http-basics.md)
-- JSON 长什么样 📖 [前置：JSON](../../prereq/index.html#json-basics.md)
+- HTTP 方法 GET/POST/PUT/DELETE、状态码 200/400/401/404/500 📖 [前置：HTTP 基础](../prereq/index.html#http-basics.md)
+- JSON 长什么样 📖 [前置：JSON](../prereq/index.html#json-basics.md)
 
 ---
 

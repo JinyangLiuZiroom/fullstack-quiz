@@ -11,7 +11,7 @@
 - 模块一：`ref`/`reactive`、`<script setup>`、组合式 API 📖 [模块一：Vue3响应式](index.html#01-Vue3响应式与组合式API.md)
 - 模块七：Vue Router 基本会用（本篇实战会用到登录拦截） 📖 [模块七：VueRouter路由](index.html#07-VueRouter路由.md)
 - 知道「prop 透传」的痛：父 → 子 → 孙，数据要一层层传，改了还要一层层 emit 回去
-- 已安装项目并 `npm install` 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
+- 已安装项目并 `npm install` 📖 [前置：命令行与 npm](../prereq/index.html#cli-npm.md)
 
 > 如果组件层级浅（父子两层），用 `props` + `emit` 就够了，**不要一上来就上 Pinia**。Pinia 解决的是「跨组件、跨层级、全局共享」的状态。
 

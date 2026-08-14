@@ -18,4 +18,4 @@ DevTools → Performance 录一段滚动，看帧率曲线。做完回主文章�
 ## 常见误解
 - 频繁读 `offsetWidth` 又写样式会强制同步重排，循环里尤甚，要批量读写。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

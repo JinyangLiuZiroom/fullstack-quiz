@@ -31,4 +31,4 @@
 - `margin` 和 `padding` 不一样：padding 是「自己内缩」，margin 是「推开别人」。
 - 相邻块级元素的 `margin` 会「塌陷」（取较大值），不是相加。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

@@ -20,4 +20,4 @@ node             # 进入 REPL，可直接敲 JS 运行
 - 前端项目「需要 Node」是为了**构建**，不是让用户装 Node；最终产物是静态 HTML/JS，浏览器直接跑。
 - 不同项目要不同 Node 版本时，用 `nvm`（Mac/Linux）或 `n` 切换。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

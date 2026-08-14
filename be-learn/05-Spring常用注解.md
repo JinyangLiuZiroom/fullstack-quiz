@@ -10,7 +10,7 @@
 
 - 模块一配置（@Value/@ConfigurationProperties 在模块一讲过，这里深入） 📖 [模块一：SpringBoot基础与自动配置](index.html#01-SpringBoot基础与自动配置.md)
 - 模块二 IoC（这些注解都是基于 Bean 机制） 📖 [模块二：SpringIoC与DI](index.html#02-SpringIoC与DI.md)
-- 知道什么是「阻塞」：方法不返回，调用方干等 📖 [前置：阻塞与非阻塞](../../prereq/index.html#blocking-basics.md)
+- 知道什么是「阻塞」：方法不返回，调用方干等 📖 [前置：阻塞与非阻塞](../prereq/index.html#blocking-basics.md)
 
 ---
 

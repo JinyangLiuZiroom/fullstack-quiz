@@ -27,4 +27,4 @@ Spring 启动时把 `UserRepo` 实例「注入」到 `OrderService`。
 - DI 不是 Spring 独有，是设计思想；Spring 只是用注解帮你自动做。
 - 注入的 Bean 默认是单例，有状态的字段要小心并发。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

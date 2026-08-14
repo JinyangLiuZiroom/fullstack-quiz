@@ -26,4 +26,4 @@ u.ifPresent(x -> System.out.println(x.getName()));
 - 接口可以有 `default` 方法；抽象类才能有状态字段。
 - 调集合方法前先判空，否则 `NullPointerException`。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

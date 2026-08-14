@@ -31,4 +31,4 @@ async function load() {
 - `await` 只能用在 `async` 函数里。
 - 忘了 `await`：拿到的是 Promise 对象不是结果，后面计算全是 `NaN`/undefined。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

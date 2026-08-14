@@ -8,11 +8,11 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- HTML：能写 `<div>`、`<input>`、`<button>`、`<ul><li>` 📖 [前置：HTML 基础](../../prereq/index.html#html-basics.md)
-- CSS：知道 class、id、基础选择器 📖 [前置：CSS 基础](../../prereq/index.html#css-basics.md)
-- JavaScript：变量 `let/const`、箭头函数、数组方法（`map/filter/find/push`）、对象、`Promise/async-await`、模块 `import/export` 📖 [前置：JavaScript 基础](../../prereq/index.html#js-basics.md)
-- 命令行：`npm install`、`npm run xxx` 能跑通 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
-- 已安装 Node.js（建议 18+） 📖 [前置：Node.js 环境](../../prereq/index.html#node-env.md)
+- HTML：能写 `<div>`、`<input>`、`<button>`、`<ul><li>` 📖 [前置：HTML 基础](../prereq/index.html#html-basics.md)
+- CSS：知道 class、id、基础选择器 📖 [前置：CSS 基础](../prereq/index.html#css-basics.md)
+- JavaScript：变量 `let/const`、箭头函数、数组方法（`map/filter/find/push`）、对象、`Promise/async-await`、模块 `import/export` 📖 [前置：JavaScript 基础](../prereq/index.html#js-basics.md)
+- 命令行：`npm install`、`npm run xxx` 能跑通 📖 [前置：命令行与 npm](../prereq/index.html#cli-npm.md)
+- 已安装 Node.js（建议 18+） 📖 [前置：Node.js 环境](../prereq/index.html#node-env.md)
 
 如果上面有不会的，先补 JS 基础再回来。Vue 是 JS 框架，JS 不熟会处处卡。
 

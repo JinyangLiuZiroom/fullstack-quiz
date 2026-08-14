@@ -8,8 +8,8 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- JavaScript：变量、函数、对象、数组、Promise、ES6 模块 📖 [前置：JavaScript 基础](../../prereq/index.html#js-basics.md)
-- 命令行：`npm install`、`npx tsc --init` 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
+- JavaScript：变量、函数、对象、数组、Promise、ES6 模块 📖 [前置：JavaScript 基础](../prereq/index.html#js-basics.md)
+- 命令行：`npm install`、`npx tsc --init` 📖 [前置：命令行与 npm](../prereq/index.html#cli-npm.md)
 - 知道「编译」概念：TS 不能直接跑浏览器，要先编译成 JS
 - 已学过模块一（Vue3），本篇会用到 `<script setup lang="ts">` 📖 [模块一：Vue3响应式](index.html#01-Vue3响应式与组合式API.md)
 

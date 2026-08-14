@@ -23,4 +23,4 @@ npx tsc --init     # 临时调用某个包的命令（不用全局装）
 - `npm install xxx` 装到依赖里并写进 `package.json`；漏了 `--save` 老版本不会记录（新版本默认记录）。
 - `node_modules` 不用提交到 Git（有 `.gitignore` 忽略），别人 `npm install` 即可还原。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

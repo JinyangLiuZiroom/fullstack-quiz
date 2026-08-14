@@ -20,4 +20,4 @@ private UserRepo repo; // 由容器注入，可以是 MySQL 也可以是 Mock
 ## 常见误解
 - 「解耦」不是不用依赖，是依赖「稳定接口」而非「易变实现」。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

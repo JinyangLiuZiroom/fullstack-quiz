@@ -18,4 +18,4 @@ Vue Router 的 `history` 模式改 `path`，`hash` 模式改 `#`。
 - SPA 首屏慢（要下载整个 JS 包）；用路由懒加载缓解。
 - `hash` 模式带 `#`，不会被发到服务器，刷新不会 404；`history` 模式刷新要服务器兜底。
 
-↩ 回到学习笔记首页：../../learn.html
+↩ 回到学习笔记首页：../learn.html

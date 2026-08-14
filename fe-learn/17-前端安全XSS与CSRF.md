@@ -10,7 +10,7 @@
 
 - 模块三（Axios）/模块四（CORS）：知道请求怎么发、同源策略 📖 [模块三：Axios与HTTP请求实战](index.html#03-Axios与HTTP请求实战.md)
 - 模块八（Pinia）/模块十一（浏览器原理）：知道 cookie/localStorage、同源 📖 [模块八：Pinia状态管理](index.html#08-Pinia状态管理.md)
-- 知道 HTML 里 `<script>` 会执行 JS 📖 [前置：HTML 基础](../../prereq/index.html#html-basics.md)
+- 知道 HTML 里 `<script>` 会执行 JS 📖 [前置：HTML 基础](../prereq/index.html#html-basics.md)
 - 知道「攻击者能往页面塞 JS」意味着什么
 
 > 安全是「防御性编程」。本篇讲前端视角最常见的两类：XSS（偷数据/钓鱼/劫持）和 CSRF（冒充你发请求）。后端配合也很关键，但前端是第一道防线。
