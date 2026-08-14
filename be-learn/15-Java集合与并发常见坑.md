@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- Java 基础（集合框架、`Runnable`/`Callable`）
-- 模块二（Bean）、模块五（@Async 线程池）
-- 知道「线程」是并发执行的单位
+- Java 基础（集合框架、`Runnable`/`Callable`） 📖 [前置：Java 8+ 基础](../../prereq/index.html#java-basics.md)
+- 模块二（Bean）、模块五（@Async 线程池） 📖 [模块二：SpringIoC与DI](index.html#02-SpringIoC与DI.md)
+- 知道「线程」是并发执行的单位 📖 [前置：线程与并发](../../prereq/index.html#concurrency-basics.md)
 
 ---
 

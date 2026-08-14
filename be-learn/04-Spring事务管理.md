@@ -8,7 +8,7 @@
 
 ## 1. 前置知识
 
-- 模块二 IoC（知道 Bean 是被代理的）、模块三 MVC
+- 模块二 IoC（知道 Bean 是被代理的）、模块三 MVC 📖 [模块二：SpringIoC与DI](index.html#02-SpringIoC与DI.md)
 - 知道数据库事务的 ACID 字面意思
 - 知道「回滚」= 操作全部撤销
 

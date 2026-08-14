@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块三（会写接口）、模块六（会查库）
-- 知道缓存 = 把热点数据放更快的存储（内存），减少查 DB
-- 基本数据结构：String/Hash/List/Set/ZSet
+- 模块三（会写接口）、模块六（会查库） 📖 [模块三：SpringMVC与RESTful接口](index.html#03-SpringMVC与RESTful接口.md)
+- 知道缓存 = 把热点数据放更快的存储（内存），减少查 DB 📖 [前置：缓存概念](../../prereq/index.html#cache-basics.md)
+- 基本数据结构：String/Hash/List/Set/ZSet 📖 [前置：Redis 数据类型](../../prereq/index.html#redis-types.md)
 
 ---
 

@@ -8,10 +8,10 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- Java 8+ 语法（Lambda、注解、`Optional`）
-- Maven 或 Gradle 基本命令（`mvn clean package` / `./gradlew build`）
-- HTTP 基础（URL、GET/POST、状态码）
-- 知道「依赖注入」字面意思（不会写也行，下面讲）
+- Java 8+ 语法（Lambda、注解、`Optional`） 📖 [前置：Java 8+ 基础](../../prereq/index.html#java-basics.md)
+- Maven 或 Gradle 基本命令（`mvn clean package` / `./gradlew build`） 📖 [前置：Maven / Gradle](../../prereq/index.html#maven-gradle.md)
+- HTTP 基础（URL、GET/POST、状态码） 📖 [前置：HTTP 基础](../../prereq/index.html#http-basics.md)
+- 知道「依赖注入」字面意思（不会写也行，下面讲） 📖 [前置：依赖注入 DI](../../prereq/index.html#di-ioc.md)
 
 如果 Maven 还不熟，先记住：依赖写在 `pom.xml` 的 `<dependencies>` 里，构建时自动下载到本地仓库。
 

@@ -8,11 +8,11 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- 模块一：Vue3 组件、`ref`/`computed`
-- 模块三：Axios 封装请求
-- 模块九：TypeScript 基础
+- 模块一：Vue3 组件、`ref`/`computed` 📖 [模块一：Vue3响应式](index.html#01-Vue3响应式与组合式API.md)
+- 模块三：Axios 封装请求 📖 [模块三：Axios与HTTP请求实战](index.html#03-Axios与HTTP请求实战.md)
+- 模块九：TypeScript 基础 📖 [模块九：TypeScript实战](index.html#09-TypeScript实战.md)
 - 知道「单元测试」= 测最小单元（函数/组件）的输入输出是否符合预期
-- 跑过 `npm run xxx`
+- 跑过 `npm run xxx` 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
 
 > 前端测试金字塔（模块大纲里有）：**多写单元测试（快、稳）**，少写 E2E（慢、脆）。Vitest 专攻单元/组件测试，跑在 Node + jsdom 环境，速度极快（基于 Vite，无需额外构建）。
 

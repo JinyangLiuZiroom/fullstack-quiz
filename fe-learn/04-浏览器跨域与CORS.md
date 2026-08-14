@@ -10,7 +10,7 @@
 
 - 知道 URL 由「协议 + 域名 + 端口」组成（如 `https://api.xxx.com:8080`）
 - 知道前端 dev 跑在 `localhost:5173`，后端在另一台/另一端口
-- 了解 Axios 发请求（见模块三）
+- 了解 Axios 发请求（见模块三） 📖 [模块三：Axios与HTTP请求实战](index.html#03-Axios与HTTP请求实战.md)
 
 ---
 

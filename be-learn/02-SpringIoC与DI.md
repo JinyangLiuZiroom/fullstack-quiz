@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块一 Spring Boot 基础（知道 `@SpringBootApplication` 启动了容器）
-- Java 注解、接口、构造方法
-- 什么是「耦合」：A 类直接 `new B()`，A 就硬依赖 B，难替换难测试
+- 模块一 Spring Boot 基础（知道 `@SpringBootApplication` 启动了容器） 📖 [模块一：SpringBoot基础与自动配置](index.html#01-SpringBoot基础与自动配置.md)
+- Java 注解、接口、构造方法 📖 [前置：Java 8+ 基础](../../prereq/index.html#java-basics.md)
+- 什么是「耦合」：A 类直接 `new B()`，A 就硬依赖 B，难替换难测试 📖 [前置：耦合概念](../../prereq/index.html#coupling-basics.md)
 
 ---
 

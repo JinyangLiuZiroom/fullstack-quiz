@@ -8,8 +8,8 @@
 
 ## 1. 前置知识
 
-- 装好 Node.js 18+（用 `node -v` 确认）
-- 会用 npm（或 pnpm/yarn）安装依赖
+- 装好 Node.js 18+（用 `node -v` 确认） 📖 [前置：Node.js 环境](../../prereq/index.html#node-env.md)
+- 会用 npm（或 pnpm/yarn）安装依赖 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
 - 知道「开发」和「上线」是两回事：开发要快+热更新，上线要小+压缩
 
 ---

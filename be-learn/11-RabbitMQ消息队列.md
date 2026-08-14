@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块三（会写接口）、模块二（Bean/注入）
-- 知道「生产者发消息、消费者收消息」的基本模型
-- 基础 JSON
+- 模块三（会写接口）、模块二（Bean/注入） 📖 [模块三：SpringMVC与RESTful接口](index.html#03-SpringMVC与RESTful接口.md)
+- 知道「生产者发消息、消费者收消息」的基本模型 📖 [前置：生产者-消费者](../../prereq/index.html#producer-consumer.md)
+- 基础 JSON 📖 [前置：JSON](../../prereq/index.html#json-basics.md)
 
 ---
 

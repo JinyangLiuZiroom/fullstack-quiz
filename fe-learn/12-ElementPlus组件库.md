@@ -8,10 +8,10 @@
 
 ## 1. 前置知识（先确认你会这些）
 
-- 模块一：`<script setup>`、`ref`、`reactive`、组件通信
-- 模块五：会用 Vite 创建/运行项目
-- 模块八：会用 Pinia（本篇实战会接登录态）
-- 知道「组件库」是什么：别人封装好的 `<el-button>`、`<el-table>`，你直接当标签用
+- 模块一：`<script setup>`、`ref`、`reactive`、组件通信 📖 [模块一：Vue3响应式](index.html#01-Vue3响应式与组合式API.md)
+- 模块五：会用 Vite 创建/运行项目 📖 [模块五：Vite工程化与构建](index.html#05-Vite工程化与构建.md)
+- 模块八：会用 Pinia（本篇实战会接登录态） 📖 [模块八：Pinia状态管理](index.html#08-Pinia状态管理.md)
+- 知道「组件库」是什么：别人封装好的 `<el-button>`、`<el-table>`，你直接当标签用 📖 [前置：组件库](../../prereq/index.html#component-library.md)
 
 > Element Plus 是 Vue3 的组件库（Vue2 时代叫 Element UI）。它提供几十个高质量组件，中后台项目首选。
 

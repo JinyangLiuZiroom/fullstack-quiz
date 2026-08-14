@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>前置知识补完 · 学习笔记</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<style>
+  :root{ --bg:#fff; --fg:#1a1a1a; --sub:#666; --line:#e8e8e8; --code:#f6f8fa; --accent:#1a1a1a; --hl:#f0f4ff; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--fg); background:var(--bg); line-height:1.75; font-size:15px; -webkit-text-size-adjust:100%; }
+  .topbar{ position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid var(--line); }
+  .sitename{font-weight:700; font-size:16px; letter-spacing:.5px}
+  .menu-btn{ display:none; border:1px solid var(--line); background:#fff; border-radius:8px; width:38px; height:34px; font-size:18px; cursor:pointer; color:var(--fg); }
+  .layout{display:flex; align-items:flex-start}
+  .sidebar{ width:268px; flex:0 0 268px; height:calc(100vh - 59px); position:sticky; top:59px; overflow:auto; border-right:1px solid var(--line); padding:14px 10px 40px; background:var(--bg); }
+  .group{margin:10px 6px 4px; font-size:12px; color:var(--sub); letter-spacing:1px; text-transform:uppercase}
+  .toc-item{ display:block; padding:9px 12px; border-radius:8px; color:var(--fg); text-decoration:none; font-size:14px; cursor:pointer; }
+  .toc-item:hover{background:#f3f4f6}
+  .toc-item.active{background:var(--hl); font-weight:600}
+  .content{flex:1; min-width:0; padding:24px 28px 80px}
+  .doc{max-width:860px; margin:0 auto}
+  .doc h1{font-size:26px; margin:.2em 0 .6em; padding-bottom:.3em; border-bottom:2px solid var(--line)}
+  .doc h2{font-size:20px; margin:1.8em 0 .7em; padding-bottom:.25em; border-bottom:1px solid var(--line)}
+  .doc h3{font-size:16.5px; margin:1.4em 0 .5em}
+  .doc p{margin:.6em 0}
+  .doc ul,.doc ol{padding-left:1.5em; margin:.5em 0}
+  .doc li{margin:.25em 0}
+  .doc code{ background:var(--code); padding:.15em .4em; border-radius:5px; font-size:13px; font-family:"SF Mono",Menlo,Consolas,monospace; }
+  .doc pre{ background:var(--code); padding:14px 16px; border-radius:10px; overflow:auto; border:1px solid var(--line); }
+  .doc pre code{ background:none; padding:0; font-size:13px; }
+  .doc blockquote{ margin:.8em 0; padding:.6em 1em; background:#fafafa; border-left:4px solid #ccc; color:#444; }
+  .doc a{ color:#7c3aed; }
+  .overlay{ display:none; position:fixed; inset:59px 0 0 0; background:rgba(0,0,0,.25); z-index:20; }
+  .overlay.show{ display:block; }
+  @media(max-width:760px){
+    .menu-btn{display:block}
+    .sidebar{ position:fixed; top:59px; left:0; bottom:0; width:80%; max-width:300px; background:#fff; transform:translateX(-100%); transition:transform .2s; z-index:25; }
+    .sidebar.open{ transform:translateX(0); }
+    .content{ padding:18px 16px 80px; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+  <span class="sitename">前置知识补完</span>
+  <a href="../../learn.html" style="margin-left:auto;font-size:13px;color:#7c3aed;text-decoration:none">← 笔记首页</a>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav id="toc"></nav></aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="content"><div class="doc" id="content"><div class="placeholder">← 从左侧选择一个前置知识点开始补完（共 27 篇）</div></main>
+</div>
+<script>
+const ARTICLES = [
+  { g:'前端通用基础', items:[
+    {t:'HTML 基础：标签、结构、块级/行内', f:'html-basics.md'},
+    {t:'CSS 基础：选择器、盒模型、display', f:'css-basics.md'},
+    {t:'JavaScript 基础：变量/函数/数组/对象/模块', f:'js-basics.md'},
+    {t:'JavaScript 异步：Promise / async-await / 事件循环', f:'js-async.md'},
+    {t:'命令行与 npm：install / run / npx', f:'cli-npm.md'},
+    {t:'Node.js 环境：安装与为什么需要它', f:'node-env.md'},
+    {t:'HTTP 基础：URL / 方法 / 状态码 / Header / Body', f:'http-basics.md'},
+    {t:'JSON 是什么：结构 / 与对象 / 解析', f:'json-basics.md'},
+    {t:'浏览器 DevTools 基础：打开 / Elements / Console / Network', f:'devtools-basics.md'},
+    {t:'同源与跨域：为什么会有跨域', f:'cors-basics.md'},
+    {t:'单页应用 SPA 概念', f:'spa-basics.md'},
+    {t:'组件库概念', f:'component-library.md'},
+    {t:'渲染与性能概念：重排/重绘/白屏/卡顿/FPS', f:'render-perf.md'},
+    {t:'XSS 与脚本注入概念', f:'xss-basics.md'},
+  ]},
+  { g:'后端通用基础', items:[
+    {t:'Java 8+ 基础：Lambda / 注解 / 集合 / 接口', f:'java-basics.md'},
+    {t:'Maven / Gradle 基本命令与构建', f:'maven-gradle.md'},
+    {t:'Git 基础：add / commit / push', f:'git-basics.md'},
+    {t:'SQL 基础：SELECT / INSERT / UPDATE / WHERE / JOIN', f:'sql-basics.md'},
+    {t:'依赖注入 DI 与 IoC 概念', f:'di-ioc.md'},
+    {t:'耦合概念：硬依赖为什么不好', f:'coupling-basics.md'},
+    {t:'线程与并发：JVM 内锁 / synchronized', f:'concurrency-basics.md'},
+    {t:'阻塞与非阻塞', f:'blocking-basics.md'},
+    {t:'缓存概念：热点数据放内存', f:'cache-basics.md'},
+    {t:'Redis 数据类型：String/Hash/List/Set/ZSet', f:'redis-types.md'},
+    {t:'B+ 树与索引：有序 / 矮胖', f:'index-btree.md'},
+    {t:'微服务概念', f:'microservice-basics.md'},
+    {t:'生产者-消费者模型', f:'producer-consumer.md'},
+  ]},
+];
+
+const CDN='https://cdn.jsdelivr.net/npm/';
+const FB='https://unpkg.com/';
+function loadScript(srcs){ return new Promise((res,rej)=>{ let i=0; (function next(){ if(i>=srcs.length){rej(new Error('load fail'));return;} const s=document.createElement('script'); s.src=srcs[i++]; s.onload=res; s.onerror=()=>{s.remove();next();}; document.head.appendChild(s); })(); }); }
+const $=s=>document.querySelector(s);
+const sidebar=$('#sidebar'), overlay=$('#overlay'), content=$('#content'), toc=$('#toc');
+function buildToc(){ toc.innerHTML=''; ARTICLES.forEach(group=>{ const h=document.createElement('div'); h.className='group'; h.textContent=group.g; toc.appendChild(h); group.items.forEach(it=>{ const a=document.createElement('a'); a.className='toc-item'; a.textContent=it.t; a.dataset.f=it.f; a.onclick=()=>open(it.f); toc.appendChild(a); }); }); }
+function markActive(f){ document.querySelectorAll('.toc-item').forEach(el=>el.classList.toggle('active', el.dataset.f===f)); }
+async function open(f){ markActive(f); $('#overlay').classList.remove('show'); sidebar.classList.remove('open'); content.scrollTop=0; window.scrollTo(0,0); content.innerHTML='<div class="placeholder">加载中…</div>'; try{ const md=await fetch(f).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); }); const html=marked.parse(md); const clean=DOMPurify.sanitize(html); content.innerHTML=clean; content.querySelectorAll('pre code').forEach(b=>{ try{hljs.highlightElement(b);}catch(e){} }); if(location.hash!=='#'+f) history.replaceState(null,'','#'+f); }catch(e){ content.innerHTML='<div class="placeholder">加载失败：'+f+'<br>请确认文件存在且网络可访问 CDN</div>'; } }
+$('#menuBtn').onclick=()=>{ sidebar.classList.toggle('open'); overlay.classList.toggle('show'); };
+overlay.onclick=()=>{ sidebar.classList.remove('open'); overlay.classList.remove('show'); };
+Promise.all([
+  loadScript([CDN+'marked/marked.min.js', FB+'marked/marked.min.js']),
+  loadScript([CDN+'dompurify@3/dist/purify.min.js', FB+'dompurify@3/dist/purify.min.js']),
+  loadScript([CDN+'@highlightjs/cdn-assets@11/highlight.min.js', FB+'@highlightjs/cdn-assets@11/highlight.min.js']),
+]).then(()=>{ marked.setOptions({gfm:true,breaks:false}); buildToc(); const hash=location.hash.replace('#',''); const all=ARTICLES.flatMap(g=>g.items.map(i=>i.f)); if(hash && all.includes(hash)) open(hash); else open(all[0]); }).catch(()=>{ content.innerHTML='<div class="placeholder">依赖（marked/highlight.js）加载失败，请检查网络后刷新</div>'; });
+</script>
+</body>
+</html>

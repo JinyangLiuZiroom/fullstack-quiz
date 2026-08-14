@@ -8,10 +8,10 @@
 
 ## 1. 前置知识
 
-- 知道 HTTP 方法 GET/POST/PUT/DELETE
-- 知道 URL、`?a=1&b=2` 查询参数、请求头 Header、请求体 Body
-- 会用 `npm install axios`
-- 了解 Promise / async-await
+- 知道 HTTP 方法 GET/POST/PUT/DELETE 📖 [前置：HTTP 基础](../../prereq/index.html#http-basics.md)
+- 知道 URL、`?a=1&b=2` 查询参数、请求头 Header、请求体 Body 📖 [前置：HTTP 基础](../../prereq/index.html#http-basics.md)
+- 会用 `npm install axios` 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
+- 了解 Promise / async-await 📖 [前置：JS 异步 / 事件循环](../../prereq/index.html#js-async.md)
 
 为什么不用原生 `fetch`：Axios 自动 JSON 序列化/反序列化、拦截器、超时、取消请求、上传进度，且浏览器/Node 通用。联调协作基本都用它。
 

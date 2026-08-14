@@ -8,8 +8,8 @@
 
 ## 1. 前置知识
 
-- 知道 HTML 的「块级元素（div 独占一行）」和「行内元素（span 并排）」
-- 会写基本 CSS：`display`、`width`、`height`、`margin`、`padding`
+- 知道 HTML 的「块级元素（div 独占一行）」和「行内元素（span 并排）」 📖 [前置：HTML 基础](../../prereq/index.html#html-basics.md)
+- 会写基本 CSS：`display`、`width`、`height`、`margin`、`padding` 📖 [前置：CSS 基础](../../prereq/index.html#css-basics.md)
 - 理解「父元素 / 子元素」的包含关系
 
 老派布局靠 `float` + `position: absolute` 硬拼，容易塌高度、难居中、难自适应。Flex 是 CSS3 的弹性盒子模型，给**容器**设 `display:flex`，里面的**子项**自动按规则排列，绝大多数布局不用算死宽度。

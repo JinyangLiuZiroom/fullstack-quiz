@@ -8,8 +8,8 @@
 
 ## 1. 前置知识
 
-- 模块一 配置（`application.yml`）、模块五 `@Value`/`@ConfigurationProperties`
-- 知道「微服务」= 多个独立部署的服务
+- 模块一 配置（`application.yml`）、模块五 `@Value`/`@ConfigurationProperties` 📖 [模块一：SpringBoot基础与自动配置](index.html#01-SpringBoot基础与自动配置.md)
+- 知道「微服务」= 多个独立部署的服务 📖 [前置：微服务概念](../../prereq/index.html#microservice-basics.md)
 - 基本网络（IP、端口）
 
 ---

@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块四 Spring 事务（知道事务注解）
-- 模块七 索引（锁和索引强相关：行锁锁索引）
-- SQL 基础
+- 模块四 Spring 事务（知道事务注解） 📖 [模块四：Spring事务管理](index.html#04-Spring事务管理.md)
+- 模块七 索引（锁和索引强相关：行锁锁索引） 📖 [模块七：MySQL索引与SQL优化](index.html#07-MySQL索引与SQL优化.md)
+- SQL 基础 📖 [前置：SQL 基础](../../prereq/index.html#sql-basics.md)
 
 ---
 

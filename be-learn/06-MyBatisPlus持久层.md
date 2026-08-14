@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块三（会写 Controller/Service）
-- SQL 基础（SELECT/INSERT/UPDATE/WHERE）
-- 知道 JDBC 是 Java 连数据库的底层 API
+- 模块三（会写 Controller/Service） 📖 [模块三：SpringMVC与RESTful接口](index.html#03-SpringMVC与RESTful接口.md)
+- SQL 基础（SELECT/INSERT/UPDATE/WHERE） 📖 [前置：SQL 基础](../../prereq/index.html#sql-basics.md)
+- 知道 JDBC 是 Java 连数据库的底层 API 📖 [前置：SQL 基础](../../prereq/index.html#sql-basics.md)
 
 ---
 

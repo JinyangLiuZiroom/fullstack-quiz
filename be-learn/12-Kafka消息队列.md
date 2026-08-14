@@ -8,9 +8,9 @@
 
 ## 1. 前置知识
 
-- 模块十一 RabbitMQ（对比学习更快）
+- 模块十一 RabbitMQ（对比学习更快） 📖 [模块十一：RabbitMQ消息队列](index.html#11-RabbitMQ消息队列.md)
 - 知道日志/流数据场景（埋点、订单事件流）
-- 基本命令行
+- 基本命令行 📖 [前置：命令行与 npm](../../prereq/index.html#cli-npm.md)
 
 ---
 
