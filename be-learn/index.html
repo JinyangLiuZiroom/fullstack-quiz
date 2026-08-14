@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>服务端学习笔记 · 组内分享</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1a1a1a; --sub:#666; --line:#e8e8e8;
+    --code:#f6f8fa; --accent:#1a1a1a; --hl:#f0f4ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:var(--fg); background:var(--bg); line-height:1.75; font-size:15px;
+    -webkit-text-size-adjust:100%;
+  }
+  .topbar{
+    position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:12px;
+    padding:12px 16px; background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .sitename{font-weight:700; font-size:16px; letter-spacing:.5px}
+  .menu-btn{
+    display:none; border:1px solid var(--line); background:#fff; border-radius:8px;
+    width:38px; height:34px; font-size:18px; cursor:pointer; color:var(--fg);
+  }
+  .layout{display:flex; align-items:flex-start}
+  .sidebar{
+    width:268px; flex:0 0 268px; height:calc(100vh - 59px); position:sticky; top:59px;
+    overflow:auto; border-right:1px solid var(--line); padding:14px 10px 40px;
+    background:var(--bg);
+  }
+  .group{margin:10px 6px 4px; font-size:12px; color:var(--sub); letter-spacing:1px; text-transform:uppercase}
+  .toc-item{
+    display:block; padding:9px 12px; border-radius:8px; color:var(--fg); text-decoration:none;
+    font-size:14px; cursor:pointer;
+  }
+  .toc-item:hover{background:#f3f4f6}
+  .toc-item.active{background:var(--hl); font-weight:600}
+  .content{flex:1; min-width:0; padding:24px 28px 80px}
+  .doc{max-width:860px; margin:0 auto}
+  .doc h1{font-size:26px; margin:.2em 0 .6em; padding-bottom:.3em; border-bottom:2px solid var(--line)}
+  .doc h2{font-size:20px; margin:1.8em 0 .7em; padding-bottom:.25em; border-bottom:1px solid var(--line)}
+  .doc h3{font-size:16.5px; margin:1.4em 0 .5em}
+  .doc p{margin:.6em 0}
+  .doc ul,.doc ol{padding-left:1.5em; margin:.5em 0}
+  .doc li{margin:.25em 0}
+  .doc code{
+    background:var(--code); padding:.15em .4em; border-radius:5px; font-size:13px;
+    font-family:"SF Mono",Menlo,Consolas,monospace;
+  }
+  .doc pre{
+    background:var(--code); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; overflow:auto; margin:1em 0; line-height:1.6;
+  }
+  .doc pre code{background:none; padding:0; font-size:13px}
+  .doc table{border-collapse:collapse; width:100%; margin:1em 0; font-size:13.5px; display:block; overflow:auto}
+  .doc th,.doc td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top}
+  .doc th{background:#fafafa; font-weight:600}
+  .doc blockquote{
+    border-left:4px solid var(--line); margin:1em 0; padding:.2em 1em; color:var(--sub); background:#fafafa;
+  }
+  .doc a{color:var(--fg); text-decoration:underline; text-underline-offset:2px}
+  .doc hr{border:none; border-top:1px solid var(--line); margin:2em 0}
+  .placeholder{color:var(--sub); text-align:center; margin-top:20vh; font-size:15px}
+  .overlay{display:none}
+  @media (max-width:820px){
+    .menu-btn{display:block}
+    .sidebar{
+      position:fixed; left:0; top:59px; z-index:20; height:calc(100vh - 59px);
+      transform:translateX(-100%); transition:transform .22s ease; box-shadow:2px 0 12px rgba(0,0,0,.08);
+    }
+    .sidebar.open{transform:translateX(0)}
+    .content{padding:18px 16px 80px}
+    .overlay.show{display:block; position:fixed; inset:59px 0 0 0; background:rgba(0,0,0,.25); z-index:15}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+  <span class="sitename">服务端学习笔记</span>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav id="toc"></nav></aside>
+  <div class="overlay" id="overlay"></div>
+  <main class="content"><div class="doc" id="content"><div class="placeholder">← 从左侧选择一篇开始学习（共 15 篇）</div></div></main>
+</div>
+
+<script>
+const ARTICLES = [
+  { g:'基础与容器', items:[
+    {t:'01 Spring Boot 基础与自动配置', f:'01-SpringBoot基础与自动配置.md'},
+    {t:'02 Spring IoC 与 DI', f:'02-SpringIoC与DI.md'},
+    {t:'03 Spring MVC 与 RESTful 接口', f:'03-SpringMVC与RESTful接口.md'},
+    {t:'04 Spring 事务管理', f:'04-Spring事务管理.md'},
+    {t:'05 Spring 常用注解', f:'05-Spring常用注解.md'}
+  ]},
+  { g:'数据层', items:[
+    {t:'06 MyBatis-Plus 持久层', f:'06-MyBatisPlus持久层.md'},
+    {t:'07 MySQL 索引与 SQL 优化', f:'07-MySQL索引与SQL优化.md'},
+    {t:'08 MySQL 事务与锁', f:'08-MySQL事务与锁.md'}
+  ]},
+  { g:'缓存与消息中间件', items:[
+    {t:'09 Redis 缓存', f:'09-Redis缓存.md'},
+    {t:'10 Redis 分布式锁与高并发', f:'10-Redis分布式锁与高并发.md'},
+    {t:'11 RabbitMQ 消息队列', f:'11-RabbitMQ消息队列.md'},
+    {t:'12 Kafka 消息队列', f:'12-Kafka消息队列.md'}
+  ]},
+  { g:'工程与规范', items:[
+    {t:'13 Nacos 配置中心与服务发现', f:'13-Nacos配置中心与服务发现.md'},
+    {t:'14 三层架构与工程规范', f:'14-三层架构与工程规范.md'},
+    {t:'15 Java 集合与并发常见坑', f:'15-Java集合与并发常见坑.md'}
+  ]},
+  { g:'导航', items:[
+    {t:'README 总览与学习路径', f:'README.md'}
+  ]}
+];
+
+const CDN = 'https://cdn.jsdelivr.net/npm/';
+const FB  = 'https://unpkg.com/';
+function loadScript(srcs){
+  return new Promise((res, rej)=>{
+    let i = 0;
+    (function next(){
+      if(i >= srcs.length){ rej(new Error('load fail: '+srcs[0])); return; }
+      const s = document.createElement('script');
+      s.src = srcs[i++];
+      s.onload = res;
+      s.onerror = ()=>{ s.remove(); next(); };
+      document.head.appendChild(s);
+    })();
+  });
+}
+
+const $ = (s)=>document.querySelector(s);
+const sidebar = $('#sidebar'), overlay = $('#overlay'), content = $('#content'), toc = $('#toc');
+let current = null;
+
+function buildToc(){
+  toc.innerHTML = '';
+  ARTICLES.forEach(group=>{
+    const h = document.createElement('div'); h.className='group'; h.textContent = group.g; toc.appendChild(h);
+    group.items.forEach(it=>{
+      const a = document.createElement('a');
+      a.className = 'toc-item'; a.textContent = it.t; a.dataset.f = it.f;
+      a.onclick = ()=>open(it.f);
+      toc.appendChild(a);
+    });
+  });
+}
+function markActive(f){
+  document.querySelectorAll('.toc-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.f === f);
+  });
+}
+async function open(f){
+  current = f; markActive(f);
+  $('#overlay').classList.remove('show'); sidebar.classList.remove('open');
+  content.scrollTop = 0; window.scrollTo(0,0);
+  content.innerHTML = '<div class="placeholder">加载中…</div>';
+  try{
+    const md = await fetch(f).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); });
+    const html = marked.parse(md);
+    const clean = DOMPurify.sanitize(html);
+    content.innerHTML = clean;
+    content.querySelectorAll('pre code').forEach(b=>{ try{ hljs.highlightElement(b); }catch(e){} });
+    if(location.hash !== '#'+f) history.replaceState(null,'','#'+f);
+  }catch(e){
+    content.innerHTML = '<div class="placeholder">加载失败：'+f+'<br>请确认文件存在且网络可访问 CDN</div>';
+  }
+}
+
+$('#menuBtn').onclick = ()=>{
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+};
+overlay.onclick = ()=>{ sidebar.classList.remove('open'); overlay.classList.remove('show'); };
+
+Promise.all([
+  loadScript([CDN+'marked/marked.min.js', FB+'marked/marked.min.js']),
+  loadScript([CDN+'dompurify@3/dist/purify.min.js', FB+'dompurify@3/dist/purify.min.js']),
+  loadScript([CDN+'@highlightjs/cdn-assets@11/highlight.min.js', FB+'@highlightjs/cdn-assets@11/highlight.min.js']),
+]).then(()=>{
+  marked.setOptions({ gfm:true, breaks:false });
+  buildToc();
+  const hash = location.hash.replace('#','');
+  const all = ARTICLES.flatMap(g=>g.items.map(i=>i.f));
+  if(hash && all.includes(hash)) open(hash);
+  else open(all[0]);
+}).catch(()=>{
+  content.innerHTML = '<div class="placeholder">依赖（marked/highlight.js）加载失败，请检查网络后刷新</div>';
+});
+</script>
+</body>
+</html>
