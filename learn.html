@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>全栈转型 · 学习笔记首页</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:#1a1a1a; background:#fff; line-height:1.75; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:48px 20px 64px}
+  h1{font-size:28px; margin:0 0 .3em; letter-spacing:.5px}
+  .sub{color:#666; font-size:15px; margin:0 0 32px}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .card{
+    display:flex; flex-direction:column; text-decoration:none; color:inherit;
+    border:1px solid #e8e8e8; border-radius:14px; padding:22px 20px; background:#fff;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.07); border-color:#cfcfcf}
+  .badge{display:inline-block; align-self:flex-start; font-size:12px; font-weight:700; color:#fff; border-radius:999px; padding:3px 11px; letter-spacing:1px}
+  .b-fe{background:#7c3aed}
+  .b-be{background:#0aa678}
+  .b-qa{background:#2b7de9}
+  .card h2{font-size:19px; margin:14px 0 6px}
+  .card p{color:#666; font-size:13.5px; margin:0 0 14px; flex:1}
+  .meta{font-size:13px; color:#333; font-weight:600}
+  .foot{margin-top:34px; padding-top:20px; border-top:1px solid #eee; display:flex; flex-wrap:wrap; gap:10px}
+  .foot a{
+    text-decoration:none; color:#1a1a1a; font-size:13.5px; border:1px solid #e0e0e0;
+    border-radius:9px; padding:8px 14px; background:#fafafa;
+  }
+  .foot a:hover{background:#f0f0f0}
+  @media (max-width:760px){
+    .grid{grid-template-columns:1fr}
+    .wrap{padding:32px 16px 48px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>全栈转型 · 学习笔记</h1>
+  <p class="sub">按模块拆分的学习文章，每篇零基础可读、带常见坑排错表与实战练习。点开任意一块开始学习（手机可远程访问）。</p>
+
+  <div class="grid">
+    <a class="card" href="fe-learn/index.html">
+      <span class="badge b-fe">前端 FE</span>
+      <h2>前端学习笔记</h2>
+      <p>Vue3 响应式 · Flex · Axios · CORS · Vite · DevTools · Router · Pinia · TypeScript · HTML/CSS · 浏览器原理 · Element Plus · 移动端适配 · 工程化 · Vitest · 性能 · 安全</p>
+      <span class="meta">共 17 篇 →</span>
+    </a>
+    <a class="card" href="be-learn/index.html">
+      <span class="badge b-be">后端 BE</span>
+      <h2>服务端学习笔记</h2>
+      <p>Spring Boot · IoC/DI · MVC · 事务 · 注解 · MyBatis-Plus · MySQL 索引与锁 · Redis · 分布式锁 · RabbitMQ · Kafka · Nacos · 三层架构 · 集合并发</p>
+      <span class="meta">共 15 篇 →</span>
+    </a>
+    <a class="card" href="qa-learn/index.html">
+      <span class="badge b-qa">测试 QA</span>
+      <h2>测试学习笔记</h2>
+      <p>测试金字塔 · 接口测试 · 功能/表单验证 · 回归 · 冒烟 · 质量工程与门禁 · JUnit5 · Playwright · CI/CD · AI 辅助测试</p>
+      <span class="meta">共 10 篇 →</span>
+    </a>
+  </div>
+
+  <div class="foot">
+    <a href="index.html">📝 每日刷题自测门户</a>
+    <a href="study_guide.html">📚 全栈认证 · 在线学习教材</a>
+    <a href="study_guide_audio.html">🎧 知识点语音朗读版</a>
+  </div>
+</div>
+</body>
+</html>
