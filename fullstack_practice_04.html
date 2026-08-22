@@ -121,7 +121,8 @@ window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
 <script>
 const norm = s => (s||'').toString().toLowerCase()
   .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
-function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+o.t+'</span></div>'; }
+const esc = s => (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+esc(o.t)+'</span></div>'; }
 function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
 
 function renderQuiz(){
@@ -131,20 +132,20 @@ function renderQuiz(){
   let html='';
   let gno=1; // 全局题号，保证 id/data-no/锚点唯一（JSON 内各 section 的 no 可能重复）
   QUIZ.sections.forEach(sec=>{
-    html += '<div class="section"><h2>'+sec.name+'</h2>';
+    html += '<div class="section"><h2>'+esc(sec.name)+'</h2>';
     sec.questions.forEach(q=>{
       q._gno=gno; // 绑定全局题号，供 qByNo 等按编号查找
       const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
       const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
-      const kao = q.kaodian ? '<span class="kaodian" title="'+q.kaodian+'">'+q.kaodian+'</span>' : '';
+      const kao = q.kaodian ? '<span class="kaodian" title="'+esc(q.kaodian)+'">'+esc(q.kaodian)+'</span>' : '';
       html += '<div class="card" id="card-'+gno+'" data-no="'+gno+'" data-type="'+q.type+'">';
       html += '<div class="q-head"><span class="q-no">'+gno+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
-      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):q.body)+'</div>';
-      if(q.code) html += '<div class="code">'+q.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):esc(q.body))+'</div>';
+      if(q.code) html += '<div class="code">'+esc(q.code)+'</div>';
       if(q.type==='single'||q.type==='multi'||q.type==='judge'){
         html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
       }
-      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+q.explain+'</div></div>';
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+esc(q.explain)+'</div></div>';
       if(q.type==='multi'||q.type==='fill'){
         html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
       }
