@@ -326,8 +326,13 @@ async function loadRecord(){
 }
 function restore(saved){
   finalized=true;
+  // 兼容旧数据：wrong 数组元素可能是字符串（早期版本存的是 c.dataset.no 字符串）
+  const wrongSet = new Set((saved.wrong||[]).map(n=>Number(n)));
   document.querySelectorAll('.card').forEach(card=>{
-    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q._gno));
+    const q=qByNo(card.dataset.no);
+    if(!q){ console.warn('restore: question not found for card', card.dataset.no); return; }
+    const gno = Number(card.dataset.no);
+    const ok = !wrongSet.has(gno);
     revealCard(card,q,null,ok);
     card.classList.add('graded');
     if(ok) correctCount++;
