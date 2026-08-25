@@ -158,7 +158,7 @@ function renderQuiz(){
   bindOptions();
   updateProgress();
   renderUserBox();
-  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); } });
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); if(new URLSearchParams(location.search).get('mode')==='wrong' && rec.wrong && rec.wrong.length){ toggleOnlyWrong(); } } });
 }
 
 let submitted=false;
@@ -327,7 +327,7 @@ async function loadRecord(){
 function restore(saved){
   finalized=true;
   document.querySelectorAll('.card').forEach(card=>{
-    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q.no));
+    const q=qByNo(card.dataset.no); const ok=!saved.wrong.includes(Number(q._gno));
     revealCard(card,q,null,ok);
     card.classList.add('graded');
     if(ok) correctCount++;
