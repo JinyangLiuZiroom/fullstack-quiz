@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈转型模拟自测卷</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa; color: #1f2329; margin: 0; padding: 24px 24px 96px; line-height: 1.65; }
+  .container { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .sub { color: #646a73; font-size: 14px; margin-bottom: 4px; }
+  .meta { background: #fff; border-radius: 10px; padding: 14px 18px; margin: 16px 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; color: #41464b; }
+  .meta b { color: #1664ff; }
+  .backlink { display:inline-block; margin: 4px 0 10px; color:#1664ff; text-decoration:none; font-size:14px; }
+  .backlink:hover { text-decoration: underline; }
+  .section { margin-top: 28px; }
+  .section h2 { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 4px solid #1664ff; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card.correct { box-shadow: 0 0 0 2px #52c41a inset, 0 1px 3px rgba(0,0,0,.06); }
+  .card.wrong { box-shadow: 0 0 0 2px #ff4d4f inset, 0 1px 3px rgba(0,0,0,.06); }
+  .q-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-no { font-weight: 700; font-size: 15px; }
+  .tag { font-size: 12px; padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+  .tag-single { background: #e8f3ff; color: #1664ff; }
+  .tag-multi  { background: #fff3e0; color: #d4860b; }
+  .tag-judge  { background: #fde8f3; color: #c41d7f; }
+  .tag-fill   { background: #e9f9ee; color: #1a9e4b; }
+  .kaodian { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #f0f2f5; color: #646a73; max-width: 64%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .res-badge { font-size:12px; padding:2px 9px; border-radius:4px; font-weight:700; margin-left:auto; }
+  .res-badge.ok { background:#e9f9ee; color:#1a9e4b; }
+  .res-badge.no { background:#fff1f0; color:#ff4d4f; }
+  .q-body { font-size: 15px; margin-bottom: 10px; }
+  .code { background: #2b2f36; color: #e6e6e6; border-radius: 8px; padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; white-space: pre; }
+  .options { margin: 8px 0 4px; }
+  .opt { display: flex; align-items:flex-start; gap:8px; padding: 9px 12px; border-radius: 8px; margin: 6px 0;
+    background: #f7f8fa; border: 1.5px solid transparent; font-size: 14px; cursor: pointer; transition: all .12s; }
+  .opt:hover { background: #eef2f7; }
+  .opt .k { font-weight:700; color:#1664ff; min-width: 16px; }
+  .opt.sel { background: #e8f3ff; border-color: #1664ff; }
+  .opt.correct { background: #f0f9eb; border-color: #52c41a; }
+  .opt.correct .k { color:#52c41a; }
+  .opt.wrong { background: #fff1f0; border-color: #ff4d4f; }
+  .opt.wrong .k { color:#ff4d4f; }
+  .opt.locked { cursor: default; }
+  .q-actions { margin-top: 10px; }
+  .q-check { background:#1664ff; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; font-weight:600; }
+  .q-check:hover { background:#0e4fd8; }
+  .card.graded .q-check { display:none; }
+  .blank { border:none; border-bottom: 1.5px solid #1664ff; background:#f7f8fa; padding: 3px 8px; margin: 0 4px;
+    font-size:14px; min-width: 120px; border-radius:4px 4px 0 0; }
+  .blank.correct { border-bottom-color:#52c41a; background:#f0f9eb; }
+  .blank.wrong { border-bottom-color:#ff4d4f; background:#fff1f0; }
+  .answer { display: none; margin-top: 14px; padding: 14px; background: #f0f9eb;
+    border-left: 4px solid #67c23a; border-radius: 6px; font-size: 14px; }
+  .answer.show { display: block; }
+  .answer .ans { font-weight: 700; color: #1a9e4b; margin-bottom: 8px; font-size: 15px; }
+  .answer .label { font-weight: 700; }
+  .footer { text-align: center; color: #9aa0a6; font-size: 13px; margin: 30px 0 10px; }
+  .bar { position: fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #e5e6eb;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.05); padding: 10px 16px; display:flex; gap:10px; align-items:center; justify-content:center; z-index: 50; }
+  .bar .prog { font-size: 14px; color:#41464b; margin-right: auto; }
+  .bar .userbox { font-size:13px; color:#646a73; margin-right: 8px; }
+  .bar .userbox a { color:#1664ff; cursor:pointer; text-decoration:none; }
+  .btn { border:none; border-radius:8px; padding: 9px 18px; font-size:14px; cursor:pointer; font-weight:600; }
+  .btn-primary { background:#1664ff; color:#fff; }
+  .btn-primary:hover { background:#0e4fd8; }
+  .btn-primary:disabled { background:#a9c4ff; cursor:not-allowed; }
+  .btn-ghost { background:#f2f3f5; color:#41464b; }
+  .btn-ghost:hover { background:#e5e6eb; }
+  .result-panel { background:#fff; border-radius:12px; padding:20px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); display:none; }
+  .result-panel.show { display:block; }
+  .result-panel .score { font-size:30px; font-weight:800; color:#1664ff; }
+  .result-panel .score small { font-size:15px; color:#646a73; font-weight:500; }
+  .result-panel .line { margin-top:8px; font-size:14px; color:#41464b; }
+  .result-panel .wrongs { margin-top:8px; font-size:14px; }
+  .result-panel .wrongs a { display:inline-block; margin:3px 6px 3px 0; padding:2px 8px; background:#fff1f0; color:#ff4d4f; border-radius:4px; text-decoration:none; font-weight:600; }
+  @media (max-width:600px) {
+    body { padding: 12px 12px 100px; }
+    .container { max-width: 100%; }
+    h1 { font-size: 20px; }
+    .meta { padding: 10px 12px; font-size: 13px; }
+    .card { padding: 14px 12px; margin-bottom: 10px; }
+    .q-body { font-size: 14px; }
+    .code { font-size: 11px; padding: 10px 10px; }
+    .opt { padding: 8px 10px; font-size: 13px; }
+    .bar { padding: 8px 10px; gap: 6px; }
+    .bar .prog { font-size: 12px; }
+    .btn { padding: 7px 12px; font-size: 13px; }
+    .section h2 { font-size: 16px; }
+    .answer { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="backlink" href="index.html">← 返回刷题门户</a>
+  <h1 id="quizTitle"></h1>
+  <div class="sub" id="quizSub"></div>
+  <div class="meta" id="quizMeta"></div>
+  <div class="result-panel" id="resultPanel"></div>
+  <div id="quizRoot"></div>
+  <div class="footer">全栈转型刷题 · 每日十点自动出题 · 单选/判断点选即出答案与讲解，多选/填空作答后点「核对本题」即时判分，全部核对完自动生成总结，错题自动记录</div>
+</div>
+<div class="bar">
+  <span class="prog" id="prog"></span>
+  <span class="userbox" id="userBox"></span>
+  <button class="btn btn-ghost" id="onlyWrongBtn" style="display:none">只看错题</button>
+  <button class="btn btn-ghost" id="redoBtn">重做</button>
+  <button class="btn btn-primary" id="submitBtn">交卷判分</button>
+</div>
+<script src="auth.js"></script>
+<script type="application/json" id="quizData">{"id": "vol36", "title": "全栈转型模拟自测卷", "sub": "可答题 · 逐题判分 · 自动记录错题", "meta": "本卷按「自如大学 7月认证考（均分 11/11/11）+ 全栈认证大纲 + AI时代全栈工程实战能力认证大纲」出题：后端≈33% / 前端≈33% / 测试≈33%。每题给真实可运行代码/配置/日志片段，考“读代码判行为/找坑/补全”，对齐真卷出题思路。", "sections": [{"name": "一、单选题（20 题 · 60 分）", "cat": "single", "questions": [{"no": 1, "type": "single", "body": "关于下面 Redis ZSET 排行榜取 Top3 的结果，下列说法正确的是？", "code": "// 初始分数\nredisTemplate.opsForZSet().add(\"rank\", \"u1\", 90);\nredisTemplate.opsForZSet().add(\"rank\", \"u2\", 95);\nredisTemplate.opsForZSet().add(\"rank\", \"u3\", 88);\nredisTemplate.opsForZSet().add(\"rank\", \"u4\", 95);\n// 取分数最高的 3 名（含分数，从高到低）\nSet<ZSetOperations.TypedTuple<String>> top =\n    redisTemplate.opsForZSet().reverseRangeWithScores(\"rank\", 0, 2);", "options": [{"k": "A", "t": "top 包含 3 个元素，按分数降序为 u2(95)、u4(95)、u1(90)"}, {"k": "B", "t": "top 包含 4 个元素，因为 u2 与 u4 同分都会返回"}, {"k": "C", "t": "top 只包含 u2 和 u4，reverseRange 会去重同分"}, {"k": "D", "t": "top 为空，reverseRangeWithScores 只返回成员不含分数"}], "answer": ["A"], "explain": "reverseRangeWithScores(key,0,2) 按分数降序取前 3 名；同分的 u2、u4 都计入，u3(88) 落榜，u1(90) 入选，共 3 个且含分数。A 正确：降序前三是 u2(95)、u4(95)、u1(90)。B 错（只取 3 个不是 4 个）；C 错（不去重）；D 错（WithScores 返回 TypedTuple 含分数）。", "kaodian": "AI后端能力-高并发与中间件层-RedisZSet排行榜查询"}, {"no": 2, "type": "single", "body": "关于下面 MyBatis-Plus 条件构造器的查询行为，说法正确的是？", "code": "String name = null;\nInteger age = 20;\nList<User> list = userMapper.selectList(\n    Wrappers.<User>lambdaQuery()\n        .eq(name != null, User::getName, name)\n        .eq(User::getAge, age));", "options": [{"k": "A", "t": "会生成 WHERE name = NULL AND age = 20，返回空结果"}, {"k": "B", "t": "因 name 为 null，.eq(name!=null,...) 条件被忽略，最终只按 age=20 查询"}, {"k": "C", "t": "因 name 为 null 抛 NullPointerException"}, {"k": "D", "t": "会生成 WHERE name = '' AND age = 20"}], "answer": ["B"], "explain": "MP 的 eq(condition,...) 当 condition 为 false 时整段条件被忽略（不拼 SQL）。name!=null 为 false，故忽略 name 条件，只查 age=20。B 正确。A/C/D 错（不会拼 name 条件，也不会 NPE）。", "kaodian": "AI后端能力-数据存储与ORM层-MP条件拼接忽略"}, {"no": 3, "type": "single", "body": "第二次以 id=1 调用下面被 @Cacheable 注解的方法时，下列说法正确的是？", "code": "@Cacheable(cacheNames=\"user\", key=\"#id\", condition=\"#id>0\")\npublic User getUser(Long id){\n    return userMapper.selectById(id); // 第 2 次调用同一 id 时\n}", "options": [{"k": "A", "t": "仍会执行 selectById 查库，因为 @Cacheable 不缓存带参数的方法"}, {"k": "B", "t": "返回 null，因为缓存 key 默认不含参数"}, {"k": "C", "t": "直接返回缓存结果，不再查库（condition 满足且 key 相同）"}, {"k": "D", "t": "因 condition 第二次重新求值失败而抛异常"}], "answer": ["C"], "explain": "@Cacheable 在 condition 满足时，首次查库并写入缓存，后续相同 key 直接命中缓存不再查库。id=1 满足条件且 key 相同，第二次命中。C 正确。A/B/D 错。", "kaodian": "AI后端能力-应用框架层-SpringCache命中行为"}, {"no": 4, "type": "single", "body": "关于下面缓存旁路（Cache-Aside）读流程的主要风险及正确做法，说法正确的是？", "code": "User read(Long id){\n    User u = redis.get(\"user:\"+id);\n    if(u!=null) return u;\n    u = db.query(id);\n    redis.set(\"user:\"+id, u); // 缺失过期时间\n    return u;\n}", "options": [{"k": "A", "t": "没有问题，缓存命中即返回无需额外处理"}, {"k": "B", "t": "风险是缓存穿透，应改为直查库且不写缓存"}, {"k": "C", "t": "风险是缓存击穿，应直接去掉读库逻辑"}, {"k": "D", "t": "风险是缓存永不过期读到陈旧数据，应 set 指定 TTL"}], "answer": ["D"], "explain": "该实现写缓存未设 TTL，数据更新后缓存长期不刷新，会读到陈旧数据。正确做法 set 带过期时间。D 正确。A 错（有陈旧风险）；B 错（穿透要布隆/空值，不是不写缓存）；C 错（击穿用互斥/逻辑过期，不是去掉读库）。", "kaodian": "AI后端能力-高并发与中间件层-缓存旁路读流程风险"}, {"no": 5, "type": "single", "body": "下面 MP 更新代码中，缺失的一行应填哪个 API（目标是把 last_login 置为 NULL）？", "code": "// 将 age<18 的用户状态置为 0，且把 last_login 设为 null\nupdateWrapper.lambda()\n    .lt(User::getAge, 18)\n    .set(User::getStatus, 0)\n    .____ ; // 缺失的一行\nuserMapper.update(null, updateWrapper);", "options": [{"k": "A", "t": ".set(User::getLastLogin, null)"}, {"k": "B", "t": ".eq(User::getLastLogin, null)"}, {"k": "C", "t": ".isNull(User::getLastLogin)"}, {"k": "D", "t": ".setSql(\"last_login = null\")"}], "answer": ["A"], "explain": "用 UpdateWrapper 将字段更新为 null，必须用 .set(字段, null)，MP 会将其拼入 SET 子句（确认 updateStrategy 非 IGNORED）。A 正确。B 是条件不是赋值；C 生成 WHERE 条件；D 的 setSql 可用但不如 A 规范，题干要求“应填哪个 API”，A 是标准链式 API。", "kaodian": "AI后端能力-数据存储与ORM层-MP链式set置NULL"}, {"no": 6, "type": "single", "body": "根据下面缓存统计日志，该缓存的命中率约为？", "code": "INFO 缓存查询统计: 总请求=800, 命中=680, 未命中回源=120", "options": [{"k": "A", "t": "68%"}, {"k": "B", "t": "85%"}, {"k": "C", "t": "15%"}, {"k": "D", "t": "120%"}], "answer": ["B"], "explain": "命中率 = 命中 / 总请求 = 680 / 800 = 0.85 = 85%。B 正确。A 是未命中占比混淆；C 是未命中率；D 无此指标。", "kaodian": "AI后端能力-高并发与中间件层-Redis命中率计算方式"}, {"no": 7, "type": "single", "body": "关于下面 Kafka 消费逻辑，下列说法正确的是？", "code": "consumer.subscribe(List.of(\"topicA\"));\nwhile(true){\n    ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(100));\n    for(var r : records) process(r);\n    consumer.commitSync(); // 处理完当前批次后同步提交\n}", "options": [{"k": "A", "t": "每次 poll 都会重新从头消费，因为 commitSync 提交的是分区偏移"}, {"k": "B", "t": "commitSync 会阻塞生产者发送"}, {"k": "C", "t": "处理完一批后同步提交位移，下次 poll 从已提交位移之后拉取，不会重复消费"}, {"k": "D", "t": "poll 间隔 100ms 表示每 100ms 必能拉到新消息"}], "answer": ["C"], "explain": "手动同步提交在批次处理后执行，位移提交后下次 poll 从该位移之后拉取，正常不重复。C 正确。A 错（提交后不会重头）；B 错（不影响生产者）；D 错（poll 未必有消息）。", "kaodian": "AI后端能力-高并发与中间件层-Kafka手动提交位移"}, {"no": 8, "type": "single", "body": "下面 Vue3 代码中，两次 console.log 输出的 double.value 分别是？", "code": "const count = ref(1);\nconst double = computed(() => count.value * 2);\nconsole.log(double.value); // ①\ncount.value = 5;\nconsole.log(double.value); // ②", "options": [{"k": "A", "t": "2 和 2"}, {"k": "B", "t": "1 和 5"}, {"k": "C", "t": "抛异常"}, {"k": "D", "t": "2 和 10"}], "answer": ["D"], "explain": "computed 基于 count.value 派生，count 变 5 后 double 重新计算为 10。①=2，②=10。D 正确。", "kaodian": "AI前端能力-前端基础与渲染引擎-computed依赖派生"}, {"no": 9, "type": "single", "body": "下面 Flex 布局中，第一个子项最终主轴尺寸约为？", "code": "<div style=\"display:flex; width:300px;\">\n  <div style=\"flex-basis:100px; width:150px; flex-grow:0;\"></div>\n  <div style=\"flex-basis:100px; width:50px;\"></div>\n</div>", "options": [{"k": "A", "t": "100px（flex-basis 优先于 width）"}, {"k": "B", "t": "150px（width 覆盖 basis）"}, {"k": "C", "t": "300px（平分容器）"}, {"k": "D", "t": "50px"}], "answer": ["A"], "explain": "当 flex-basis 为非 auto 时，它优先于 width 决定主轴初始尺寸；grow=0 不扩展。第一项为 100px。A 正确。B 错（basis≠auto 时 width 不生效）。", "kaodian": "AI前端能力-前端基础与渲染引擎-flexbasis与width优先级"}, {"no": 10, "type": "single", "body": "下面 Flex 布局（无内容、无 padding），三个子项按 flex-grow 比例分配剩余空间，最终宽度比约为？", "code": "<div style=\"display:flex; width:600px;\">\n  <div style=\"flex:2 1 0;\"></div>\n  <div style=\"flex:1 1 0;\"></div>\n  <div style=\"flex:3 1 0;\"></div>\n</div>", "options": [{"k": "A", "t": "1:1:1"}, {"k": "B", "t": "2:1:3"}, {"k": "C", "t": "3:2:1"}, {"k": "D", "t": "6:3:1"}], "answer": ["B"], "explain": "flex-basis:0 表示初始尺寸 0，总 grow=2+1+3=6，剩余 600px 按 2:1:3 分配，宽度比=2:1:3。B 正确。", "kaodian": "AI前端能力-前端基础与渲染引擎-FlexGrow加权分配计算"}, {"no": 11, "type": "single", "body": "下面 Axios 无感刷新拦截器在并发多个 401 请求时，主要缺陷是？", "code": "let refreshing = false;\naxios.interceptors.response.use(\n  r => r,\n  async err => {\n    if(err.response.status===401 && !err.config._retry){\n      err.config._retry = true;\n      const token = await refreshToken();\n      setToken(token);\n      return axios(err.config);\n    }\n    return Promise.reject(err);\n  });", "options": [{"k": "A", "t": "无问题，每个 401 都会独立刷新 token"}, {"k": "B", "t": "拦截器无法对失败请求做重试"}, {"k": "C", "t": "并发 401 会各自刷新，导致重复刷新与旧 token 失效"}, {"k": "D", "t": "必须在请求拦截器里统一处理 401"}], "answer": ["C"], "explain": "缺少“刷新中队列”机制，并发 401 各自调用 refreshToken，导致重复刷新、旧 token 失效、部分重试用旧 token 再次 401。C 正确。正确做法是用 refreshing 标志 + 等待队列。", "kaodian": "AI前端能力-网络与BFF架构-Axios无感刷新并发缺陷"}, {"no": 12, "type": "single", "body": "前端用 credentials:true 且带自定义头调用 /api，若浏览器发预检(OPTIONS)被拒，正确排查/做法是？", "code": "@Bean\npublic WebMvcConfigurer cors(){\n  return new WebMvcConfigurer(){\n    public void addCorsMappings(CorsRegistry r){\n      r.addMapping(\"/api/**\")\n       .allowedOriginPatterns(\"*\")\n       .allowedMethods(\"GET\",\"POST\")\n       .allowCredentials(true)\n       .allowedHeaders(\"*\");\n    }\n  };\n}", "options": [{"k": "A", "t": "把 allowedOriginPatterns 改成 \"null\" 即可"}, {"k": "B", "t": "只要前端 axios 设置 withCredentials 即可，无需服务端配合"}, {"k": "C", "t": "预检失败是因为前端没加 Content-Type"}, {"k": "D", "t": "预检是浏览器自动发的，服务端必须显式处理 OPTIONS 返回 200 且带 CORS 头"}], "answer": ["D"], "explain": "带凭据+自定义头的跨域请求会触发预检 OPTIONS，服务端需对该路由返回 200 且响应头含 Access-Control-Allow-*。D 正确。A 错（null 非法）；B 错（必须服务端配置）；C 错（Content-Type 不是主因）。", "kaodian": "AI前端能力-网络与BFF架构-跨域预检OPTIONS处理"}, {"no": 13, "type": "single", "body": "下面 <script setup> 模板中 {{ }} 内应填什么才能正确显示计数？", "code": "<script setup>\nimport { ref } from 'vue';\nconst count = ref(0);\n// 模板中直接使用 count 即可自动解包，无需 .value\n<\/script>\n<template>\n  <button @click=\"count++\">{{ ____ }}</button>\n</template>", "options": [{"k": "A", "t": "count"}, {"k": "B", "t": "count.value"}, {"k": "C", "t": "count()"}, {"k": "D", "t": "this.count"}], "answer": ["A"], "explain": "在 <script setup> 模板顶层，ref 被自动解包，直接写 count 即其 .value。A 正确。B 在模板里会报错（解包后无 .value）；C/D 错。", "kaodian": "AI前端能力-前端基础与渲染引擎-ref模板顶层解包"}, {"no": 14, "type": "single", "body": "关于下面浏览器 Network 面板某请求，说法正确的是？", "code": "Name: /api/user\nStatus: 200 OK\nType: xhr\nSize: 1.2 kB\nTime: 320 ms\nResponse: {\"code\":500,\"msg\":\"internal error\"}", "options": [{"k": "A", "t": "状态码 200 即业务成功，前端可直接渲染"}, {"k": "B", "t": "200 只代表传输成功，code=500 说明后端出错，前端应判失败"}, {"k": "C", "t": "Size 1.2kB 指请求体大小"}, {"k": "D", "t": "Type:xhr 表示发生页面跳转"}], "answer": ["B"], "explain": "HTTP 200 只代表传输层成功；业务 code=500 表示逻辑失败，前端需按 code 判错。B 正确。A 错（混淆状态码与业务码）；C 错（Size 是响应大小）；D 错（xhr 是异步请求）。", "kaodian": "AI前端能力-前端生态-Network面板响应分析"}, {"no": 15, "type": "single", "body": "关于下面 JUnit5 异常断言测试，说法正确的是？", "code": "@Test\nvoid testDivide(){\n    Calculator c = new Calculator();\n    assertThrows(ArithmeticException.class, () -> c.div(1, 0));\n}\n// c.div(a,b){ return a/b; }", "options": [{"k": "A", "t": "测试失败，因为 assertThrows 不能捕获运行时异常"}, {"k": "B", "t": "需改用 assertEquals 才能验证异常"}, {"k": "C", "t": "测试通过，因为 1/0 抛出 ArithmeticException"}, {"k": "D", "t": "测试通过但会额外抛出编译错误"}], "answer": ["C"], "explain": "assertThrows 期望抛出指定异常类型，1/0 抛 ArithmeticException，匹配则测试通过。C 正确。A/B/D 错。", "kaodian": "AI质量保障-自动化测试-JUnit5异常断言式"}, {"no": 16, "type": "single", "body": "下面 Playwright 点击操作（元素 2 秒后才出现），说法正确的是？", "code": "await page.getByText('提交成功').click();\n// 元素在 2 秒后才出现", "options": [{"k": "A", "t": "必须手动写 waitForTimeout(2000) 才能等到元素"}, {"k": "B", "t": "元素未出现会立即抛 TimeoutError 不等待"}, {"k": "C", "t": "getByText 不会触发任何等待"}, {"k": "D", "t": "若元素 2 秒后才出现，Playwright 会自动等待其可见可点击后再点击"}], "answer": ["D"], "explain": "Playwright 的 Locator 操作（click）内置自动等待（actionability 检查），会轮询直到元素可见可操作或超时。D 正确。A/B/C 错。", "kaodian": "AI质量保障-自动化测试-Playwright操作自动等待"}, {"no": 17, "type": "single", "body": "下面接口测试断言的主要缺陷是？", "code": "const res = await axios.get('/api/order/123');\nassert(res.status === 200);\n// 业务约定：{ code:0, data:{...} }", "options": [{"k": "A", "t": "只断言状态码未校验业务 code，后端 code=500 会被误判通过"}, {"k": "B", "t": "没有问题，HTTP 200 即代表接口成功"}, {"k": "C", "t": "应改用 assertEquals 而非 assert"}, {"k": "D", "t": "缺少对响应耗时的断言"}], "answer": ["A"], "explain": "业务以 code 字段表示成败，仅断言 status=200 会在后端逻辑失败（code≠0）时漏判，产生假绿。A 正确。应补充 assert(res.data.code===0)。", "kaodian": "AI质量保障-接口测试-HTTP状态码与业务码联合断言"}, {"no": 18, "type": "single", "body": "本次需求修改了支付模块的优惠券计算函数，涉及调用方：下单页、购物车、订单详情。关于回归测试范围选择，正确做法是？", "code": "// 变更影响分析\n改动点：优惠券计算函数\n调用方：下单页、购物车、订单详情", "options": [{"k": "A", "t": "只重测被改动的优惠券计算函数本身即可"}, {"k": "B", "t": "以变更影响分析圈定：改动点、上游调用方与高缺陷区优先覆盖"}, {"k": "C", "t": "全量回归所有用例最稳妥，不必分析"}, {"k": "D", "t": "只测新增功能，旧功能不必动"}], "answer": ["B"], "explain": "回归测试应基于影响分析，覆盖改动点及其影响面（调用方、共享模块、高风险区），在成本与风险间权衡。B 正确。A/D 覆盖不足；C 成本高但非首选。", "kaodian": "AI质量保障-软件测试理论与质量体系-回归测试精准圈定"}, {"no": 19, "type": "single", "body": "某判定表有三条件（用户已登录 Y/N、余额充足 Y/N、商品有库存 Y/N），均为二值且无约束。规则（用例）总数约为？", "code": "条件桩：① 用户已登录? (Y/N) ② 余额充足? (Y/N) ③ 商品有库存? (Y/N)\n动作桩：允许下单 / 拒绝\n// 三条件均为二值，无约束", "options": [{"k": "A", "t": "3"}, {"k": "B", "t": "6"}, {"k": "C", "t": "8"}, {"k": "D", "t": "9"}], "answer": ["C"], "explain": "三条件各 2 值，无约束时规则数 = 2^3 = 8。C 正确。", "kaodian": "AI质量保障-软件测试理论与质量体系-判定表用例数计算"}, {"no": 20, "type": "single", "body": "下面 Playwright 等待“加载中”消失后再断言结果的代码中，缺失的等待 API 是？", "code": "// 等待\"加载中\"消失后再断言结果\nawait page.getByText('加载中').____();\nawait expect(page.getByText('完成')).toBeVisible();", "options": [{"k": "A", "t": "waitFor({state:'visible'})"}, {"k": "B", "t": "waitForSelector()"}, {"k": "C", "t": "waitForHidden()"}, {"k": "D", "t": "getByText('加载中').waitFor({ state: 'hidden' })"}], "answer": ["D"], "explain": "Playwright 等待元素消失应使用 Locator.waitFor({state:'hidden'})。D 正确。A 默认等 visible 不针对消失；B 是旧 API；C waitForHidden 已废弃。", "kaodian": "AI质量保障-自动化测试-Playwright等待元素消失"}]}, {"name": "二、多选题（7 题 · 28 分）", "cat": "multi", "questions": [{"no": 1, "type": "multi", "body": "判断下列关于“RabbitMQ 端到端可靠投递”说法的正误：", "code": "rabbitTemplate.setConfirmCallback(...);      // ① publisher confirm\nrabbitTemplate.setReturnsCallback(...);      // ② mandatory/return\n@RabbitListener(queues=\"q\")\npublic void on(Message m, Channel ch) throws IOException {\n    try { handle(m); ch.basicAck(m.getMessageProperties().getDeliveryTag(), false); }\n    catch(Exception e){ ch.basicNack(deliveryTag, false, true); } // ③ 手动 ack\n}", "options": [{"k": "A", "t": "publisher confirm 能保证消息成功到达交换机，是生产端可靠的一环"}, {"k": "B", "t": "returns/mandatory 能在消息路由不到队列时通知生产者，避免消息静默丢失"}, {"k": "C", "t": "消费端用 autoAck=true 即可保证消息不丢失，无需手动 basicAck"}, {"k": "D", "t": "消费失败用 basicNack(requeue=true) 可将消息重新入队重试，是消费端可靠的一环"}], "answer": ["A", "B", "D"], "explain": "1. A 正确：confirm 确认到达交换机。2. B 正确：return 在不可路由时回调。3. C 错误：autoAck=true 在投递即确认，处理失败会丢消息，不可靠。4. D 正确：basicNack requeue 重试是消费端可靠手段。答案 ABD。", "kaodian": "AI后端能力-高并发与中间件层-RabbitMQ消息可靠投递保障"}, {"no": 2, "type": "multi", "body": "判断下列关于该查询索引使用的说法：", "code": "CREATE TABLE order_item (\n  id BIGINT PRIMARY KEY,\n  user_id BIGINT, status TINYINT, created_at DATETIME,\n  KEY idx_user_status (user_id, status)\n);\nSELECT * FROM order_item\nWHERE status = 1 AND user_id + 0 = 100;", "options": [{"k": "A", "t": "联合索引 (user_id, status) 能利用最左前缀匹配 user_id"}, {"k": "B", "t": "对 user_id 使用 user_id + 0 = 100 会使该列索引失效"}, {"k": "C", "t": "仅用 status = 1 也能命中 idx_user_status 的最左前缀"}, {"k": "D", "t": "WHERE 中两列顺序不影响优化器选择联合索引列"}], "answer": ["A", "B"], "explain": "1. A 正确：user_id 在最左，可走索引。2. B 正确：对列做运算 user_id+0 导致索引失效。3. C 错误：仅用 status 不满足最左前缀，不会命中该联合索引。4. D 错误：列顺序不影响（优化器可重排），但最左前缀依赖“是否有最左列条件”，此处 user_id 有索引列但被运算破坏。答案 AB。", "kaodian": "AI后端能力-数据存储与ORM层-联合索引列运算失效"}, {"no": 3, "type": "multi", "body": "判断下列关于 Spring 事务的说法：", "code": "@Service\npublic class OrderService {\n    @Transactional\n    public void create(Order o){ inner(o); }\n    @Transactional(propagation=REQUIRES_NEW)\n    public void inner(Order o){ dao.insert(o); }\n}", "options": [{"k": "A", "t": "create 调用同一类内的 inner，inner 的 REQUIRES_NEW 会生效开启新事务"}, {"k": "B", "t": "因为 inner 是同类内部方法调用，绕过了代理，inner 上的事务注解不生效"}, {"k": "C", "t": "将 inner 抽到另一个 Spring Bean 中再调用，可使其事务注解生效"}, {"k": "D", "t": "@Transactional 加在 private 方法上也能正常开启事务"}], "answer": ["B", "C"], "explain": "1. A 错误：同类自调用不走代理，inner 注解失效。2. B 正确：自调用绕过代理。3. C 正确：跨 Bean 调用走代理，注解生效。4. D 错误：@Transactional 只能作用于 public 方法，private 不生效。答案 BC。", "kaodian": "AI后端能力-应用框架层-Transactional自调用失效"}, {"no": 4, "type": "multi", "body": "判断下列 Vue3 响应式行为说法：", "code": "const state = reactive({ count: 0 });\nlet { count } = state; count++;            // ①\nconst plain = state; plain = { count: 9 }; // ②\nconst r = ref(0); const { value } = r; value++; // ③\nconst arr = reactive([1,2]); arr.length = 0;    // ④", "options": [{"k": "A", "t": "① 解构出的 count 是普通值，自增不会触发视图更新"}, {"k": "B", "t": "② 将 plain 整体重新赋值为新对象后，原 reactive 代理仍指向旧对象，新对象不具响应式"}, {"k": "C", "t": "③ 使用 toRefs(state) 解构得到的 ref，与原对象属性保持响应式联动"}, {"k": "D", "t": "④ 对 reactive 数组用 arr.length = 0 清空，不会触发视图更新"}], "answer": ["A", "B", "C"], "explain": "1. A 正确：reactive 解构丢失响应式。2. B 正确：对局部变量重赋值不影响原代理。3. C 正确：toRefs 生成与原属性联动的 ref，保持响应。4. D 错误：Vue3 Proxy 代理数组，length 修改可触发更新。答案 ABC。", "kaodian": "AI前端能力-前端基础与渲染引擎-响应式解构丢失"}, {"no": 5, "type": "multi", "body": "判断下列关于跨域解决方案的说法：", "code": "// 前端 http://a.com 调 http://b.com/api\nfetch('http://b.com/api', { credentials:'include' });\n// 后端 b.com 需配合", "options": [{"k": "A", "t": "开发环境可用 Vite proxy 将 /api 代理到 b.com 规避同源限制"}, {"k": "B", "t": "后端设置 Access-Control-Allow-Origin: * 且前端带凭据时，浏览器允许跨域"}, {"k": "C", "t": "Nginx 反向代理把跨域变成同源是常用生产方案"}, {"k": "D", "t": "JSONP 只能发 GET，依赖 <script> 标签无同源限制"}], "answer": ["A", "C", "D"], "explain": "1. A 正确：Vite proxy 代理绕过同源。2. B 错误：带凭据时 Allow-Origin 不能为 *，必须具体源。3. C 正确：Nginx 反向代理同源化。4. D 正确：JSONP 仅 GET。答案 ACD。", "kaodian": "AI前端能力-网络与BFF架构-跨域方案能力对比"}, {"no": 6, "type": "multi", "body": "判断下列关于测试金字塔的说法：", "code": "团队结构：UI 自动化 60% | 接口/集成 30% | 单元测试 10%", "options": [{"k": "A", "t": "经典测试金字塔建议单元测试最多、UI 最少，呈三角形"}, {"k": "B", "t": "当前团队结构（UI 多、单测少）是倒置的“冰淇淋筒”，维护成本高"}, {"k": "C", "t": "UI 自动化越快越好，应优先大量写 E2E"}, {"k": "D", "t": "单元测试执行快、定位准，应作为金字塔底座占比最大"}], "answer": ["A", "B", "D"], "explain": "1. A 正确：金字塔底层单测多。2. B 正确：UI 多单测少是反模式。3. C 错误：E2E 慢且脆，不应优先大量写。4. D 正确：单测快且精准。答案 ABD。", "kaodian": "AI质量保障-软件测试理论与质量体系-测试金字塔结构"}, {"no": 7, "type": "multi", "body": "判断下列关于缺陷严重度与优先级的说法：", "code": "缺陷A：支付金额计算错误 → 资金损失\n缺陷B：关于页错别字", "options": [{"k": "A", "t": "严重度描述缺陷对系统的破坏程度，缺陷A严重度高"}, {"k": "B", "t": "优先级描述修复紧迫程度，资金类缺陷通常优先级也高"}, {"k": "C", "t": "严重度与优先级通常正相关，但受修复成本、发版节点等影响并不恒等"}, {"k": "D", "t": "错别字虽严重度低，但临近发版时优先级可能被临时调高"}], "answer": ["A", "B", "C", "D"], "explain": "1. A 正确：金额错严重度高。2. B 正确：资金缺陷优先级高。3. C 正确：二者不恒等。4. D 正确：错别字可因发版节点临时提优先级。答案 ABCD。", "kaodian": "AI质量保障-软件测试理论与质量体系-缺陷严重度与优先级区别"}]}, {"name": "三、判断题（6 题 · 12 分）", "cat": "judge", "questions": [{"no": 1, "type": "judge", "body": "InnoDB 在 REPEATABLE READ 隔离级别下，普通 SELECT 语句执行的是快照读（一致性读），不会对读取的行加共享锁。", "code": "InnoDB 在 REPEATABLE READ 隔离级别下，普通 SELECT 语句执行的是快照读（一致性读），不会对读取的行加共享锁。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "RR 级别下普通 SELECT 是 MVCC 快照读，不加锁；只有 SELECT ... FOR UPDATE / LOCK IN SHARE MODE 或更新才会加锁。题干陈述正确。", "kaodian": "AI后端能力-数据存储与ORM层-InnoDB快照读不加锁"}, {"no": 2, "type": "judge", "body": "Vue3 中 reactive() 包裹普通对象后，若直接对该变量整体重新赋值为新对象，原模板绑定会保持响应式更新。", "code": "Vue3 中 reactive() 包裹普通对象后，若直接对该变量整体重新赋值为新对象，原模板绑定会保持响应式更新。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "reactive 返回的代理若被整体重新赋值（如 state = {new}），原引用断开，模板绑定不再跟踪新对象，响应式丢失。题干陈述错误。", "kaodian": "AI前端能力-前端基础与渲染引擎-reactive整体重赋值"}, {"no": 3, "type": "judge", "body": "CSS Flex 容器默认 align-items 值为 stretch，当项目未设置交叉轴尺寸时会沿交叉轴拉伸填满。", "code": "CSS Flex 容器默认 align-items 值为 stretch，当项目未设置交叉轴尺寸时会沿交叉轴拉伸填满。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "Flex 容器默认 align-items: stretch，项目在交叉轴方向未定尺寸时拉伸填充。题干陈述正确。", "kaodian": "AI前端能力-前端基础与渲染引擎-alignitems默认stretch"}, {"no": 4, "type": "judge", "body": "单元测试应当隔离外部依赖，通过 Mock/Stub 替换数据库、网络等协作组件，使测试稳定可重复。", "code": "单元测试应当隔离外部依赖，通过 Mock/Stub 替换数据库、网络等协作组件，使测试稳定可重复。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["正确"], "explain": "单元测试核心是隔离，用测试替身替代外部依赖以保证快速、稳定、可重复。题干正确。", "kaodian": "AI质量保障-自动化测试-单测外部依赖隔离"}, {"no": 5, "type": "judge", "body": "当某次需求变更影响 3 个模块时，回归测试应只重测这 3 个被改动模块本身，无需覆盖其上游调用方。", "code": "当某次需求变更影响 3 个模块时，回归测试应只重测这 3 个被改动模块本身，无需覆盖其上游调用方。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "变更可能通过调用链影响上游，只测改动点易遗漏回归缺陷；应基于影响分析覆盖受影响模块与调用方。题干错误。", "kaodian": "AI质量保障-软件测试理论与质量体系-变更回归影响面"}, {"no": 6, "type": "judge", "body": "在 CI 流水线中，tsc --noEmit 类型检查通过即代表代码不存在运行时逻辑错误。", "code": "在 CI 流水线中，tsc --noEmit 类型检查通过即代表代码不存在运行时逻辑错误。", "options": [{"k": "正确", "t": "正确"}, {"k": "错误", "t": "错误"}], "answer": ["错误"], "explain": "tsc 只做静态类型检查，无法发现空指针、业务逻辑错、异步竞态等运行时问题。题干错误。", "kaodian": "AI质量保障-CI/CD与质量门禁-tsc不保证运行时正确"}]}]}</script>
+<script>
+window.QUIZ = JSON.parse(document.getElementById('quizData').textContent);
+</script>
+
+<script>
+const norm = s => (s||'').toString().toLowerCase()
+  .replace(/[\s'"`\u2018\u2019\u201c\u201d（）()\[\]{}·.,，。；;:：\-_/\\]/g,'');
+const esc = s => (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function optHtml(o){ return '<div class="opt" data-k="'+o.k+'"><span class="k">'+o.k+'</span><span class="t">'+esc(o.t)+'</span></div>'; }
+function fillBody(body){ let i=0; return body.replace(/【空\d+】/g, ()=>'<input class="blank" data-i="'+(i++)+'" autocomplete="off">'); }
+
+function renderQuiz(){
+  document.getElementById('quizTitle').textContent = QUIZ.title;
+  document.getElementById('quizSub').textContent = QUIZ.sub;
+  document.getElementById('quizMeta').innerHTML = QUIZ.meta;
+  let html='';
+  let gno=1; // 全局题号，保证 id/data-no/锚点唯一（JSON 内各 section 的 no 可能重复）
+  QUIZ.sections.forEach(sec=>{
+    html += '<div class="section"><h2>'+esc(sec.name)+'</h2>';
+    sec.questions.forEach(q=>{
+      q._gno=gno; // 绑定全局题号，供 qByNo 等按编号查找
+      const tagCls={single:'tag-single',multi:'tag-multi',judge:'tag-judge',fill:'tag-fill'}[q.type];
+      const tagTxt={single:'单选',multi:'多选',judge:'判断',fill:'填空'}[q.type];
+      const kao = q.kaodian ? '<span class="kaodian" title="'+esc(q.kaodian)+'">'+esc(q.kaodian)+'</span>' : '';
+      html += '<div class="card" id="card-'+gno+'" data-no="'+gno+'" data-type="'+q.type+'">';
+      html += '<div class="q-head"><span class="q-no">'+gno+'.</span><span class="tag '+tagCls+'">'+tagTxt+'</span>'+kao+'<span class="res-badge" style="display:none"></span></div>';
+      html += '<div class="q-body">'+(q.type==='fill'?fillBody(q.body):esc(q.body))+'</div>';
+      if(q.code) html += '<div class="code">'+esc(q.code)+'</div>';
+      if(q.type==='single'||q.type==='multi'||q.type==='judge'){
+        html += '<div class="options">'+q.options.map(optHtml).join('')+'</div>';
+      }
+      html += '<div class="answer"><div class="ans"></div><div><span class="label">讲解：</span>'+esc(q.explain)+'</div></div>';
+      if(q.type==='multi'||q.type==='fill'){
+        html += '<div class="q-actions"><button class="q-check" data-no="'+q.no+'">核对本题</button></div>';
+      }
+      html += '</div>';
+      gno++;
+    });
+    html += '</div>';
+  });
+  document.getElementById('quizRoot').innerHTML = html;
+  bindOptions();
+  updateProgress();
+  renderUserBox();
+  loadRecord().then(rec=>{ if(rec && rec.done){ restore(rec); if(new URLSearchParams(location.search).get('mode')==='wrong' && rec.wrong && rec.wrong.length){ toggleOnlyWrong(); } } });
+}
+
+let submitted=false;
+function allQ(){ return QUIZ.sections.flatMap(s=>s.questions); }
+function qByNo(no){ return allQ().find(q=>q._gno==no); }
+
+function bindOptions(){
+  document.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const card=opt.closest('.card');
+      if(card.classList.contains('graded')) return;
+      const type=card.dataset.type;
+      if(type==='multi'){ opt.classList.toggle('sel'); updateProgress(); }
+      else { card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); opt.classList.add('sel');
+             if(type==='single'||type==='judge') gradeCard(card); }
+    });
+  });
+  document.querySelectorAll('.blank').forEach(b=> b.addEventListener('input', updateProgress));
+  document.querySelectorAll('.q-check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ const card=btn.closest('.card'); if(card) gradeCard(card); });
+  });
+}
+function getUserAnswer(card){
+  const type=card.dataset.type;
+  if(type==='fill'){ return [...card.querySelectorAll('.blank')].map(b=>b.value.trim()); }
+  return [...card.querySelectorAll('.opt.sel')].map(o=>o.dataset.k);
+}
+function isAnswered(card){
+  const ua=getUserAnswer(card);
+  if(card.dataset.type==='fill') return ua.some(v=>v!=='');
+  return ua.length>0;
+}
+function updateProgress(){
+  const cards=[...document.querySelectorAll('.card')];
+  const graded=cards.filter(c=>c.classList.contains('graded')).length;
+  document.getElementById('prog').innerHTML='已核对 <b>'+graded+'</b> / '+cards.length+' 题 · 当前 <b>'+correctCount+'</b> 分';
+}
+function judge(q, ua){
+  if(q.type==='fill'){
+    if(ua.length<q.blanks) return false;
+    for(let i=0;i<q.blanks;i++){
+      const v=norm(ua[i]); if(!v) return false;
+      const ok=q.accept[i].some(kw=> v.includes(norm(kw)) || norm(kw).includes(v));
+      if(!ok) return false;
+    }
+    return true;
+  }
+  const a=[...q.answer].sort().join(','); const b=[...ua].sort().join(',');
+  return a===b;
+}
+let correctCount=0, finalized=false;
+function revealCard(card,q,ua,ok){
+  card.classList.add(ok?'correct':'wrong');
+  const badge=card.querySelector('.res-badge');
+  badge.style.display='inline-block';
+  badge.className='res-badge '+(ok?'ok':'no');
+  badge.textContent=ok?'✔ 答对':'✘ 答错';
+  if(q.type==='fill'){
+    if(ua){
+      card.querySelectorAll('.blank').forEach((b,i)=>{
+        const v=norm(b.value); const good=v && q.accept[i].some(kw=> v.includes(norm(kw))||norm(kw).includes(v));
+        b.classList.add(good?'correct':'wrong'); b.disabled=true;
+      });
+    } else { card.querySelectorAll('.blank').forEach(b=>b.disabled=true); }
+  } else {
+    card.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('locked');
+      const k=o.dataset.k; const chosen=o.classList.contains('sel');
+      if(q.answer.includes(k)) o.classList.add('correct');
+      else if(chosen) o.classList.add('wrong');
+    });
+  }
+  const ans=card.querySelector('.answer');
+  if(ans){
+    let ansText='';
+    if(q.type==='fill'){ ansText = (q.answerText!==undefined)? q.answerText : (Array.isArray(q.answer)? q.answer.join('、') : ''); }
+    else { const arr = Array.isArray(q.answer)? q.answer : (q.answer!=null? String(q.answer).split('') : []); ansText = arr.join('、'); }
+    const ansEl=ans.querySelector('.ans');
+    if(ansEl) ansEl.textContent='答案：'+ansText;
+    ans.classList.add('show');
+  }
+}
+function gradeCard(card){
+  if(card.classList.contains('graded')) return;
+  const q=qByNo(card.dataset.no); const ua=getUserAnswer(card);
+  // 未作答也直接展示答案（不再用 confirm 阻断：部分浏览器/WebView 会静默拒绝 confirm，导致答案永远不显示）
+  const ok=judge(q,ua);
+  revealCard(card,q,ua,ok);
+  card.classList.add('graded');
+  if(ok) correctCount++;
+  updateProgress();
+  if(document.querySelectorAll('.card.graded').length===document.querySelectorAll('.card').length) finalize();
+}
+function finalize(){
+  if(finalized) return; finalized=true;
+  const cards=[...document.querySelectorAll('.card')];
+  const wrong=cards.filter(c=>!c.classList.contains('correct')).map(c=>+c.dataset.no);
+  showResult(correctCount, cards.length, wrong);
+  const answersMap={}; cards.forEach(c=>answersMap[c.dataset.no]=getUserAnswer(c));
+  saveRecord({done:true, score:correctCount, total:cards.length, wrong:wrong, answers:answersMap});
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function submit(){
+  if(finalized) return;
+  const cards=[...document.querySelectorAll('.card')];
+  const ungraded=cards.filter(c=>!c.classList.contains('graded'));
+  if(ungraded.length>0){
+    if(!confirm('还有 '+ungraded.length+' 题未核对，将按当前作答判分（未作答计为错）。确定交卷？')) return;
+    ungraded.forEach(gradeCard);
+  }
+  finalize();
+}
+function showResult(correct,total,wrong){
+  const p=document.getElementById('resultPanel'); p.classList.add('show');
+  let h='<div class="score">'+correct+' <small>/ '+total+' 分</small></div>';
+  h+='<div class="line">正确率 '+Math.round(correct/total*100)+'%\u3000\u00b7\u3000答对 '+correct+' 题，答错 '+wrong.length+' 题</div>';
+  if(wrong.length){
+    h+='<div class="wrongs"><b>错题：</b>'+wrong.map(n=>'<a href="#card-'+n+'">第 '+n+' 题</a>').join('')+'</div>';
+    h+='<div class="line" style="color:#9aa0a6">错题已记录'+(QB&&QB.isLogin()?'到后台数据库':'到本机浏览器')+'。</div>';
+  } else { h+='<div class="line" style="color:#52c41a;font-weight:700">满分！全部答对 \ud83c\udf89</div>'; }
+  p.innerHTML=h;
+}
+let onlyWrong=false;
+function toggleOnlyWrong(){
+  onlyWrong=!onlyWrong;
+  document.getElementById('onlyWrongBtn').textContent = onlyWrong?'显示全部':'只看错题';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (onlyWrong && !c.classList.contains('wrong')) ? 'none':'';
+  });
+}
+function redo(){
+  if(!confirm('重做本卷？将清除本卷作答记录并重新开始。')) return;
+  if(QB && QB.isLogin()){
+    // 后端记录由下次提交覆盖；这里直接前端重置
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  } else {
+    localStorage.removeItem('fsp:'+QUIZ.id);
+    location.reload();
+  }
+}
+// ---- 后端优先 / localStorage 兜底 ----
+async function saveRecord(rec){
+  if(QB && QB.isLogin()){
+    try{
+      await QB.apiPost('/api/records', {
+        volId: QUIZ.id, score: rec.score, total: rec.total,
+        wrong: rec.wrong, answers: JSON.stringify(rec.answers||{})
+      });
+      return;
+    }catch(e){ /* 后端失败降级 */ }
+  }
+  localStorage.setItem('fsp:'+QUIZ.id, JSON.stringify(rec));
+}
+async function loadRecord(){
+  if(QB && QB.isLogin()){
+    try{
+      const rv = await QB.apiGet('/api/records/'+QUIZ.id);
+      if(rv) return { done:true, score:rv.score, total:rv.total, wrong: JSON.parse(rv.wrong||'[]'), answers: JSON.parse(rv.answers||'{}') };
+    }catch(e){ /* 降级 */ }
+  }
+  try{ return JSON.parse(localStorage.getItem('fsp:'+QUIZ.id)); }catch(e){ return null; }
+}
+function restore(saved){
+  finalized=true;
+  // 兼容旧数据：wrong 数组元素可能是字符串（早期版本存的是 c.dataset.no 字符串）
+  const wrongSet = new Set((saved.wrong||[]).map(n=>Number(n)));
+  document.querySelectorAll('.card').forEach(card=>{
+    const q=qByNo(card.dataset.no);
+    if(!q){ console.warn('restore: question not found for card', card.dataset.no); return; }
+    const gno = Number(card.dataset.no);
+    const ok = !wrongSet.has(gno);
+    revealCard(card,q,null,ok);
+    card.classList.add('graded');
+    if(ok) correctCount++;
+  });
+  showResult(saved.score, saved.total, saved.wrong);
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('onlyWrongBtn').style.display='inline-block';
+  document.getElementById('prog').innerHTML='本卷已完成 \u00b7 得分 <b>'+saved.score+'</b>/'+saved.total;
+}
+function renderUserBox(){
+  const box=document.getElementById('userBox');
+  if(QB && QB.isLogin()){
+    box.innerHTML='用户：'+QB.user()+' \u00b7 <a id="logoutLink">登出</a>';
+    document.getElementById('logoutLink').onclick=()=>{ QB.clear(); location.reload(); };
+  } else {
+    box.innerHTML='<a id="loginLink">登录 / 注册</a>（记录可同步到后台）';
+    document.getElementById('loginLink').onclick=()=>{ QB.showLogin(()=>location.reload()); };
+  }
+}
+renderQuiz();
+document.getElementById('submitBtn').addEventListener('click', submit);
+document.getElementById('redoBtn').addEventListener('click', redo);
+document.getElementById('onlyWrongBtn').addEventListener('click', toggleOnlyWrong);
+</script>
+
+</body>
+</html>
